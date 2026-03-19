@@ -1,0 +1,144 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Scissors, Check, Zap, Loader2, ArrowLeft } from "lucide-react";
+
+export default function PricingPage() {
+  const [loading, setLoading] = useState<string | null>(null);
+  const router = useRouter();
+
+  async function handleCheckout(plan: string) {
+    setLoading(plan);
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plan }),
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      setLoading(null);
+    }
+  }
+
+  const plans = [
+    {
+      name: "Free",
+      price: "$0",
+      period: "forever",
+      key: "free",
+      features: [
+        "1 video per month",
+        "Up to 30 min videos",
+        "3-5 clips per video",
+        "Animated captions",
+        "ViralCut watermark",
+      ],
+      cta: "Current Plan",
+      disabled: true,
+      highlight: false,
+    },
+    {
+      name: "Pro",
+      price: "$19",
+      period: "/month",
+      key: "pro",
+      features: [
+        "10 videos per month",
+        "Up to 2 hour videos",
+        "3-5 clips per video",
+        "Animated captions",
+        "No watermark",
+        "Priority processing",
+      ],
+      cta: "Upgrade to Pro",
+      disabled: false,
+      highlight: true,
+    },
+    {
+      name: "Unlimited",
+      price: "$49",
+      period: "/month",
+      key: "unlimited",
+      features: [
+        "Unlimited videos",
+        "Up to 2 hour videos",
+        "3-5 clips per video",
+        "Animated captions",
+        "No watermark",
+        "Priority processing",
+        "Early access to new features",
+      ],
+      cta: "Go Unlimited",
+      disabled: false,
+      highlight: false,
+    },
+  ];
+
+  return (
+    <div className="min-h-screen">
+      <nav className="glass fixed top-0 w-full z-50">
+        <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-4">
+          <a href="/" className="flex items-center gap-2">
+            <Scissors className="w-6 h-6 text-electric-500" />
+            <span className="font-display text-xl font-bold text-white">
+              Viral<span className="text-electric-400">Cut</span>
+            </span>
+          </a>
+          <a href="/clip" className="text-sm text-slate-400 hover:text-white flex items-center gap-1">
+            <ArrowLeft className="w-4 h-4" /> Back to App
+          </a>
+        </div>
+      </nav>
+
+      <div className="pt-32 pb-20 px-6 max-w-5xl mx-auto">
+        <div className="text-center mb-16">
+          <Zap className="w-10 h-10 text-electric-500 mx-auto mb-4" />
+          <h1 className="font-display text-3xl md:text-5xl font-bold text-white mb-4">
+            Upgrade Your Plan
+          </h1>
+          <p className="text-slate-400 text-lg">Remove watermarks, clip more videos, and get priority processing.</p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {plans.map((plan) => (
+            <div key={plan.key} className={`card p-8 flex flex-col ${plan.highlight ? "pricing-pro" : ""}`}>
+              {plan.highlight && (
+                <span className="badge badge-electric mb-4 self-start">Most Popular</span>
+              )}
+              <h3 className="text-xl font-semibold text-white">{plan.name}</h3>
+              <div className="mt-4 flex items-baseline gap-1">
+                <span className="font-display text-4xl font-bold text-white">{plan.price}</span>
+                <span className="text-slate-400 text-sm">{plan.period}</span>
+              </div>
+              <ul className="mt-6 space-y-3 flex-1">
+                {plan.features.map((f, j) => (
+                  <li key={j} className="flex items-center gap-2 text-sm text-slate-300">
+                    <Check className="w-4 h-4 text-neon-400 flex-shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={() => !plan.disabled && handleCheckout(plan.key)}
+                disabled={plan.disabled || loading === plan.key}
+                className={`mt-8 w-full py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
+                  plan.highlight
+                    ? "btn-primary"
+                    : plan.disabled
+                    ? "bg-dark-700 text-slate-500 cursor-not-allowed"
+                    : "btn-ghost"
+                }`}
+              >
+                {loading === plan.key && <Loader2 className="w-4 h-4 animate-spin" />}
+                {plan.cta}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

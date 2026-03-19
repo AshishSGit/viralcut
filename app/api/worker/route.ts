@@ -1,0 +1,365 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createAdminClient } from "@/utils/supabase/admin";
+import { uploadToR2 } from "@/utils/r2";
+import { execFile } from "child_process";
+import { promisify } from "util";
+import { readFile, writeFile, unlink, mkdir } from "fs/promises";
+import path from "path";
+import os from "os";
+import Anthropic from "@anthropic-ai/sdk";
+
+const execFileAsync = promisify(execFile);
+
+export const maxDuration = 300; // 5 minutes
+
+interface ClipResult {
+  title: string;
+  hook_text: string;
+  start_time: number;
+  end_time: number;
+  virality_score: number;
+  r2_key?: string;
+}
+
+export async function POST(request: NextRequest) {
+  const { job_id, service_key } = await request.json();
+
+  // Simple auth check
+  if (service_key !== process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const admin = createAdminClient();
+  const tmpDir = path.join(os.tmpdir(), `viralcut-${job_id}`);
+  await mkdir(tmpDir, { recursive: true });
+
+  try {
+    // Get job info
+    const { data: job } = await admin
+      .from("jobs")
+      .select("*")
+      .eq("id", job_id)
+      .single();
+
+    if (!job || job.status !== "pending") {
+      return NextResponse.json({ error: "Invalid job" }, { status: 400 });
+    }
+
+    // Get user plan for watermark decision
+    const { data: plan } = await admin
+      .from("user_plans")
+      .select("plan")
+      .eq("user_id", job.user_id)
+      .single();
+    const needsWatermark = !plan || plan.plan === "free";
+
+    // ── STEP 1: Download video ──
+    await updateStatus(admin, job_id, "downloading");
+    const videoPath = path.join(tmpDir, "input.mp4");
+
+    if (job.source_type === "url") {
+      const denoPath = path.join(os.homedir(), ".deno", "bin");
+      const envPath = `${denoPath}:${process.env.PATH}`;
+      await execFileAsync("yt-dlp", [
+        "--remote-components", "ejs:github",
+        "-f", "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
+        "--merge-output-format", "mp4",
+        "-o", videoPath,
+        "--no-playlist",
+        "--max-filesize", "2G",
+        job.source_url,
+      ], { timeout: 120000, env: { ...process.env, PATH: envPath } });
+    } else {
+      // Download from R2
+      const { S3Client, GetObjectCommand } = await import("@aws-sdk/client-s3");
+      const r2 = new S3Client({
+        region: "auto",
+        endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+        credentials: {
+          accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+        },
+      });
+      const resp = await r2.send(new GetObjectCommand({
+        Bucket: process.env.R2_BUCKET_NAME!,
+        Key: job.source_r2_key,
+      }));
+      const chunks: Uint8Array[] = [];
+      const stream = resp.Body as AsyncIterable<Uint8Array>;
+      for await (const chunk of stream) {
+        chunks.push(chunk);
+      }
+      await writeFile(videoPath, Buffer.concat(chunks));
+    }
+
+    // Get video duration
+    const { stdout: durationOut } = await execFileAsync("ffprobe", [
+      "-v", "error", "-show_entries", "format=duration",
+      "-of", "default=noprint_wrappers=1:nokey=1", videoPath,
+    ]);
+    const durationSec = Math.round(parseFloat(durationOut.trim()));
+    await admin.from("jobs").update({ duration_seconds: durationSec }).eq("id", job_id);
+
+    // ── STEP 2: Extract audio ──
+    await updateStatus(admin, job_id, "transcribing");
+    const audioPath = path.join(tmpDir, "audio.wav");
+    await execFileAsync("ffmpeg", [
+      "-i", videoPath, "-vn", "-ar", "16000", "-ac", "1", "-f", "wav", audioPath,
+    ], { timeout: 60000 });
+
+    // ── STEP 3: Transcribe with Deepgram ──
+    const audioBuffer = await readFile(audioPath);
+    const dgResponse = await fetch("https://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&diarize=true&punctuate=true&utterances=true", {
+      method: "POST",
+      headers: {
+        "Authorization": `Token ${process.env.DEEPGRAM_API_KEY}`,
+        "Content-Type": "audio/wav",
+      },
+      body: audioBuffer,
+    });
+
+    if (!dgResponse.ok) {
+      throw new Error(`Deepgram error: ${dgResponse.status} ${await dgResponse.text()}`);
+    }
+
+    const dgResult = await dgResponse.json();
+    const words = dgResult.results?.channels?.[0]?.alternatives?.[0]?.words || [];
+    const transcript = dgResult.results?.channels?.[0]?.alternatives?.[0]?.transcript || "";
+
+    if (!transcript || transcript.length < 50) {
+      throw new Error("Transcript too short or empty. Video may not contain speech.");
+    }
+
+    // ── STEP 4: Find viral clips with Claude ──
+    await updateStatus(admin, job_id, "analyzing");
+    const anthropic = new Anthropic();
+
+    // Build transcript with timestamps
+    const formattedTranscript = words.reduce((acc: string, w: { word: string; start: number; end: number; speaker?: number }, i: number) => {
+      const timestamp = `[${formatTime(w.start)}]`;
+      const speakerChange = i > 0 && w.speaker !== words[i - 1].speaker;
+      const prefix = speakerChange ? `\n\nSpeaker ${w.speaker}: ${timestamp} ` : (i === 0 ? `Speaker ${w.speaker || 0}: ${timestamp} ` : " ");
+      return acc + prefix + w.word;
+    }, "");
+
+    const clipResponse = await anthropic.messages.create({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 2000,
+      messages: [
+        {
+          role: "user",
+          content: `Analyze this podcast transcript and find 3-5 clips (30-90 seconds each) that would go VIRAL on TikTok/Instagram Reels. Focus on:
+- Strong hooks / cold opens
+- Hot takes / controversial opinions
+- Emotional peaks / vulnerability
+- Funny moments
+- Quotable soundbites / aha moments
+- Storytelling moments with payoff
+
+Return ONLY a JSON array (no other text) with objects containing:
+- "title": catchy 5-8 word title for the clip
+- "hook_text": the opening hook text (first sentence)
+- "start_time": start time in seconds (number)
+- "end_time": end time in seconds (number)
+- "virality_score": 1-10 score of viral potential
+
+Make sure clips don't overlap. Prefer clips that start with a strong hook.
+
+TRANSCRIPT:
+${formattedTranscript.slice(0, 30000)}`,
+        },
+      ],
+    });
+
+    const clipText = clipResponse.content[0].type === "text" ? clipResponse.content[0].text : "";
+    // Extract JSON array from response
+    const jsonMatch = clipText.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) throw new Error("Failed to parse clip suggestions from AI");
+
+    const clips: ClipResult[] = JSON.parse(jsonMatch[0]);
+
+    // ── STEP 5: Generate clips ──
+    await updateStatus(admin, job_id, "clipping");
+
+    const processedClips: ClipResult[] = [];
+
+    for (let i = 0; i < clips.length; i++) {
+      const clip = clips[i];
+      const clipPath = path.join(tmpDir, `clip_${i}.mp4`);
+      const assPath = path.join(tmpDir, `clip_${i}.ass`);
+      const finalPath = path.join(tmpDir, `final_${i}.mp4`);
+
+      // 5a. Extract clip segment
+      await execFileAsync("ffmpeg", [
+        "-ss", String(clip.start_time),
+        "-to", String(clip.end_time),
+        "-i", videoPath,
+        "-c", "copy",
+        "-y", clipPath,
+      ], { timeout: 30000 });
+
+      // 5b. Get words for this clip's captions
+      const clipWords = words.filter(
+        (w: { start: number; end: number }) => w.start >= clip.start_time && w.end <= clip.end_time
+      );
+
+      // 5c. Crop to 9:16 + burn captions + optional watermark
+      // Check if drawtext filter is available (needs freetype — available on Railway/Linux, not always on macOS)
+      let hasDrawtext = false;
+      try {
+        const { stdout: filters } = await execFileAsync("ffmpeg", ["-filters"], { timeout: 5000 });
+        hasDrawtext = filters.includes("drawtext");
+      } catch {}
+
+      const filterParts: string[] = ["crop=ih*9/16:ih"];
+
+      if (hasDrawtext) {
+        // Build drawtext filters for word-by-word captions (groups of 4 words)
+        const WORDS_PER_PHRASE = 4;
+        for (let p = 0; p < clipWords.length; p += WORDS_PER_PHRASE) {
+          const phraseWords = clipWords.slice(p, p + WORDS_PER_PHRASE);
+          const phraseText = phraseWords.map((w: { word: string }) => w.word).join(" ")
+            .replace(/\\/g, "\\\\").replace(/'/g, "\u2019").replace(/:/g, "\\:").replace(/%/g, "%%");
+          const phraseStart = phraseWords[0].start - clip.start_time;
+          const phraseEnd = phraseWords[phraseWords.length - 1].end - clip.start_time;
+          filterParts.push(
+            `drawtext=text='${phraseText}':fontsize=48:fontcolor=white:borderw=3:bordercolor=black:x=(w-text_w)/2:y=h*0.75:enable='between(t\\,${phraseStart.toFixed(2)}\\,${phraseEnd.toFixed(2)})'`
+          );
+        }
+        if (needsWatermark) {
+          filterParts.push(
+            "drawtext=text='Made with ViralCut':fontsize=18:fontcolor=white@0.5:x=w-tw-20:y=h-th-20"
+          );
+        }
+      }
+
+      // Write filter to file to avoid command line length limits
+      const filterScriptPath = path.join(tmpDir, `filter_${i}.txt`);
+      await writeFile(filterScriptPath, filterParts.join(",\n"));
+
+      await execFileAsync("ffmpeg", [
+        "-i", clipPath,
+        "-filter_script:v", filterScriptPath,
+        "-c:v", "libx264",
+        "-preset", "fast",
+        "-crf", "23",
+        "-c:a", "aac",
+        "-b:a", "128k",
+        "-y", finalPath,
+      ], { timeout: 120000 });
+
+      // 5d. Upload to R2
+      const finalBuffer = await readFile(finalPath);
+      const r2Key = `clips/${job.user_id}/${job_id}/clip_${i}.mp4`;
+      await uploadToR2(r2Key, finalBuffer, "video/mp4");
+
+      processedClips.push({
+        ...clip,
+        r2_key: r2Key,
+      });
+    }
+
+    // ── STEP 6: Update job as completed ──
+    await admin.from("jobs").update({
+      status: "completed",
+      clips: processedClips,
+      completed_at: new Date().toISOString(),
+    }).eq("id", job_id);
+
+    // Cleanup tmp files
+    await cleanup(tmpDir);
+
+    return NextResponse.json({ success: true, clips: processedClips.length });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    console.error(`Job ${job_id} failed:`, message);
+
+    await admin.from("jobs").update({
+      status: "failed",
+      error: message.slice(0, 500),
+    }).eq("id", job_id);
+
+    await cleanup(tmpDir);
+
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
+
+async function updateStatus(admin: ReturnType<typeof createAdminClient>, jobId: string, status: string) {
+  await admin.from("jobs").update({ status }).eq("id", jobId);
+}
+
+function formatTime(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+function generateASSCaptions(
+  words: { word: string; start: number; end: number }[],
+  clipStartTime: number
+): string {
+  const header = `[Script Info]
+Title: ViralCut Captions
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Arial,72,&H00FFFFFF,&H0000FFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,4,0,2,40,40,120,1
+Style: Highlight,Arial,72,&H0000D4FF,&H0000FFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,4,0,2,40,40,120,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+`;
+
+  // Group words into phrases (3-5 words each)
+  const phrases: { words: typeof words; start: number; end: number }[] = [];
+  const WORDS_PER_PHRASE = 4;
+
+  for (let i = 0; i < words.length; i += WORDS_PER_PHRASE) {
+    const phraseWords = words.slice(i, i + WORDS_PER_PHRASE);
+    phrases.push({
+      words: phraseWords,
+      start: phraseWords[0].start - clipStartTime,
+      end: phraseWords[phraseWords.length - 1].end - clipStartTime,
+    });
+  }
+
+  // Generate dialogue lines with karaoke timing
+  const events = phrases.map((phrase) => {
+    const startStr = secondsToASS(Math.max(0, phrase.start));
+    const endStr = secondsToASS(phrase.end);
+
+    // Build karaoke text with \k tags for word-by-word highlight
+    const karaokeText = phrase.words.map((w) => {
+      const wordDur = Math.round((w.end - w.start) * 100); // centiseconds
+      return `{\\kf${wordDur}}${w.word}`;
+    }).join(" ");
+
+    return `Dialogue: 0,${startStr},${endStr},Default,,0,0,0,,${karaokeText}`;
+  }).join("\n");
+
+  return header + events + "\n";
+}
+
+function secondsToASS(totalSec: number): string {
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  return `${h}:${m.toString().padStart(2, "0")}:${s.toFixed(2).padStart(5, "0")}`;
+}
+
+async function cleanup(dir: string) {
+  try {
+    const { readdir } = await import("fs/promises");
+    const files = await readdir(dir);
+    for (const f of files) {
+      await unlink(path.join(dir, f)).catch(() => {});
+    }
+    const { rmdir } = await import("fs/promises");
+    await rmdir(dir).catch(() => {});
+  } catch {}
+}
