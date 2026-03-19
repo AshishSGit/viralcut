@@ -6,11 +6,11 @@ const BASE_URL = process.env.NEXT_PUBLIC_URL || "https://clippified.com";
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "Clippified — AI Viral Clip Generator for Podcasts",
+    default: "Clippified — Turn Podcasts Into Viral Clips",
     template: "%s | Clippified",
   },
   description:
-    "Paste a YouTube link. AI finds the most viral moments, crops to 9:16, adds captions, and exports clips for TikTok, Reels & Shorts. Free to start.",
+    "Paste a YouTube link. Clippified finds your most shareable moments, crops to 9:16, adds captions, and exports clips for TikTok, Reels & Shorts. Free to start.",
   keywords: [
     "podcast clip generator",
     "AI video clipper",
@@ -25,18 +25,18 @@ export const metadata: Metadata = {
     "clippified",
   ],
   openGraph: {
-    title: "Clippified — AI Viral Clip Generator for Podcasts",
+    title: "Clippified — Turn Podcasts Into Viral Clips",
     description:
-      "Paste a YouTube link. AI finds viral moments, crops to 9:16, adds captions, exports for TikTok/Reels/Shorts.",
+      "Paste a YouTube link. Clippified finds your most shareable moments, crops to 9:16, adds captions, exports for TikTok/Reels/Shorts.",
     type: "website",
     url: BASE_URL,
     siteName: "Clippified",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Clippified — AI Viral Clip Generator for Podcasts",
+    title: "Clippified — Turn Podcasts Into Viral Clips",
     description:
-      "Paste a YouTube link. AI finds viral moments, crops to 9:16, adds captions, exports for TikTok/Reels/Shorts.",
+      "Paste a YouTube link. Clippified finds your most shareable moments, crops to 9:16, adds captions, exports for TikTok/Reels/Shorts.",
   },
 };
 

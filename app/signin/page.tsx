@@ -81,8 +81,8 @@ export default function SignInPage() {
         ) : (
           <>
             <h2 className="text-2xl font-bold text-white mb-1">Welcome to Clippified</h2>
-            <p className="text-slate-400 text-sm mb-8">
-              Sign in to start turning podcasts into viral clips.
+            <p className="text-white/50 text-sm mb-8">
+              Sign in to start turning your content into viral clips.
             </p>
 
             {/* Google OAuth */}
