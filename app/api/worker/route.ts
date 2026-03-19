@@ -22,12 +22,14 @@ interface ClipResult {
 }
 
 export async function POST(request: NextRequest) {
-  const { job_id, service_key } = await request.json();
-
-  // Simple auth check
-  if (service_key !== process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  // Auth: verify bearer token matches worker secret
+  const authHeader = request.headers.get("authorization");
+  const expectedSecret = process.env.WORKER_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!authHeader || authHeader !== `Bearer ${expectedSecret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const { job_id } = await request.json();
 
   const admin = createAdminClient();
   const tmpDir = path.join(os.tmpdir(), `viralcut-${job_id}`);
@@ -186,7 +188,6 @@ ${formattedTranscript.slice(0, 30000)}`,
     for (let i = 0; i < clips.length; i++) {
       const clip = clips[i];
       const clipPath = path.join(tmpDir, `clip_${i}.mp4`);
-      const assPath = path.join(tmpDir, `clip_${i}.ass`);
       const finalPath = path.join(tmpDir, `final_${i}.mp4`);
 
       // 5a. Extract clip segment
@@ -211,7 +212,25 @@ ${formattedTranscript.slice(0, 30000)}`,
         hasDrawtext = filters.includes("drawtext");
       } catch {}
 
-      const filterParts: string[] = ["crop=ih*9/16:ih"];
+      // Detect input aspect ratio to decide crop
+      let inputWidth = 1920, inputHeight = 1080;
+      try {
+        const { stdout: probeOut } = await execFileAsync("ffprobe", [
+          "-v", "error", "-select_streams", "v:0",
+          "-show_entries", "stream=width,height",
+          "-of", "csv=p=0", clipPath,
+        ], { timeout: 5000 });
+        const [w, h] = probeOut.trim().split(",").map(Number);
+        if (w && h) { inputWidth = w; inputHeight = h; }
+      } catch {}
+
+      // Only crop if video is wider than 9:16
+      const targetRatio = 9 / 16;
+      const inputRatio = inputWidth / inputHeight;
+      const cropFilter = inputRatio > targetRatio
+        ? "crop=ih*9/16:ih"
+        : "crop=iw:iw*16/9";
+      const filterParts: string[] = [cropFilter];
 
       if (hasDrawtext) {
         // Build drawtext filters for word-by-word captions (groups of 4 words)
@@ -293,63 +312,6 @@ function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60);
   const s = Math.floor(seconds % 60);
   return `${m}:${s.toString().padStart(2, "0")}`;
-}
-
-function generateASSCaptions(
-  words: { word: string; start: number; end: number }[],
-  clipStartTime: number
-): string {
-  const header = `[Script Info]
-Title: ViralCut Captions
-ScriptType: v4.00+
-PlayResX: 1080
-PlayResY: 1920
-WrapStyle: 0
-
-[V4+ Styles]
-Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,Arial,72,&H00FFFFFF,&H0000FFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,4,0,2,40,40,120,1
-Style: Highlight,Arial,72,&H0000D4FF,&H0000FFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,4,0,2,40,40,120,1
-
-[Events]
-Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-`;
-
-  // Group words into phrases (3-5 words each)
-  const phrases: { words: typeof words; start: number; end: number }[] = [];
-  const WORDS_PER_PHRASE = 4;
-
-  for (let i = 0; i < words.length; i += WORDS_PER_PHRASE) {
-    const phraseWords = words.slice(i, i + WORDS_PER_PHRASE);
-    phrases.push({
-      words: phraseWords,
-      start: phraseWords[0].start - clipStartTime,
-      end: phraseWords[phraseWords.length - 1].end - clipStartTime,
-    });
-  }
-
-  // Generate dialogue lines with karaoke timing
-  const events = phrases.map((phrase) => {
-    const startStr = secondsToASS(Math.max(0, phrase.start));
-    const endStr = secondsToASS(phrase.end);
-
-    // Build karaoke text with \k tags for word-by-word highlight
-    const karaokeText = phrase.words.map((w) => {
-      const wordDur = Math.round((w.end - w.start) * 100); // centiseconds
-      return `{\\kf${wordDur}}${w.word}`;
-    }).join(" ");
-
-    return `Dialogue: 0,${startStr},${endStr},Default,,0,0,0,,${karaokeText}`;
-  }).join("\n");
-
-  return header + events + "\n";
-}
-
-function secondsToASS(totalSec: number): string {
-  const h = Math.floor(totalSec / 3600);
-  const m = Math.floor((totalSec % 3600) / 60);
-  const s = totalSec % 60;
-  return `${h}:${m.toString().padStart(2, "0")}:${s.toFixed(2).padStart(5, "0")}`;
 }
 
 async function cleanup(dir: string) {

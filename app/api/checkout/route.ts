@@ -15,6 +15,11 @@ export async function POST(request: NextRequest) {
 
   const stripe = getStripe();
   const { plan } = await request.json();
+
+  if (!["pro", "unlimited"].includes(plan)) {
+    return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
+  }
+
   const priceId =
     plan === "pro"
       ? process.env.STRIPE_PRO_PRICE_ID!

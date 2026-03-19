@@ -23,8 +23,7 @@ export async function POST(request: NextRequest) {
 
   const currentPlan = plan?.plan || "free";
   const usage = plan?.monthly_usage || 0;
-  const isDev = process.env.NODE_ENV === "development";
-  const limits: Record<string, number> = { free: isDev ? 100 : 1, pro: 10, unlimited: 999999 };
+  const limits: Record<string, number> = { free: 1, pro: 10, unlimited: 999999 };
   const maxVideos = limits[currentPlan] || 1;
 
   // Reset monthly usage if needed
@@ -49,6 +48,22 @@ export async function POST(request: NextRequest) {
   if (sourceType === "url" && !sourceUrl) {
     return NextResponse.json({ error: "URL is required" }, { status: 400 });
   }
+
+  // Validate URL to prevent SSRF
+  if (sourceType === "url" && sourceUrl) {
+    try {
+      const parsed = new URL(sourceUrl);
+      const allowedHosts = ["youtube.com", "www.youtube.com", "youtu.be", "m.youtube.com", "tiktok.com", "www.tiktok.com", "vm.tiktok.com"];
+      if (!allowedHosts.some(h => parsed.hostname === h || parsed.hostname.endsWith(`.${h}`))) {
+        return NextResponse.json({ error: "Only YouTube and TikTok URLs are supported" }, { status: 400 });
+      }
+      if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+        return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
+      }
+    } catch {
+      return NextResponse.json({ error: "Invalid URL format" }, { status: 400 });
+    }
+  }
   if (sourceType === "upload" && !file) {
     return NextResponse.json({ error: "File is required" }, { status: 400 });
   }
@@ -58,7 +73,8 @@ export async function POST(request: NextRequest) {
   // If file upload, store in R2
   if (sourceType === "upload" && file) {
     const buffer = Buffer.from(await file.arrayBuffer());
-    const key = `uploads/${user.id}/${Date.now()}-${file.name}`;
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 100);
+    const key = `uploads/${user.id}/${Date.now()}-${safeName}`;
     await uploadToR2(key, buffer, file.type);
     sourceR2Key = key;
   }
@@ -93,13 +109,14 @@ export async function POST(request: NextRequest) {
     usage_reset_at: needsReset ? nextReset.toISOString() : plan?.usage_reset_at,
   });
 
-  // Fire worker (fire-and-forget)
+  // Fire worker (fire-and-forget) — use internal secret, never send service role key
   const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+  const workerSecret = process.env.WORKER_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY;
   fetch(`${baseUrl}/api/worker`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ job_id: job.id, service_key: process.env.SUPABASE_SERVICE_ROLE_KEY }),
-  }).catch(() => {});
+    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${workerSecret}` },
+    body: JSON.stringify({ job_id: job.id }),
+  }).catch((err) => console.error("Worker fire failed:", err));
 
   return NextResponse.json({ job_id: job.id });
 }
