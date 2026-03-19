@@ -9,8 +9,8 @@ import {
   Upload,
   Link2,
   Play,
-  ArrowRight,
   Check,
+  CheckCircle,
   Sparkles,
   Clock,
   TrendingUp,
@@ -158,21 +158,34 @@ function Hero() {
                 <Zap className="w-4 h-4" /> Clip It
               </button>
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              {["Hook: Why most creators fail...", "Hot Take: AI will replace...", "Story: When I started my..."].map(
-                (title, i) => (
-                  <div
-                    key={i}
-                    className="bg-dark-800 rounded-lg aspect-[9/16] max-h-48 flex flex-col items-center justify-center p-3 border border-dark-600"
-                  >
-                    <Play className="w-8 h-8 text-brand-500 mb-2" />
-                    <p className="text-xs text-slate-400 text-center">{title}</p>
-                    <span className="badge badge-hot mt-2 !text-[10px]">
-                      {["9.2", "8.7", "8.4"][i]}/10
-                    </span>
+            {/* Results preview */}
+            <div className="bg-dark-800/50 rounded-xl p-4 border border-dark-600">
+              <div className="flex items-center gap-2 mb-3">
+                <CheckCircle className="w-4 h-4 text-neon-400" />
+                <span className="text-sm text-neon-400 font-medium">5 viral clips found</span>
+                <span className="text-xs text-slate-500 ml-auto">2:14 processing time</span>
+              </div>
+              <div className="space-y-2">
+                {[
+                  { title: "Why most creators fail in the first year", score: "9.2", duration: "47s" },
+                  { title: "AI will replace 80% of content jobs", score: "8.7", duration: "38s" },
+                  { title: "The moment everything changed for me", score: "8.4", duration: "52s" },
+                ].map((clip, i) => (
+                  <div key={i} className="flex items-center gap-3 bg-dark-900/60 rounded-lg px-4 py-3">
+                    <div className="w-8 h-8 rounded-lg bg-brand-500/15 flex items-center justify-center flex-shrink-0">
+                      <Play className="w-4 h-4 text-brand-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-white font-medium truncate">{clip.title}</p>
+                      <p className="text-xs text-slate-500">{clip.duration} clip</p>
+                    </div>
+                    <span className="text-xs font-semibold text-brand-400">{clip.score}/10</span>
+                    <button className="text-xs bg-brand-500/15 text-brand-400 px-3 py-1.5 rounded-lg font-medium">
+                      Download
+                    </button>
                   </div>
-                )
-              )}
+                ))}
+              </div>
             </div>
           </div>
           <div className="absolute -inset-4 bg-gradient-to-r from-brand-600/10 via-brand-500/5 to-brand-600/10 rounded-2xl blur-3xl -z-10" />
