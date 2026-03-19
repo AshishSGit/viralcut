@@ -10,7 +10,7 @@
     "build": "next build",
     "start": "next start -p ${PORT:-3000}",
     "lint": "eslint",
-    "postinstall": "pip install yt-dlp --break-system-packages 2>/dev/null || pip3 install yt-dlp --break-system-packages 2>/dev/null || curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp && chmod +x /usr/local/bin/yt-dlp || true"
+    "postinstall": "curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o ./yt-dlp && chmod +x ./yt-dlp && echo 'yt-dlp downloaded to ./yt-dlp'"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",

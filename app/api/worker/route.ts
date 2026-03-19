@@ -60,17 +60,25 @@ export async function POST(request: NextRequest) {
     const videoPath = path.join(tmpDir, "input.mp4");
 
     if (job.source_type === "url") {
-      const denoPath = path.join(os.homedir(), ".deno", "bin");
-      const envPath = `${denoPath}:${process.env.PATH}`;
-      await execFileAsync("yt-dlp", [
-        "--remote-components", "ejs:github",
+      // Find yt-dlp: check local binary first, then PATH
+      const localYtdlp = path.join(process.cwd(), "yt-dlp");
+      let ytdlpBin = "yt-dlp";
+      try {
+        const { accessSync } = require("fs");
+        accessSync(localYtdlp);
+        ytdlpBin = localYtdlp;
+      } catch {
+        // fall back to PATH
+      }
+
+      await execFileAsync(ytdlpBin, [
         "-f", "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
         "--merge-output-format", "mp4",
         "-o", videoPath,
         "--no-playlist",
         "--max-filesize", "2G",
         job.source_url,
-      ], { timeout: 120000, env: { ...process.env, PATH: envPath } });
+      ], { timeout: 120000 });
     } else {
       // Download from R2
       const { S3Client, GetObjectCommand } = await import("@aws-sdk/client-s3");
