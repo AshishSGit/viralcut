@@ -6,6 +6,7 @@ import { Scissors, Check, Zap, Loader2, ArrowLeft } from "lucide-react";
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
+  const [error, setError] = useState("");
   const router = useRouter();
 
   async function handleCheckout(plan: string) {
@@ -19,6 +20,7 @@ export default function PricingPage() {
     if (data.url) {
       window.location.href = data.url;
     } else {
+      setError(data.error || "Something went wrong. Please try again.");
       setLoading(null);
     }
   }
@@ -138,6 +140,12 @@ export default function PricingPage() {
             </div>
           ))}
         </div>
+
+        {error && (
+          <div className="mt-6 p-4 rounded-xl bg-hot-500/10 border border-hot-500/20 text-hot-400 text-sm text-center">
+            {error}
+          </div>
+        )}
       </div>
     </div>
   );

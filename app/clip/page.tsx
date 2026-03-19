@@ -224,7 +224,7 @@ export default function ClipPage() {
         </form>
 
         {/* Trust signals */}
-        <div className="mt-10 flex items-center justify-center gap-8 text-sm text-white/40">
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-4 md:gap-8 text-sm text-white/40">
           <span className="flex items-center gap-2">
             <Shield className="w-4 h-4 text-neon-400" /> Secure & private
           </span>

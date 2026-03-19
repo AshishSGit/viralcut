@@ -94,12 +94,14 @@ export default function JobResultPage() {
               Clippi<span className="text-brand-400">fied</span>
             </span>
           </a>
-          <a
-            href="/clip"
-            className="text-sm text-slate-400 hover:text-white transition-colors flex items-center gap-1"
-          >
-            <ArrowLeft className="w-4 h-4" /> New Clip
-          </a>
+          <div className="flex items-center gap-4">
+            <a href="/dashboard" className="text-sm text-white/50 hover:text-white transition-colors">
+              Dashboard
+            </a>
+            <a href="/clip" className="text-sm text-white/50 hover:text-white transition-colors flex items-center gap-1">
+              <ArrowLeft className="w-4 h-4" /> New Clip
+            </a>
+          </div>
         </div>
       </nav>
 

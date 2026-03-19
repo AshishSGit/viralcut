@@ -17,8 +17,6 @@ import {
   Monitor,
   ChevronDown,
   Shield,
-  Users,
-  Star,
 } from "lucide-react";
 
 const fadeUp = {
@@ -95,7 +93,7 @@ function Hero() {
       <div className="max-w-4xl mx-auto text-center">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
           <span className="badge badge-brand uppercase tracking-widest text-xs">
-            Trusted by 500+ content creators
+            Podcast Clip Generator
           </span>
         </motion.div>
 
@@ -132,7 +130,7 @@ function Hero() {
         </motion.div>
 
         <motion.div
-          className="mt-8 flex items-center justify-center gap-6 text-sm text-white/40"
+          className="mt-8 flex flex-wrap items-center justify-center gap-4 md:gap-6 text-sm text-white/40"
           initial="hidden" animate="visible" variants={fadeUp} custom={4}
         >
           <span className="flex items-center gap-1.5">
@@ -204,61 +202,19 @@ function SocialProof() {
   return (
     <section className="py-16 px-6">
       <div className="max-w-4xl mx-auto">
-        <div className="grid md:grid-cols-3 gap-8 text-center">
+        <div className="grid grid-cols-3 gap-8 text-center">
           <div>
-            <p className="font-display text-3xl font-bold text-white">10,000+</p>
-            <p className="text-sm text-white/40 mt-1">Clips generated</p>
+            <p className="font-display text-3xl font-bold text-white">3-5</p>
+            <p className="text-sm text-white/40 mt-1">Clips per video</p>
           </div>
           <div>
-            <p className="font-display text-3xl font-bold text-white">500+</p>
-            <p className="text-sm text-white/40 mt-1">Creators using Clippified</p>
+            <p className="font-display text-3xl font-bold text-white">~2 min</p>
+            <p className="text-sm text-white/40 mt-1">Processing time</p>
           </div>
           <div>
-            <p className="font-display text-3xl font-bold text-white">2 min</p>
-            <p className="text-sm text-white/40 mt-1">Average processing time</p>
+            <p className="font-display text-3xl font-bold text-white">9:16</p>
+            <p className="text-sm text-white/40 mt-1">Vertical + captions</p>
           </div>
-        </div>
-
-        {/* Testimonials */}
-        <div className="mt-12 grid md:grid-cols-3 gap-6">
-          {[
-            {
-              quote: "I used to spend 3 hours clipping my podcast episodes. Now it takes 2 minutes. Game changer.",
-              name: "Sarah K.",
-              role: "Podcast Host",
-            },
-            {
-              quote: "The clip detection is scary good. It finds moments I didn't even realize were viral-worthy.",
-              name: "Marcus T.",
-              role: "YouTube Creator",
-            },
-            {
-              quote: "Finally, a tool that actually works. My TikTok grew 40% in the first month of using Clippified.",
-              name: "Priya R.",
-              role: "Content Strategist",
-            },
-          ].map((t, i) => (
-            <motion.div
-              key={i}
-              className="card p-6"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUp}
-              custom={i + 1}
-            >
-              <div className="flex items-center gap-1 mb-3">
-                {[...Array(5)].map((_, j) => (
-                  <Star key={j} className="w-4 h-4 text-brand-400 fill-brand-400" />
-                ))}
-              </div>
-              <p className="text-sm text-white/70 leading-relaxed mb-4">&ldquo;{t.quote}&rdquo;</p>
-              <div>
-                <p className="text-sm font-semibold text-white">{t.name}</p>
-                <p className="text-xs text-white/40">{t.role}</p>
-              </div>
-            </motion.div>
-          ))}
         </div>
       </div>
     </section>
@@ -582,6 +538,7 @@ function Footer() {
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         <Logo size="sm" />
         <div className="flex items-center gap-6 text-sm text-white/30">
+          <a href="mailto:support@clippified.com" className="hover:text-white transition-colors">Support</a>
           <a href="/terms" className="hover:text-white transition-colors">Terms</a>
           <a href="/privacy" className="hover:text-white transition-colors">Privacy</a>
           <span>&copy; {new Date().getFullYear()} Clippified</span>
