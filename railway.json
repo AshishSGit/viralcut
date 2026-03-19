@@ -9,6 +9,9 @@
         },
         "install": {
           "cmds": ["npm ci", "pip install yt-dlp --break-system-packages"]
+        },
+        "build": {
+          "cmds": ["npm run build", "which yt-dlp || pip install yt-dlp --break-system-packages"]
         }
       }
     }
