@@ -12,6 +12,9 @@ import {
   X,
   LogOut,
   Sparkles,
+  Shield,
+  TrendingUp,
+  Clock,
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
@@ -83,15 +86,15 @@ export default function ClipPage() {
             </span>
           </a>
           <div className="flex items-center gap-4">
-            <a href="/dashboard" className="text-sm text-slate-400 hover:text-white transition-colors">
+            <a href="/dashboard" className="text-sm text-white/70 hover:text-white transition-colors">
               Dashboard
             </a>
-            <a href="/pricing" className="text-sm text-slate-400 hover:text-white transition-colors flex items-center gap-1">
+            <a href="/pricing" className="text-sm text-white/70 hover:text-white transition-colors flex items-center gap-1">
               <Sparkles className="w-4 h-4" /> Upgrade
             </a>
             <button
               onClick={handleSignOut}
-              className="text-sm text-slate-500 hover:text-white transition-colors flex items-center gap-1"
+              className="text-sm text-white/40 hover:text-white transition-colors flex items-center gap-1"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -100,53 +103,53 @@ export default function ClipPage() {
       </nav>
 
       <div className="pt-28 pb-20 px-6 max-w-2xl mx-auto">
-        <h1 className="font-display text-3xl md:text-4xl font-bold text-white text-center mb-2">
+        <h1 className="font-display text-4xl md:text-5xl font-bold text-white text-center mb-3">
           Create Viral Clips
         </h1>
-        <p className="text-slate-400 text-center mb-10">
+        <p className="text-lg text-white/60 text-center mb-12">
           Paste a YouTube URL or upload a video to get started.
         </p>
 
         {/* Tab toggle */}
-        <div className="flex items-center justify-center gap-2 mb-8">
+        <div className="flex items-center justify-center gap-3 mb-8">
           <button
             onClick={() => setTab("url")}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold transition-all ${
               tab === "url"
-                ? "bg-brand-500/15 text-brand-400 border border-brand-500/30"
-                : "text-slate-400 hover:text-white border border-transparent"
+                ? "bg-brand-500/15 text-white border border-brand-500/30"
+                : "text-white/50 hover:text-white border border-white/10 hover:border-white/20"
             }`}
           >
-            <Link2 className="w-4 h-4" /> Paste URL
+            <Link2 className="w-5 h-5" /> Paste URL
           </button>
           <button
             onClick={() => setTab("upload")}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold transition-all ${
               tab === "upload"
-                ? "bg-brand-500/15 text-brand-400 border border-brand-500/30"
-                : "text-slate-400 hover:text-white border border-transparent"
+                ? "bg-brand-500/15 text-white border border-brand-500/30"
+                : "text-white/50 hover:text-white border border-white/10 hover:border-white/20"
             }`}
           >
-            <Upload className="w-4 h-4" /> Upload Video
+            <Upload className="w-5 h-5" /> Upload Video
           </button>
         </div>
 
         <form onSubmit={handleSubmit}>
           {tab === "url" ? (
-            <div className="card p-6">
-              <label className="text-sm text-slate-400 mb-2 block">YouTube or Video URL</label>
+            <div className="card p-8">
+              <label className="text-base text-white/70 mb-3 block font-medium">YouTube or Video URL</label>
               <div className="flex gap-3">
                 <input
                   type="url"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  className="input-field flex-1"
+                  className="input-field flex-1 text-base !py-4"
                   placeholder="https://youtube.com/watch?v=..."
                 />
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn-primary flex items-center gap-2 whitespace-nowrap"
+                  className="btn-primary flex items-center gap-2 whitespace-nowrap text-base !py-4 !px-8"
                 >
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
                   {loading ? "Processing..." : "Clip It"}
@@ -155,7 +158,7 @@ export default function ClipPage() {
             </div>
           ) : (
             <div
-              className={`card p-8 text-center transition-all ${
+              className={`card p-10 text-center transition-all ${
                 dragOver ? "border-brand-500 bg-brand-500/10" : ""
               }`}
               onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
@@ -165,10 +168,10 @@ export default function ClipPage() {
               {file ? (
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <FileVideo className="w-8 h-8 text-brand-500" />
+                    <FileVideo className="w-10 h-10 text-brand-500" />
                     <div className="text-left">
-                      <p className="text-white font-medium">{file.name}</p>
-                      <p className="text-sm text-slate-500">
+                      <p className="text-white font-semibold text-lg">{file.name}</p>
+                      <p className="text-base text-white/40">
                         {(file.size / (1024 * 1024)).toFixed(1)} MB
                       </p>
                     </div>
@@ -177,14 +180,14 @@ export default function ClipPage() {
                     <button
                       type="button"
                       onClick={() => setFile(null)}
-                      className="text-slate-500 hover:text-white"
+                      className="text-white/40 hover:text-white"
                     >
                       <X className="w-5 h-5" />
                     </button>
                     <button
                       type="submit"
                       disabled={loading}
-                      className="btn-primary flex items-center gap-2"
+                      className="btn-primary flex items-center gap-2 text-base !py-4 !px-8"
                     >
                       {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
                       {loading ? "Processing..." : "Clip It"}
@@ -193,14 +196,14 @@ export default function ClipPage() {
                 </div>
               ) : (
                 <div
-                  className="cursor-pointer"
+                  className="cursor-pointer py-4"
                   onClick={() => fileRef.current?.click()}
                 >
-                  <Upload className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-                  <p className="text-white font-medium mb-1">
+                  <Upload className="w-14 h-14 text-white/20 mx-auto mb-4" />
+                  <p className="text-white font-semibold text-lg mb-2">
                     Drop your video here or click to browse
                   </p>
-                  <p className="text-sm text-slate-500">MP4, MOV, WEBM — up to 2GB</p>
+                  <p className="text-base text-white/40">MP4, MOV, WEBM — up to 2GB</p>
                   <input
                     ref={fileRef}
                     type="file"
@@ -214,13 +217,26 @@ export default function ClipPage() {
           )}
 
           {error && (
-            <div className="mt-4 p-4 rounded-xl bg-hot-500/10 border border-hot-500/20 text-hot-400 text-sm">
+            <div className="mt-4 p-4 rounded-xl bg-hot-500/10 border border-hot-500/20 text-hot-400 text-base">
               {error}
             </div>
           )}
         </form>
 
-        <p className="mt-6 text-center text-xs text-slate-600">
+        {/* Trust signals */}
+        <div className="mt-10 flex items-center justify-center gap-8 text-sm text-white/40">
+          <span className="flex items-center gap-2">
+            <Shield className="w-4 h-4 text-neon-400" /> Secure & private
+          </span>
+          <span className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-brand-400" /> ~2 min processing
+          </span>
+          <span className="flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-brand-400" /> 3-5 clips per video
+          </span>
+        </div>
+
+        <p className="mt-4 text-center text-sm text-white/25">
           Supports YouTube, TikTok, and direct video URLs. Max 2 hours.
         </p>
       </div>
