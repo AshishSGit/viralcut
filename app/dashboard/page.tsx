@@ -90,10 +90,10 @@ export default function DashboardPage() {
             <a href="/clip" className="text-sm text-brand-400 hover:text-brand-300 flex items-center gap-1">
               <Plus className="w-4 h-4" /> New Clip
             </a>
-            <a href="/pricing" className="text-sm text-slate-400 hover:text-white flex items-center gap-1">
+            <a href="/pricing" className="text-sm text-white/50 hover:text-white flex items-center gap-1">
               <Sparkles className="w-4 h-4" /> Upgrade
             </a>
-            <button onClick={handleSignOut} className="text-sm text-slate-500 hover:text-white">
+            <button onClick={handleSignOut} className="text-sm text-white/30 hover:text-white">
               <LogOut className="w-4 h-4" />
             </button>
           </div>
@@ -104,18 +104,18 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="font-display text-2xl md:text-3xl font-bold text-white">Dashboard</h1>
-            <p className="text-slate-400 text-sm mt-1">Your clip history</p>
+            <p className="text-white/50 text-sm mt-1">Your clip history</p>
           </div>
 
           {/* Usage card */}
           <div className="card px-5 py-3 flex items-center gap-4">
             <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wider">Plan</p>
+              <p className="text-xs text-white/30 uppercase tracking-wider">Plan</p>
               <p className="text-sm font-semibold text-white capitalize">{usage.plan}</p>
             </div>
             <div className="w-px h-8 bg-dark-600" />
             <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wider">Usage</p>
+              <p className="text-xs text-white/30 uppercase tracking-wider">Usage</p>
               <p className="text-sm font-semibold text-white">
                 {usage.usage}/{usage.limit === 999999 ? "∞" : usage.limit}
               </p>
@@ -129,9 +129,9 @@ export default function DashboardPage() {
           </div>
         ) : jobs.length === 0 ? (
           <div className="card p-12 text-center">
-            <Scissors className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+            <Scissors className="w-12 h-12 text-white/15 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-2">No clips yet</h3>
-            <p className="text-slate-400 mb-6">Create your first viral clip from a podcast or video.</p>
+            <p className="text-white/50 mb-6">Create your first viral clip from a podcast or video.</p>
             <a href="/clip" className="btn-primary inline-flex items-center gap-2">
               <Plus className="w-4 h-4" /> Create First Clip
             </a>
@@ -149,13 +149,13 @@ export default function DashboardPage() {
                   <p className="text-white font-medium text-sm truncate">
                     {job.source_url || "Uploaded video"}
                   </p>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-xs text-white/30 mt-0.5">
                     {new Date(job.created_at).toLocaleDateString()} ·{" "}
                     {job.duration_seconds ? `${Math.round(job.duration_seconds / 60)} min` : "—"} ·{" "}
                     {job.clips ? `${job.clips.length} clips` : job.status}
                   </p>
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-600" />
+                <ArrowRight className="w-4 h-4 text-white/15" />
               </a>
             ))}
           </div>

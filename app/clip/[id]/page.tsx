@@ -15,6 +15,7 @@ import {
   Wifi,
   Search,
   Film,
+  DownloadCloud,
 } from "lucide-react";
 
 interface Clip {
@@ -49,6 +50,7 @@ export default function JobResultPage() {
   const { id } = useParams();
   const [job, setJob] = useState<Job | null>(null);
   const [downloading, setDownloading] = useState<string | null>(null);
+  const [downloadingAll, setDownloadingAll] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -82,6 +84,25 @@ export default function JobResultPage() {
     setDownloading(null);
   }
 
+  async function handleDownloadAll() {
+    if (!job?.clips) return;
+    setDownloadingAll(true);
+
+    for (const clip of job.clips) {
+      if (clip.r2_key) {
+        const res = await fetch(`/api/download?key=${encodeURIComponent(clip.r2_key)}`);
+        const { url } = await res.json();
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${clip.title.replace(/[^a-zA-Z0-9]/g, "_")}.mp4`;
+        a.click();
+        await new Promise(r => setTimeout(r, 500));
+      }
+    }
+
+    setDownloadingAll(false);
+  }
+
   const currentStageIdx = STATUS_STAGES.findIndex((s) => s.key === job?.status);
 
   return (
@@ -109,47 +130,46 @@ export default function JobResultPage() {
         {!job ? (
           <div className="text-center py-20">
             <Loader2 className="w-8 h-8 text-brand-500 animate-spin mx-auto mb-4" />
-            <p className="text-slate-400">Loading job...</p>
+            <p className="text-white/40">Loading job...</p>
           </div>
         ) : job.status === "failed" ? (
-          <div className="card p-8 text-center">
-            <XCircle className="w-12 h-12 text-hot-500 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-white mb-2">Processing Failed</h2>
-            <p className="text-slate-400 mb-6">{job.error || "An unknown error occurred."}</p>
+          <div className="card p-10 text-center max-w-lg mx-auto">
+            <XCircle className="w-14 h-14 text-hot-500 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-white mb-3">Processing Failed</h2>
+            <p className="text-white/50 mb-8 text-base">{job.error || "An unknown error occurred."}</p>
             <a href="/clip" className="btn-primary inline-flex items-center gap-2">
               <ArrowLeft className="w-4 h-4" /> Try Again
             </a>
           </div>
         ) : job.status !== "completed" ? (
           /* Processing progress */
-          <div className="card p-8 max-w-lg mx-auto">
-            <h2 className="font-display text-2xl font-bold text-white text-center mb-8">
+          <div className="card p-10 max-w-lg mx-auto">
+            <h2 className="font-display text-2xl font-bold text-white text-center mb-10">
               Processing Your Video
             </h2>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {STATUS_STAGES.map((stage, i) => {
                 const isActive = stage.key === job.status;
                 const isComplete = i < currentStageIdx;
-                const isPending = i > currentStageIdx;
                 const Icon = stage.icon;
 
                 return (
                   <div
                     key={stage.key}
-                    className={`flex items-center gap-4 p-3 rounded-xl transition-all ${
+                    className={`flex items-center gap-4 p-4 rounded-xl transition-all ${
                       isActive
-                        ? "bg-brand-500/10 border border-brand-500/20"
+                        ? "bg-brand-500/8 border border-brand-500/20"
                         : ""
                     }`}
                   >
                     <div
                       className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                         isComplete
-                          ? "bg-neon-500/20 text-neon-400"
+                          ? "bg-neon-500/15 text-neon-400"
                           : isActive
                           ? "bg-brand-500/15 text-brand-400"
-                          : "bg-dark-700 text-slate-600"
+                          : "bg-white/[0.03] text-white/20"
                       }`}
                     >
                       {isActive ? (
@@ -166,7 +186,7 @@ export default function JobResultPage() {
                           ? "text-neon-400"
                           : isActive
                           ? "text-white"
-                          : "text-slate-600"
+                          : "text-white/20"
                       }`}
                     >
                       {stage.label}
@@ -176,7 +196,7 @@ export default function JobResultPage() {
               })}
             </div>
 
-            <p className="mt-8 text-center text-xs text-slate-600">
+            <p className="mt-10 text-center text-sm text-white/25">
               This usually takes 2-4 minutes for a 60-minute video.
             </p>
           </div>
@@ -184,43 +204,61 @@ export default function JobResultPage() {
           /* Completed — show clips */
           <div>
             <div className="text-center mb-10">
-              <CheckCircle2 className="w-10 h-10 text-neon-400 mx-auto mb-3" />
-              <h2 className="font-display text-2xl md:text-3xl font-bold text-white mb-2">
-                Your Clips Are Ready!
+              <CheckCircle2 className="w-12 h-12 text-neon-400 mx-auto mb-4" />
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-3">
+                Your Clips Are Ready
               </h2>
-              <p className="text-slate-400">
-                {job.clips?.length || 0} viral clips found from your{" "}
+              <p className="text-white/50 text-lg">
+                {job.clips?.length || 0} clips found from your{" "}
                 {job.duration_seconds
                   ? `${Math.round(job.duration_seconds / 60)}-minute`
                   : ""}{" "}
-                video.
+                video
               </p>
             </div>
 
+            {/* Download All */}
+            {job.clips && job.clips.length > 1 && (
+              <div className="flex justify-center mb-8">
+                <button
+                  onClick={handleDownloadAll}
+                  disabled={downloadingAll}
+                  className="btn-ghost flex items-center gap-2 text-sm"
+                >
+                  {downloadingAll ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <DownloadCloud className="w-4 h-4" />
+                  )}
+                  {downloadingAll ? "Downloading..." : "Download All Clips"}
+                </button>
+              </div>
+            )}
+
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {job.clips?.map((clip, i) => (
-                <div key={i} className="card p-5 flex flex-col">
+                <div key={i} className="card p-6 flex flex-col">
                   {/* Virality score badge */}
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center justify-between mb-4">
                     <span className="badge badge-hot flex items-center gap-1">
                       <TrendingUp className="w-3 h-3" />
                       {clip.virality_score}/10
                     </span>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-white/30 font-medium">
                       {Math.round(clip.end_time - clip.start_time)}s
                     </span>
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-lg font-semibold text-white mb-2">{clip.title}</h3>
+                  <h3 className="text-lg font-bold text-white mb-2 leading-snug">{clip.title}</h3>
 
                   {/* Hook preview */}
-                  <p className="text-sm text-slate-400 mb-4 flex-1 italic">
+                  <p className="text-sm text-white/40 mb-4 flex-1 italic leading-relaxed">
                     &ldquo;{clip.hook_text}&rdquo;
                   </p>
 
                   {/* Timestamp */}
-                  <p className="text-xs text-slate-600 mb-4">
+                  <p className="text-xs text-white/20 mb-5 font-mono">
                     {formatTimestamp(clip.start_time)} — {formatTimestamp(clip.end_time)}
                   </p>
 
@@ -228,7 +266,7 @@ export default function JobResultPage() {
                   <button
                     onClick={() => handleDownload(clip)}
                     disabled={downloading === clip.r2_key}
-                    className="btn-primary w-full flex items-center justify-center gap-2 text-sm"
+                    className="btn-primary w-full flex items-center justify-center gap-2 text-sm !py-3"
                   >
                     {downloading === clip.r2_key ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -241,7 +279,7 @@ export default function JobResultPage() {
               ))}
             </div>
 
-            <div className="mt-10 text-center">
+            <div className="mt-12 text-center">
               <a href="/clip" className="btn-ghost inline-flex items-center gap-2">
                 <Scissors className="w-4 h-4" /> Clip Another Video
               </a>
