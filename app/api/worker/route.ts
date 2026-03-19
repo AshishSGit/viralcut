@@ -152,13 +152,19 @@ export async function POST(request: NextRequest) {
       return acc + prefix + w.word;
     }, "");
 
+    // Determine ideal clip length based on video duration
+    const isShortVideo = durationSec <= 120;
+    const clipGuidance = isShortVideo
+      ? `The video is only ${durationSec} seconds long. Find 1-3 clips (15-${Math.min(60, durationSec)} seconds each). All timestamps MUST be between 0 and ${durationSec}. Do NOT exceed ${durationSec} seconds.`
+      : `The video is ${Math.round(durationSec / 60)} minutes long. Find 3-5 clips (30-90 seconds each). All timestamps MUST be between 0 and ${durationSec}.`;
+
     const clipResponse = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 2000,
       messages: [
         {
           role: "user",
-          content: `Analyze this podcast transcript and find 3-5 clips (30-90 seconds each) that would go VIRAL on TikTok/Instagram Reels. Focus on:
+          content: `Analyze this podcast transcript and find viral clips for TikTok/Instagram Reels. Focus on:
 - Strong hooks / cold opens
 - Hot takes / controversial opinions
 - Emotional peaks / vulnerability
@@ -166,11 +172,13 @@ export async function POST(request: NextRequest) {
 - Quotable soundbites / aha moments
 - Storytelling moments with payoff
 
+${clipGuidance}
+
 Return ONLY a JSON array (no other text) with objects containing:
 - "title": catchy 5-8 word title for the clip
 - "hook_text": the opening hook text (first sentence)
 - "start_time": start time in seconds (number)
-- "end_time": end time in seconds (number)
+- "end_time": end time in seconds (number, MUST NOT exceed ${durationSec})
 - "virality_score": 1-10 score of viral potential
 
 Make sure clips don't overlap. Prefer clips that start with a strong hook.
@@ -186,7 +194,20 @@ ${formattedTranscript.slice(0, 30000)}`,
     const jsonMatch = clipText.match(/\[[\s\S]*\]/);
     if (!jsonMatch) throw new Error("Failed to parse clip suggestions from AI");
 
-    const clips: ClipResult[] = JSON.parse(jsonMatch[0]);
+    const rawClips: ClipResult[] = JSON.parse(jsonMatch[0]);
+
+    // Validate and clamp timestamps to actual video duration
+    const clips = rawClips
+      .map(clip => ({
+        ...clip,
+        start_time: Math.max(0, clip.start_time),
+        end_time: Math.min(clip.end_time, durationSec),
+      }))
+      .filter(clip => (clip.end_time - clip.start_time) >= 10); // Skip clips shorter than 10s
+
+    if (clips.length === 0) {
+      throw new Error("No valid clips found. The video may be too short.");
+    }
 
     // ── STEP 5: Generate clips ──
     await updateStatus(admin, job_id, "clipping");
