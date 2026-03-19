@@ -34,7 +34,7 @@ export default function PricingPage() {
         "Up to 30 min videos",
         "3-5 clips per video",
         "Animated captions",
-        "ViralCut watermark",
+        "Clippified watermark",
       ],
       cta: "Current Plan",
       disabled: true,
@@ -82,9 +82,9 @@ export default function PricingPage() {
       <nav className="glass fixed top-0 w-full z-50">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-4">
           <a href="/" className="flex items-center gap-2">
-            <Scissors className="w-6 h-6 text-electric-500" />
+            <Scissors className="w-6 h-6 text-brand-500" />
             <span className="font-display text-xl font-bold text-white">
-              Viral<span className="text-electric-400">Cut</span>
+              Clippi<span className="text-brand-400">fied</span>
             </span>
           </a>
           <a href="/clip" className="text-sm text-slate-400 hover:text-white flex items-center gap-1">
@@ -95,7 +95,7 @@ export default function PricingPage() {
 
       <div className="pt-32 pb-20 px-6 max-w-5xl mx-auto">
         <div className="text-center mb-16">
-          <Zap className="w-10 h-10 text-electric-500 mx-auto mb-4" />
+          <Zap className="w-10 h-10 text-brand-500 mx-auto mb-4" />
           <h1 className="font-display text-3xl md:text-5xl font-bold text-white mb-4">
             Upgrade Your Plan
           </h1>
@@ -106,7 +106,7 @@ export default function PricingPage() {
           {plans.map((plan) => (
             <div key={plan.key} className={`card p-8 flex flex-col ${plan.highlight ? "pricing-pro" : ""}`}>
               {plan.highlight && (
-                <span className="badge badge-electric mb-4 self-start">Most Popular</span>
+                <span className="badge badge-brand mb-4 self-start">Most Popular</span>
               )}
               <h3 className="text-xl font-semibold text-white">{plan.name}</h3>
               <div className="mt-4 flex items-baseline gap-1">

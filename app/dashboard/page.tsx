@@ -72,7 +72,7 @@ export default function DashboardPage() {
       case "failed":
         return <XCircle className="w-5 h-5 text-hot-400" />;
       default:
-        return <Loader2 className="w-5 h-5 text-electric-400 animate-spin" />;
+        return <Loader2 className="w-5 h-5 text-brand-400 animate-spin" />;
     }
   };
 
@@ -81,13 +81,13 @@ export default function DashboardPage() {
       <nav className="glass fixed top-0 w-full z-50">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-4">
           <a href="/" className="flex items-center gap-2">
-            <Scissors className="w-6 h-6 text-electric-500" />
+            <Scissors className="w-6 h-6 text-brand-500" />
             <span className="font-display text-xl font-bold text-white">
-              Viral<span className="text-electric-400">Cut</span>
+              Clippi<span className="text-brand-400">fied</span>
             </span>
           </a>
           <div className="flex items-center gap-4">
-            <a href="/clip" className="text-sm text-electric-400 hover:text-electric-300 flex items-center gap-1">
+            <a href="/clip" className="text-sm text-brand-400 hover:text-brand-300 flex items-center gap-1">
               <Plus className="w-4 h-4" /> New Clip
             </a>
             <a href="/pricing" className="text-sm text-slate-400 hover:text-white flex items-center gap-1">
@@ -125,7 +125,7 @@ export default function DashboardPage() {
 
         {loading ? (
           <div className="text-center py-20">
-            <Loader2 className="w-8 h-8 text-electric-500 animate-spin mx-auto" />
+            <Loader2 className="w-8 h-8 text-brand-500 animate-spin mx-auto" />
           </div>
         ) : jobs.length === 0 ? (
           <div className="card p-12 text-center">
@@ -142,7 +142,7 @@ export default function DashboardPage() {
               <a
                 key={job.id}
                 href={`/clip/${job.id}`}
-                className="card p-5 flex items-center gap-4 hover:border-electric-500/30 transition-all block"
+                className="card p-5 flex items-center gap-4 hover:border-brand-500/30 transition-all block"
               >
                 {statusIcon(job.status)}
                 <div className="flex-1 min-w-0">

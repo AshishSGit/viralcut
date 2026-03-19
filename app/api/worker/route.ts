@@ -247,7 +247,7 @@ ${formattedTranscript.slice(0, 30000)}`,
         }
         if (needsWatermark) {
           filterParts.push(
-            "drawtext=text='Made with ViralCut':fontsize=18:fontcolor=white@0.5:x=w-tw-20:y=h-th-20"
+            "drawtext=text='Made with Clippified':fontsize=18:fontcolor=white@0.5:x=w-tw-20:y=h-th-20"
           );
         }
       }

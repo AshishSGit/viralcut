@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-const BASE_URL = process.env.NEXT_PUBLIC_URL || "https://viralcut.io";
+const BASE_URL = process.env.NEXT_PUBLIC_URL || "https://clippified.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "ViralCut — Turn Podcasts Into Viral Clips",
-    template: "%s | ViralCut",
+    default: "Clippified — AI Viral Clip Generator for Podcasts",
+    template: "%s | Clippified",
   },
   description:
-    "ViralCut uses AI to find the most viral moments in your podcast or talking-head video, auto-crops to 9:16, adds animated captions, and exports ready-to-post clips for TikTok, Reels, and Shorts.",
+    "Paste a YouTube link. AI finds the most viral moments, crops to 9:16, adds captions, and exports clips for TikTok, Reels & Shorts. Free to start.",
   keywords: [
     "podcast clip generator",
     "AI video clipper",
@@ -22,20 +22,21 @@ export const metadata: Metadata = {
     "tiktok clip maker",
     "reels generator",
     "youtube shorts maker",
+    "clippified",
   ],
   openGraph: {
-    title: "ViralCut — Turn Podcasts Into Viral Clips",
+    title: "Clippified — AI Viral Clip Generator for Podcasts",
     description:
-      "AI finds the most viral moments in your podcast. Auto-crop, animated captions, export for TikTok/Reels/Shorts.",
+      "Paste a YouTube link. AI finds viral moments, crops to 9:16, adds captions, exports for TikTok/Reels/Shorts.",
     type: "website",
     url: BASE_URL,
-    siteName: "ViralCut",
+    siteName: "Clippified",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ViralCut — Turn Podcasts Into Viral Clips",
+    title: "Clippified — AI Viral Clip Generator for Podcasts",
     description:
-      "AI finds the most viral moments in your podcast. Auto-crop, animated captions, export for TikTok/Reels/Shorts.",
+      "Paste a YouTube link. AI finds viral moments, crops to 9:16, adds captions, exports for TikTok/Reels/Shorts.",
   },
 };
 

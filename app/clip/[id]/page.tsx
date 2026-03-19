@@ -89,9 +89,9 @@ export default function JobResultPage() {
       <nav className="glass fixed top-0 w-full z-50">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-4">
           <a href="/" className="flex items-center gap-2">
-            <Scissors className="w-6 h-6 text-electric-500" />
+            <Scissors className="w-6 h-6 text-brand-500" />
             <span className="font-display text-xl font-bold text-white">
-              Viral<span className="text-electric-400">Cut</span>
+              Clippi<span className="text-brand-400">fied</span>
             </span>
           </a>
           <a
@@ -106,7 +106,7 @@ export default function JobResultPage() {
       <div className="pt-28 pb-20 px-6 max-w-4xl mx-auto">
         {!job ? (
           <div className="text-center py-20">
-            <Loader2 className="w-8 h-8 text-electric-500 animate-spin mx-auto mb-4" />
+            <Loader2 className="w-8 h-8 text-brand-500 animate-spin mx-auto mb-4" />
             <p className="text-slate-400">Loading job...</p>
           </div>
         ) : job.status === "failed" ? (
@@ -137,7 +137,7 @@ export default function JobResultPage() {
                     key={stage.key}
                     className={`flex items-center gap-4 p-3 rounded-xl transition-all ${
                       isActive
-                        ? "bg-electric-600/10 border border-electric-500/20"
+                        ? "bg-brand-500/10 border border-brand-500/20"
                         : ""
                     }`}
                   >
@@ -146,7 +146,7 @@ export default function JobResultPage() {
                         isComplete
                           ? "bg-neon-500/20 text-neon-400"
                           : isActive
-                          ? "bg-electric-600/20 text-electric-400"
+                          ? "bg-brand-500/15 text-brand-400"
                           : "bg-dark-700 text-slate-600"
                       }`}
                     >

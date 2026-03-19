@@ -77,9 +77,9 @@ export default function ClipPage() {
       <nav className="glass fixed top-0 w-full z-50">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-4">
           <a href="/" className="flex items-center gap-2">
-            <Scissors className="w-6 h-6 text-electric-500" />
+            <Scissors className="w-6 h-6 text-brand-500" />
             <span className="font-display text-xl font-bold text-white">
-              Viral<span className="text-electric-400">Cut</span>
+              Clippi<span className="text-brand-400">fied</span>
             </span>
           </a>
           <div className="flex items-center gap-4">
@@ -113,7 +113,7 @@ export default function ClipPage() {
             onClick={() => setTab("url")}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
               tab === "url"
-                ? "bg-electric-600/20 text-electric-400 border border-electric-500/30"
+                ? "bg-brand-500/15 text-brand-400 border border-brand-500/30"
                 : "text-slate-400 hover:text-white border border-transparent"
             }`}
           >
@@ -123,7 +123,7 @@ export default function ClipPage() {
             onClick={() => setTab("upload")}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
               tab === "upload"
-                ? "bg-electric-600/20 text-electric-400 border border-electric-500/30"
+                ? "bg-brand-500/15 text-brand-400 border border-brand-500/30"
                 : "text-slate-400 hover:text-white border border-transparent"
             }`}
           >
@@ -156,7 +156,7 @@ export default function ClipPage() {
           ) : (
             <div
               className={`card p-8 text-center transition-all ${
-                dragOver ? "border-electric-500 bg-electric-600/10" : ""
+                dragOver ? "border-brand-500 bg-brand-500/10" : ""
               }`}
               onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
               onDragLeave={() => setDragOver(false)}
@@ -165,7 +165,7 @@ export default function ClipPage() {
               {file ? (
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <FileVideo className="w-8 h-8 text-electric-500" />
+                    <FileVideo className="w-8 h-8 text-brand-500" />
                     <div className="text-left">
                       <p className="text-white font-medium">{file.name}</p>
                       <p className="text-sm text-slate-500">

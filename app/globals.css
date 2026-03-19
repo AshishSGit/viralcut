@@ -1,22 +1,24 @@
 @import "tailwindcss";
 
 @theme {
-  --color-dark-950: #05060b;
-  --color-dark-900: #0a0c14;
-  --color-dark-800: #0f1220;
-  --color-dark-700: #161a2e;
-  --color-dark-600: #1e2340;
-  --color-dark-500: #2a3050;
+  --color-dark-950: #030507;
+  --color-dark-900: #0a0d12;
+  --color-dark-800: #111318;
+  --color-dark-700: #1a1d24;
+  --color-dark-600: #24282f;
+  --color-dark-500: #2e333c;
 
-  --color-electric-300: #c4b5fd;
-  --color-electric-400: #a78bfa;
-  --color-electric-500: #8b5cf6;
-  --color-electric-600: #7c3aed;
-  --color-electric-700: #6d28d9;
+  --color-brand-300: #fcd34d;
+  --color-brand-400: #fbbf24;
+  --color-brand-500: #f59e0b;
+  --color-brand-600: #d97706;
+  --color-brand-700: #b45309;
+
+  --color-accent-400: #38bdf8;
+  --color-accent-500: #0ea5e9;
 
   --color-hot-400: #fb7185;
   --color-hot-500: #f43f5e;
-  --color-hot-600: #e11d48;
 
   --color-neon-400: #34d399;
   --color-neon-500: #10b981;
@@ -47,8 +49,8 @@
     50% { transform: translateY(-12px); }
   }
   @keyframes pulseGlow {
-    0%, 100% { box-shadow: 0 0 20px rgba(139,92,246,0.2); }
-    50% { box-shadow: 0 0 40px rgba(139,92,246,0.5); }
+    0%, 100% { box-shadow: 0 0 20px rgba(245,158,11,0.2); }
+    50% { box-shadow: 0 0 40px rgba(245,158,11,0.4); }
   }
 }
 
@@ -64,18 +66,16 @@ body {
 
 /* Buttons */
 .btn-primary {
-  background: linear-gradient(135deg, var(--color-electric-600), var(--color-electric-500));
-  color: white;
+  background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-600));
+  color: #030507;
   padding: 0.75rem 2rem;
   border-radius: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   transition: all 0.2s;
-  position: relative;
-  overflow: hidden;
 }
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 30px rgba(139,92,246,0.4);
+  box-shadow: 0 0 30px rgba(245,158,11,0.35);
 }
 .btn-primary:active {
   transform: translateY(0);
@@ -86,40 +86,40 @@ body {
   color: #cbd5e1;
   padding: 0.75rem 1.5rem;
   border-radius: 0.75rem;
-  border: 1px solid rgba(139,92,246,0.3);
+  border: 1px solid rgba(245,158,11,0.25);
   font-weight: 500;
   transition: all 0.2s;
 }
 .btn-ghost:hover {
-  border-color: var(--color-electric-500);
+  border-color: var(--color-brand-500);
   color: white;
-  background: rgba(139,92,246,0.08);
+  background: rgba(245,158,11,0.06);
 }
 
 /* Cards */
 .card {
-  background: linear-gradient(135deg, rgba(139,92,246,0.06) 0%, rgba(255,255,255,0.02) 100%);
-  border: 1px solid rgba(139,92,246,0.12);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
   border-radius: 1rem;
   backdrop-filter: blur(12px);
   transition: all 0.3s;
 }
 .card:hover {
-  border-color: rgba(139,92,246,0.25);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(139,92,246,0.15);
+  border-color: rgba(255,255,255,0.12);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
 }
 
-/* Glass */
+/* Glass nav */
 .glass {
-  background: rgba(10,12,20,0.7);
+  background: rgba(10,13,18,0.8);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(139,92,246,0.1);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
 /* Input */
 .input-field {
-  background: rgba(15,18,32,0.8);
-  border: 1px solid rgba(139,92,246,0.2);
+  background: rgba(17,19,24,0.9);
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
   color: white;
@@ -127,8 +127,8 @@ body {
   outline: none;
 }
 .input-field:focus {
-  border-color: var(--color-electric-500);
-  box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
+  border-color: var(--color-brand-500);
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
 }
 .input-field::placeholder {
   color: #475569;
@@ -142,35 +142,40 @@ body {
   font-weight: 600;
   letter-spacing: 0.05em;
 }
+.badge-brand {
+  background: rgba(245,158,11,0.12);
+  color: var(--color-brand-400);
+  border: 1px solid rgba(245,158,11,0.2);
+}
 .badge-electric {
-  background: rgba(139,92,246,0.15);
-  color: var(--color-electric-400);
-  border: 1px solid rgba(139,92,246,0.25);
+  background: rgba(245,158,11,0.12);
+  color: var(--color-brand-400);
+  border: 1px solid rgba(245,158,11,0.2);
 }
 .badge-hot {
-  background: rgba(244,63,94,0.15);
+  background: rgba(244,63,94,0.12);
   color: var(--color-hot-400);
-  border: 1px solid rgba(244,63,94,0.25);
+  border: 1px solid rgba(244,63,94,0.2);
 }
 .badge-neon {
-  background: rgba(16,185,129,0.15);
+  background: rgba(16,185,129,0.12);
   color: var(--color-neon-400);
-  border: 1px solid rgba(16,185,129,0.25);
+  border: 1px solid rgba(16,185,129,0.2);
 }
 
 /* Pricing card glow */
 .pricing-pro {
-  border: 1px solid rgba(139,92,246,0.4);
-  box-shadow: 0 0 40px rgba(139,92,246,0.15);
+  border: 1px solid rgba(245,158,11,0.3);
+  box-shadow: 0 0 40px rgba(245,158,11,0.08);
 }
 
 /* Hero gradient */
 .hero-gradient {
-  background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(139,92,246,0.2) 0%, transparent 60%);
+  background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(245,158,11,0.12) 0%, transparent 60%);
 }
 
 /* Section divider */
 .section-glow {
-  background: linear-gradient(90deg, transparent, rgba(139,92,246,0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(245,158,11,0.2), transparent);
   height: 1px;
 }

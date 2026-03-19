@@ -55,16 +55,16 @@ export default function SignInPage() {
       >
         {/* Logo */}
         <a href="/" className="flex items-center gap-2 mb-8">
-          <Scissors className="w-6 h-6 text-electric-500" />
+          <Scissors className="w-6 h-6 text-brand-500" />
           <span className="font-display text-xl font-bold text-white">
-            Viral<span className="text-electric-400">Cut</span>
+            Clippi<span className="text-brand-400">fied</span>
           </span>
         </a>
 
         {mode === "sent" ? (
           <div className="text-center py-8">
-            <div className="w-16 h-16 rounded-full bg-electric-600/15 flex items-center justify-center mx-auto mb-4">
-              <Mail className="w-8 h-8 text-electric-400" />
+            <div className="w-16 h-16 rounded-full bg-brand-500/10 flex items-center justify-center mx-auto mb-4">
+              <Mail className="w-8 h-8 text-brand-400" />
             </div>
             <h2 className="text-xl font-semibold text-white mb-2">Check your email</h2>
             <p className="text-slate-400 text-sm mb-6">
@@ -73,14 +73,14 @@ export default function SignInPage() {
             </p>
             <button
               onClick={() => setMode("signin")}
-              className="text-sm text-electric-400 hover:text-electric-300 flex items-center gap-1 mx-auto"
+              className="text-sm text-brand-400 hover:text-brand-300 flex items-center gap-1 mx-auto"
             >
               <ArrowLeft className="w-4 h-4" /> Back to sign in
             </button>
           </div>
         ) : (
           <>
-            <h2 className="text-2xl font-bold text-white mb-1">Welcome to ViralCut</h2>
+            <h2 className="text-2xl font-bold text-white mb-1">Welcome to Clippified</h2>
             <p className="text-slate-400 text-sm mb-8">
               Sign in to start turning podcasts into viral clips.
             </p>
@@ -88,7 +88,7 @@ export default function SignInPage() {
             {/* Google OAuth */}
             <button
               onClick={handleGoogleSignIn}
-              className="w-full flex items-center justify-center gap-3 py-3 rounded-xl border border-dark-600 bg-dark-800 text-white font-medium hover:border-electric-500/30 transition-all mb-6"
+              className="w-full flex items-center justify-center gap-3 py-3 rounded-xl border border-dark-600 bg-dark-800 text-white font-medium hover:border-brand-500/30 transition-all mb-6"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
@@ -137,8 +137,8 @@ export default function SignInPage() {
 
             <p className="mt-6 text-xs text-slate-500 text-center">
               By signing in, you agree to our{" "}
-              <a href="/terms" className="text-electric-400 hover:underline">Terms</a> and{" "}
-              <a href="/privacy" className="text-electric-400 hover:underline">Privacy Policy</a>.
+              <a href="/terms" className="text-brand-400 hover:underline">Terms</a> and{" "}
+              <a href="/privacy" className="text-brand-400 hover:underline">Privacy Policy</a>.
             </p>
           </>
         )}
