@@ -93,7 +93,7 @@ function Hero() {
       <div className="max-w-5xl mx-auto text-center relative z-10">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
           <span className="badge badge-brand uppercase tracking-widest text-xs">
-            Video Clip Generator
+            Stop editing. Start posting.
           </span>
         </motion.div>
 
@@ -112,8 +112,8 @@ function Hero() {
           className="mt-8 text-xl md:text-2xl text-white/50 max-w-2xl mx-auto leading-relaxed"
           initial="hidden" animate="visible" variants={fadeUp} custom={2}
         >
-          Paste any YouTube link. We find the most shareable moments, crop to 9:16,
-          add animated captions, and export clips ready for TikTok, Reels & Shorts.
+          You have hours of great content buried in long videos.
+          We find the moments worth posting — cropped, captioned, and ready to go viral.
         </motion.p>
 
         <motion.div
@@ -241,23 +241,23 @@ function HowItWorks() {
   const steps = [
     {
       icon: <Upload className="w-7 h-7" />,
-      title: "Paste a Link",
-      desc: "Paste any YouTube or TikTok URL, or upload an MP4. Supports videos up to 2 hours.",
+      title: "Drop Your Video",
+      desc: "Paste any YouTube or TikTok URL. No downloads, no uploads, no file management headaches.",
     },
     {
       icon: <Sparkles className="w-7 h-7" />,
-      title: "We Find the Gold",
-      desc: "Your video is transcribed and analyzed to find hooks, hot takes, and emotional peaks.",
+      title: "We Find What Goes Viral",
+      desc: "Every word is analyzed to find the hooks, hot takes, and emotional peaks your audience will share.",
     },
     {
       icon: <Captions className="w-7 h-7" />,
-      title: "Captions & Crop",
-      desc: "Each clip is cropped to 9:16 with word-by-word animated captions, ready to post.",
+      title: "Auto-Captioned & Cropped",
+      desc: "Each clip gets vertical 9:16 crop and word-by-word captions. No editing software needed.",
     },
     {
       icon: <TrendingUp className="w-7 h-7" />,
-      title: "Download & Post",
-      desc: "Download your clips and post directly to TikTok, Reels, or YouTube Shorts.",
+      title: "Post & Grow",
+      desc: "Download and post. Creators using short-form clips grow 3x faster on every platform.",
     },
   ];
 
@@ -270,9 +270,9 @@ function HowItWorks() {
         >
           <span className="badge badge-brand">How It Works</span>
           <h2 className="mt-6 font-display text-3xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight">
-            Video to clips in 2 minutes
+            3 hours of editing → 2 minutes
           </h2>
-          <p className="mt-5 text-white/40 text-lg md:text-xl">No editing skills required. Just paste and go.</p>
+          <p className="mt-5 text-white/40 text-lg md:text-xl">Paste a link. Get clips. Post and grow.</p>
         </motion.div>
 
         <div className="grid md:grid-cols-4 gap-6">
@@ -300,33 +300,33 @@ function Features() {
   const features = [
     {
       icon: <Zap className="w-6 h-6" />,
-      title: "Viral Moment Detection",
-      desc: "Automatically finds hooks, hot takes, emotional peaks, funny moments, and quotable soundbites.",
+      title: "Knows What Goes Viral",
+      desc: "Not random cuts. Every clip is chosen because it has a strong hook, a hot take, or an emotional peak your audience will share.",
     },
     {
       icon: <Captions className="w-6 h-6" />,
-      title: "Animated Captions",
-      desc: "Word-by-word highlighted captions burned into the video. Timed perfectly to speech.",
+      title: "Captions That Pop",
+      desc: "Word-by-word animated captions burned into the video. 85% of social media is watched on mute — captions are essential.",
     },
     {
       icon: <Monitor className="w-6 h-6" />,
-      title: "Smart 9:16 Crop",
-      desc: "Landscape video automatically cropped to vertical format, keeping the speaker centered.",
+      title: "Vertical-Ready",
+      desc: "Landscape video automatically cropped to 9:16. No manual resizing, no black bars, no Canva workarounds.",
     },
     {
       icon: <Clock className="w-6 h-6" />,
-      title: "2-Minute Processing",
-      desc: "A 60-minute video processed in about 2 minutes. No waiting around.",
+      title: "Done Before Your Coffee",
+      desc: "A full 60-minute video processed in about 2 minutes. Your clips are ready before you finish scrolling Twitter.",
     },
     {
       icon: <Link2 className="w-6 h-6" />,
-      title: "YouTube & TikTok URLs",
-      desc: "Just paste a link — no need to download the video first. We handle everything.",
+      title: "Just Paste a Link",
+      desc: "No downloading, no file converting, no uploading. Paste a YouTube or TikTok URL and we handle the rest.",
     },
     {
       icon: <Shield className="w-6 h-6" />,
-      title: "Secure & Private",
-      desc: "Your videos are processed securely and automatically deleted after 24 hours.",
+      title: "Your Content Stays Yours",
+      desc: "Videos are processed on secure servers and automatically deleted after 24 hours. We never store or share your content.",
     },
   ];
 
@@ -339,9 +339,9 @@ function Features() {
         >
           <span className="badge badge-neon">Features</span>
           <h2 className="mt-6 font-display text-3xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight">
-            Everything you need to go viral
+            Why creators switch to Clippified
           </h2>
-          <p className="mt-5 text-white/40 text-lg md:text-xl">Professional clips without the professional editing team.</p>
+          <p className="mt-5 text-white/40 text-lg md:text-xl">Stop paying editors. Stop wasting weekends. Start growing.</p>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-6">
