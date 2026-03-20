@@ -93,7 +93,7 @@ function Hero() {
       <div className="max-w-5xl mx-auto text-center relative z-10">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
           <span className="badge badge-brand uppercase tracking-widest text-xs">
-            Podcast Clip Generator
+            Video Clip Generator
           </span>
         </motion.div>
 
@@ -101,7 +101,7 @@ function Hero() {
           className="mt-8 font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.1] tracking-tight"
           initial="hidden" animate="visible" variants={fadeUp} custom={1}
         >
-          Your podcast,{" "}
+          Your content,{" "}
           <br className="hidden sm:block" />
           <span className="text-brand-400">
             clippified.
@@ -112,7 +112,7 @@ function Hero() {
           className="mt-8 text-xl md:text-2xl text-white/50 max-w-2xl mx-auto leading-relaxed"
           initial="hidden" animate="visible" variants={fadeUp} custom={2}
         >
-          Paste a YouTube link. We find your most shareable moments, crop to 9:16,
+          Paste any YouTube link. We find the most shareable moments, crop to 9:16,
           add animated captions, and export clips ready for TikTok, Reels & Shorts.
         </motion.p>
 
@@ -145,52 +145,56 @@ function Hero() {
           </span>
         </motion.div>
 
-        {/* Phone mockups showing clips */}
+        {/* App demo mockup */}
         <motion.div
-          className="mt-20 flex items-end justify-center gap-4 md:gap-6"
-          initial={{ opacity: 0, y: 60 }}
+          className="mt-20 relative max-w-3xl mx-auto"
+          initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7, duration: 0.8 }}
         >
-          <div className="phone-frame w-32 md:w-40 h-56 md:h-72 -rotate-6 flex flex-col items-center justify-end p-3 relative">
-            <div className="absolute inset-0 bg-gradient-to-b from-brand-600/10 to-dark-900/80" />
-            <div className="relative z-10 text-center">
-              <p className="text-[10px] md:text-xs font-bold text-white leading-tight mb-1">
-                &ldquo;Why most creators fail in their first year&rdquo;
-              </p>
-              <span className="text-[9px] text-brand-400 font-semibold">9.2/10</span>
-            </div>
-          </div>
-
-          <div className="phone-frame w-40 md:w-48 h-64 md:h-80 flex flex-col items-center justify-end p-4 relative border-brand-500/20">
-            <div className="absolute inset-0 bg-gradient-to-b from-brand-500/10 to-dark-900/80" />
-            <div className="absolute top-3 left-3 right-3 flex items-center gap-2">
-              <Play className="w-4 h-4 text-brand-400" />
-              <div className="flex-1 h-1 bg-white/10 rounded-full">
-                <div className="h-1 w-2/3 bg-brand-500 rounded-full" />
+          <div className="card p-6 md:p-8">
+            {/* URL bar */}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="flex items-center gap-2 flex-1 input-field !py-3">
+                <Link2 className="w-4 h-4 text-white/30" />
+                <span className="text-white/30 text-sm">https://youtube.com/watch?v=podcast-ep-42...</span>
               </div>
-              <span className="text-[9px] text-white/40">0:47</span>
+              <button className="btn-primary !py-3 !px-6 flex items-center gap-2 text-sm">
+                <Zap className="w-4 h-4" /> Clip It
+              </button>
             </div>
-            <div className="relative z-10 text-center">
-              <p className="text-xs md:text-sm font-bold text-white leading-tight mb-1">
-                &ldquo;The moment everything changed&rdquo;
-              </p>
-              <div className="flex items-center justify-center gap-2 mt-2">
-                <span className="badge badge-hot !text-[9px] !py-0.5">10/10</span>
-                <span className="text-[9px] text-white/30">52s clip</span>
+
+            {/* Results */}
+            <div className="bg-dark-800/50 rounded-xl p-4 border border-white/5">
+              <div className="flex items-center gap-2 mb-4">
+                <CheckCircle className="w-4 h-4 text-neon-400" />
+                <span className="text-sm text-neon-400 font-semibold">5 clips ready to download</span>
+                <span className="text-xs text-white/25 ml-auto">Processed in 1:47</span>
+              </div>
+              <div className="space-y-2">
+                {[
+                  { title: "Why most creators fail in the first year", score: "9.2", duration: "47s", hot: true },
+                  { title: "The truth about growing on social media", score: "8.7", duration: "38s", hot: false },
+                  { title: "The moment everything changed for me", score: "8.4", duration: "52s", hot: false },
+                ].map((clip, i) => (
+                  <div key={i} className={`flex items-center gap-3 rounded-lg px-4 py-3 ${i === 0 ? "bg-brand-500/[0.06] border border-brand-500/10" : "bg-dark-900/60"}`}>
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${i === 0 ? "bg-brand-500/20" : "bg-white/[0.04]"}`}>
+                      <Play className={`w-4 h-4 ${i === 0 ? "text-brand-400" : "text-white/30"}`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-white font-medium truncate">{clip.title}</p>
+                      <p className="text-xs text-white/25">{clip.duration} clip · 9:16 vertical</p>
+                    </div>
+                    <span className={`text-xs font-bold ${clip.hot ? "text-brand-400" : "text-white/40"}`}>{clip.score}/10</span>
+                    <button className={`text-xs px-3 py-1.5 rounded-lg font-semibold ${i === 0 ? "bg-brand-500 text-dark-950" : "bg-white/[0.05] text-white/50"}`}>
+                      Download
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-
-          <div className="phone-frame w-32 md:w-40 h-56 md:h-72 rotate-6 flex flex-col items-center justify-end p-3 relative">
-            <div className="absolute inset-0 bg-gradient-to-b from-brand-600/10 to-dark-900/80" />
-            <div className="relative z-10 text-center">
-              <p className="text-[10px] md:text-xs font-bold text-white leading-tight mb-1">
-                &ldquo;Nobody talks about this side of growth&rdquo;
-              </p>
-              <span className="text-[9px] text-brand-400 font-semibold">8.7/10</span>
-            </div>
-          </div>
+          <div className="absolute -inset-4 bg-gradient-to-r from-brand-600/8 via-brand-500/4 to-brand-600/8 rounded-2xl blur-3xl -z-10" />
         </motion.div>
       </div>
     </section>
@@ -266,7 +270,7 @@ function HowItWorks() {
         >
           <span className="badge badge-brand">How It Works</span>
           <h2 className="mt-6 font-display text-3xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight">
-            Podcast to clips in 2 minutes
+            Video to clips in 2 minutes
           </h2>
           <p className="mt-5 text-white/40 text-lg md:text-xl">No editing skills required. Just paste and go.</p>
         </motion.div>
