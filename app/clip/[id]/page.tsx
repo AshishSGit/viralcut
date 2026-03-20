@@ -88,15 +88,21 @@ export default function JobResultPage() {
     if (!job?.clips) return;
     setDownloadingAll(true);
 
-    for (const clip of job.clips) {
+    for (let i = 0; i < job.clips.length; i++) {
+      const clip = job.clips[i];
       if (clip.r2_key) {
         const res = await fetch(`/api/download?key=${encodeURIComponent(clip.r2_key)}`);
         const { url } = await res.json();
+
+        // Fetch the file as blob then trigger download — avoids browser blocking
+        const blob = await fetch(url).then(r => r.blob());
+        const blobUrl = URL.createObjectURL(blob);
         const a = document.createElement("a");
-        a.href = url;
-        a.download = `${clip.title.replace(/[^a-zA-Z0-9]/g, "_")}.mp4`;
+        a.href = blobUrl;
+        a.download = `clip_${i + 1}_${clip.title.replace(/[^a-zA-Z0-9]/g, "_").slice(0, 50)}.mp4`;
         a.click();
-        await new Promise(r => setTimeout(r, 500));
+        URL.revokeObjectURL(blobUrl);
+        await new Promise(r => setTimeout(r, 1500));
       }
     }
 
