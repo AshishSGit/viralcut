@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Upload,
@@ -15,6 +15,10 @@ import {
   Shield,
   TrendingUp,
   Clock,
+  User,
+  CreditCard,
+  LayoutDashboard,
+  ChevronDown,
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
@@ -25,9 +29,39 @@ export default function ClipPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [dragOver, setDragOver] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [userPlan, setUserPlan] = useState("free");
   const fileRef = useRef<HTMLInputElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const supabase = createClient();
+
+  useEffect(() => {
+    async function loadUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserEmail(user.email || "");
+      }
+      const res = await fetch("/api/pro-status");
+      if (res.ok) {
+        const data = await res.json();
+        setUserPlan(data.plan);
+      }
+    }
+    loadUser();
+  }, [supabase]);
+
+  // Close menu on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -74,6 +108,8 @@ export default function ClipPage() {
     }
   }, []);
 
+  const initials = userEmail ? userEmail[0].toUpperCase() : "U";
+
   return (
     <div className="min-h-screen">
       {/* Top nav */}
@@ -85,19 +121,69 @@ export default function ClipPage() {
               Clippi<span className="text-brand-400">fied</span>
             </span>
           </a>
-          <div className="flex items-center gap-4">
-            <a href="/dashboard" className="text-sm text-white/70 hover:text-white transition-colors">
+          <div className="flex items-center gap-3">
+            <a href="/dashboard" className="text-sm text-white/60 hover:text-white transition-colors hidden sm:block">
               Dashboard
             </a>
-            <a href="/pricing" className="text-sm text-white/70 hover:text-white transition-colors flex items-center gap-1">
-              <Sparkles className="w-4 h-4" /> Upgrade
-            </a>
-            <button
-              onClick={handleSignOut}
-              className="text-sm text-white/40 hover:text-white transition-colors flex items-center gap-1"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
+
+            {/* User menu */}
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl border border-white/10 hover:border-white/20 transition-all"
+              >
+                <div className="w-7 h-7 rounded-lg bg-brand-500/20 flex items-center justify-center text-brand-400 text-xs font-bold">
+                  {initials}
+                </div>
+                <ChevronDown className={`w-3.5 h-3.5 text-white/40 transition-transform ${menuOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {menuOpen && (
+                <div className="absolute right-0 mt-2 w-64 card p-2 border border-white/10 shadow-2xl z-50">
+                  {/* User info */}
+                  <div className="px-3 py-3 border-b border-white/5">
+                    <p className="text-sm font-medium text-white truncate">{userEmail}</p>
+                    <p className="text-xs text-white/30 mt-0.5 capitalize">{userPlan} plan</p>
+                  </div>
+
+                  {/* Menu items */}
+                  <div className="py-1">
+                    <a
+                      href="/dashboard"
+                      className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                    >
+                      <LayoutDashboard className="w-4 h-4" />
+                      Dashboard
+                    </a>
+                    <a
+                      href="/pricing"
+                      className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      {userPlan === "free" ? "Upgrade Plan" : "Manage Plan"}
+                    </a>
+                    <a
+                      href="mailto:support@clippified.com"
+                      className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                    >
+                      <User className="w-4 h-4" />
+                      Contact Support
+                    </a>
+                  </div>
+
+                  {/* Sign out */}
+                  <div className="border-t border-white/5 pt-1">
+                    <button
+                      onClick={handleSignOut}
+                      className="flex items-center gap-3 px-3 py-2.5 text-sm text-hot-400 hover:bg-hot-500/10 rounded-lg transition-colors w-full text-left"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </nav>
