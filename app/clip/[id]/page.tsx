@@ -169,18 +169,32 @@ export default function JobResultPage() {
       </div>
 
       <nav className="glass fixed top-0 w-full z-50">
-        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-3">
           <a href="/" className="flex items-center gap-2">
             <Scissors className="w-6 h-6 text-brand-500" />
             <span className="font-display text-xl font-bold text-white">
               Clippi<span className="text-brand-400">fied</span>
             </span>
           </a>
-          <div className="flex items-center gap-3">
-            <a href="/dashboard" className="text-sm text-white/70 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5">
+
+          {/* Center nav tabs */}
+          <div className="hidden md:flex items-center bg-white/[0.04] rounded-xl border border-white/[0.06] p-1">
+            <a href="/dashboard" className="text-sm text-white/50 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.06] transition-all">
               Dashboard
             </a>
-            <a href="/clip" className="text-sm font-medium text-dark-950 bg-brand-500 hover:bg-brand-400 transition-all px-4 py-1.5 rounded-lg flex items-center gap-1.5">
+            <a href="/clip" className="text-sm text-white/50 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.06] transition-all">
+              Create
+            </a>
+            <a href="/pricing" className="text-sm text-white/50 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.06] transition-all">
+              Pricing
+            </a>
+            <a href="/blog" className="text-sm text-white/50 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.06] transition-all">
+              Blog
+            </a>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <a href="/clip" className="btn-primary text-sm !py-2 !px-4 flex items-center gap-1.5">
               <Scissors className="w-3.5 h-3.5" /> New Clip
             </a>
           </div>

@@ -96,13 +96,30 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen ambient-glow">
       <nav className="glass fixed top-0 w-full z-50">
-        <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-4">
+        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-3">
           <a href="/" className="flex items-center gap-2">
             <Scissors className="w-6 h-6 text-brand-500" />
             <span className="font-display text-xl font-bold text-white">
               Clippi<span className="text-brand-400">fied</span>
             </span>
           </a>
+
+          {/* Center nav tabs */}
+          <div className="hidden md:flex items-center bg-white/[0.04] rounded-xl border border-white/[0.06] p-1">
+            <a href="/dashboard" className="text-sm font-medium text-white px-4 py-2 rounded-lg bg-white/[0.08] border border-white/[0.08]">
+              Dashboard
+            </a>
+            <a href="/clip" className="text-sm text-white/50 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.06] transition-all">
+              Create
+            </a>
+            <a href="/pricing" className="text-sm text-white/50 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.06] transition-all">
+              Pricing
+            </a>
+            <a href="/blog" className="text-sm text-white/50 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.06] transition-all">
+              Blog
+            </a>
+          </div>
+
           <div className="flex items-center gap-3">
             <a href="/clip" className="btn-primary text-sm !py-2 !px-4 flex items-center gap-1.5">
               <Plus className="w-4 h-4" /> New Clip
@@ -134,7 +151,7 @@ export default function DashboardPage() {
                       <Sparkles className="w-4 h-4" /> {usage.plan === "free" ? "Upgrade Plan" : "Manage Plan"}
                     </a>
                     <a href="/contact" className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
-                      <User className="w-4 h-4" /> Contact Support
+                      <User className="w-4 h-4" /> Support
                     </a>
                   </div>
                   <div className="border-t border-white/5 pt-1">

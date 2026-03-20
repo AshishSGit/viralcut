@@ -117,19 +117,32 @@ export default function ClipPage() {
     <div className="min-h-screen ambient-glow">
       {/* Top nav */}
       <nav className="glass fixed top-0 w-full z-50">
-        <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-4">
+        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-3">
           <a href="/" className="flex items-center gap-2">
             <Scissors className="w-6 h-6 text-brand-500" />
             <span className="font-display text-xl font-bold text-white">
               Clippi<span className="text-brand-400">fied</span>
             </span>
           </a>
-          <div className="flex items-center gap-3">
-            <a href="/dashboard" className="text-sm text-white/60 hover:text-white transition-colors hidden sm:block">
+
+          {/* Center nav tabs */}
+          <div className="hidden md:flex items-center bg-white/[0.04] rounded-xl border border-white/[0.06] p-1">
+            <a href="/dashboard" className="text-sm text-white/50 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.06] transition-all">
               Dashboard
             </a>
+            <a href="/clip" className="text-sm font-medium text-white px-4 py-2 rounded-lg bg-white/[0.08] border border-white/[0.08]">
+              Create
+            </a>
+            <a href="/pricing" className="text-sm text-white/50 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.06] transition-all">
+              Pricing
+            </a>
+            <a href="/blog" className="text-sm text-white/50 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.06] transition-all">
+              Blog
+            </a>
+          </div>
 
-            {/* User menu */}
+          {/* User menu */}
+          <div className="flex items-center gap-3">
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
@@ -143,45 +156,24 @@ export default function ClipPage() {
 
               {menuOpen && (
                 <div className="absolute right-0 mt-2 w-64 p-2 border border-white/10 shadow-2xl z-[60] rounded-2xl" style={{ background: "#111318", backdropFilter: "blur(20px)" }}>
-                  {/* User info */}
                   <div className="px-3 py-3 border-b border-white/5">
                     <p className="text-sm font-medium text-white truncate">{userEmail}</p>
                     <p className="text-xs text-white/30 mt-0.5 capitalize">{userPlan} plan</p>
                   </div>
-
-                  {/* Menu items */}
                   <div className="py-1">
-                    <a
-                      href="/dashboard"
-                      className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-                    >
-                      <LayoutDashboard className="w-4 h-4" />
-                      Dashboard
+                    <a href="/dashboard" className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+                      <LayoutDashboard className="w-4 h-4" /> Dashboard
                     </a>
-                    <a
-                      href="/pricing"
-                      className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      {userPlan === "free" ? "Upgrade Plan" : "Manage Plan"}
+                    <a href="/pricing" className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+                      <Sparkles className="w-4 h-4" /> {userPlan === "free" ? "Upgrade Plan" : "Manage Plan"}
                     </a>
-                    <a
-                      href="/contact"
-                      className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-                    >
-                      <User className="w-4 h-4" />
-                      Contact Support
+                    <a href="/contact" className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+                      <User className="w-4 h-4" /> Support
                     </a>
                   </div>
-
-                  {/* Sign out */}
                   <div className="border-t border-white/5 pt-1">
-                    <button
-                      onClick={handleSignOut}
-                      className="flex items-center gap-3 px-3 py-2.5 text-sm text-hot-400 hover:bg-hot-500/10 rounded-lg transition-colors w-full text-left"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      Sign Out
+                    <button onClick={handleSignOut} className="flex items-center gap-3 px-3 py-2.5 text-sm text-hot-400 hover:bg-hot-500/10 rounded-lg transition-colors w-full text-left">
+                      <LogOut className="w-4 h-4" /> Sign Out
                     </button>
                   </div>
                 </div>
