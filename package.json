@@ -10,7 +10,7 @@
     "build": "next build",
     "start": "next start -p ${PORT:-3000}",
     "lint": "eslint",
-    "postinstall": "curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o ./yt-dlp && chmod +x ./yt-dlp && echo 'yt-dlp downloaded to ./yt-dlp'"
+    "postinstall": "curl -L https://github.com/yt-dlp/yt-dlp-nightly-builds/releases/latest/download/yt-dlp -o ./yt-dlp && chmod +x ./yt-dlp && echo 'yt-dlp nightly downloaded' && ./yt-dlp --version"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",

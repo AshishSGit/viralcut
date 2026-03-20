@@ -71,8 +71,14 @@ export async function POST(request: NextRequest) {
         // fall back to PATH
       }
 
+      // Update yt-dlp before each run to stay ahead of YouTube's bot detection
+      try {
+        await execFileAsync(ytdlpBin, ["-U"], { timeout: 30000 });
+      } catch {}
+
       await execFileAsync(ytdlpBin, [
         "--js-runtimes", "node",
+        "--extractor-args", "youtube:player_client=web,mweb",
         "-f", "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
         "--merge-output-format", "mp4",
         "-o", videoPath,
