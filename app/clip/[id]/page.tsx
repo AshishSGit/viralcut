@@ -98,22 +98,13 @@ export default function JobResultPage() {
     setDownloading(clip.r2_key);
 
     try {
-      // Always get a fresh presigned URL for downloads (cached ones may expire)
+      // Get a fresh presigned URL
       const res = await fetch(`/api/download?key=${encodeURIComponent(clip.r2_key)}`);
       if (!res.ok) throw new Error("Failed to get download URL");
       const { url } = await res.json();
 
-      const blobRes = await fetch(url);
-      if (!blobRes.ok) throw new Error("Failed to fetch file");
-      const blob = await blobRes.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = blobUrl;
-      a.download = `${clip.title.replace(/[^a-zA-Z0-9]/g, "_")}.mp4`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(blobUrl);
+      // Open in new tab — browser will download the .mp4 file
+      window.open(url, "_blank");
     } catch (err) {
       console.error("Download failed:", err);
       alert("Download failed. Please try again.");
@@ -133,18 +124,7 @@ export default function JobResultPage() {
           const res = await fetch(`/api/download?key=${encodeURIComponent(clip.r2_key)}`);
           if (!res.ok) continue;
           const { url } = await res.json();
-
-          const blobRes = await fetch(url);
-          if (!blobRes.ok) continue;
-          const blob = await blobRes.blob();
-          const blobUrl = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = blobUrl;
-          a.download = `clip_${i + 1}_${clip.title.replace(/[^a-zA-Z0-9]/g, "_").slice(0, 50)}.mp4`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(blobUrl);
+          window.open(url, "_blank");
           await new Promise(r => setTimeout(r, 1500));
         } catch (err) {
           console.error(`Download clip ${i + 1} failed:`, err);
