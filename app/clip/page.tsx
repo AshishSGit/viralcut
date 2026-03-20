@@ -92,6 +92,7 @@ export default function ClipPage() {
       router.push(`/clip/${data.job_id}`);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
       setLoading(false);
     }
   }
