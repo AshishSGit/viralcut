@@ -39,7 +39,7 @@ export default function ContactPage() {
             </span>
           </a>
           <a href="/clip" className="text-sm text-white/60 hover:text-white transition-colors">
-            Back to App
+            Create Clips
           </a>
         </div>
       </nav>

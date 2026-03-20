@@ -90,7 +90,7 @@ export default function PricingPage() {
             </span>
           </a>
           <a href="/clip" className="text-sm text-slate-400 hover:text-white flex items-center gap-1">
-            <ArrowLeft className="w-4 h-4" /> Back to App
+            <ArrowLeft className="w-4 h-4" /> Create Clips
           </a>
         </div>
       </nav>
