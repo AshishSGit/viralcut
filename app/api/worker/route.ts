@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
         await execFileAsync(ytdlpBin, ["-U"], { timeout: 30000 });
       } catch {}
 
-      await execFileAsync(ytdlpBin, [
+      const ytdlpArgs = [
         "--js-runtimes", "node",
         "--extractor-args", "youtube:player_client=web,mweb",
         "-f", "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
@@ -84,8 +84,17 @@ export async function POST(request: NextRequest) {
         "-o", videoPath,
         "--no-playlist",
         "--max-filesize", "2G",
-        job.source_url,
-      ], { timeout: 120000 });
+      ];
+
+      // Use residential proxy if configured (avoids YouTube IP blocks on servers)
+      const proxyUrl = process.env.YTDLP_PROXY_URL;
+      if (proxyUrl) {
+        ytdlpArgs.push("--proxy", proxyUrl);
+      }
+
+      ytdlpArgs.push(job.source_url);
+
+      await execFileAsync(ytdlpBin, ytdlpArgs, { timeout: 120000 });
     } else {
       // Download from R2
       const { S3Client, GetObjectCommand } = await import("@aws-sdk/client-s3");
@@ -353,8 +362,8 @@ ${formattedTranscript.slice(0, 30000)}`,
 
     // Show user-friendly error messages instead of raw command output
     let message = rawMessage;
-    if (rawMessage.includes("Sign in to confirm") || rawMessage.includes("not a bot")) {
-      message = "This video requires YouTube sign-in and can't be processed. Please try a different video.";
+    if (rawMessage.includes("Sign in to confirm") || rawMessage.includes("not a bot") || rawMessage.includes("HTTP Error 403") || rawMessage.includes("HTTP Error 429")) {
+      message = "YouTube blocked this download. Please download the video yourself and use the Upload option instead.";
     } else if (rawMessage.includes("Video unavailable") || rawMessage.includes("Private video")) {
       message = "This video is private or unavailable. Please check the URL and try again.";
     } else if (rawMessage.includes("Transcript too short")) {
@@ -363,8 +372,10 @@ ${formattedTranscript.slice(0, 30000)}`,
       message = "The video is too short to generate clips. Try a longer video (at least 1 minute).";
     } else if (rawMessage.includes("ENOENT") || rawMessage.includes("spawn")) {
       message = "A processing error occurred. Please try again or contact support.";
+    } else if (rawMessage.includes("urlopen error") || rawMessage.includes("timed out") || rawMessage.includes("Connection refused")) {
+      message = "Download failed due to a network issue. Please try uploading the video directly instead.";
     } else if (rawMessage.length > 200) {
-      message = "Something went wrong while processing your video. Please try a different video or contact support.";
+      message = "Something went wrong processing this video. Try uploading the video file directly instead.";
     }
 
     await admin.from("jobs").update({

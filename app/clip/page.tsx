@@ -23,7 +23,7 @@ import {
 import { createClient } from "@/utils/supabase/client";
 
 export default function ClipPage() {
-  const [tab, setTab] = useState<"url" | "upload">("url");
+  const [tab, setTab] = useState<"url" | "upload">("upload");
   const [url, setUrl] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -193,21 +193,11 @@ export default function ClipPage() {
           Create Viral Clips
         </h1>
         <p className="text-lg text-white/60 text-center mb-12">
-          Paste a YouTube URL or upload a video to get started.
+          Upload a video or paste a YouTube URL to get started.
         </p>
 
         {/* Tab toggle */}
         <div className="flex items-center justify-center gap-3 mb-8">
-          <button
-            onClick={() => setTab("url")}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold transition-all ${
-              tab === "url"
-                ? "bg-brand-500/15 text-white border border-brand-500/30"
-                : "text-white/50 hover:text-white border border-white/10 hover:border-white/20"
-            }`}
-          >
-            <Link2 className="w-5 h-5" /> Paste URL
-          </button>
           <button
             onClick={() => setTab("upload")}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold transition-all ${
@@ -218,31 +208,20 @@ export default function ClipPage() {
           >
             <Upload className="w-5 h-5" /> Upload Video
           </button>
+          <button
+            onClick={() => setTab("url")}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold transition-all ${
+              tab === "url"
+                ? "bg-brand-500/15 text-white border border-brand-500/30"
+                : "text-white/50 hover:text-white border border-white/10 hover:border-white/20"
+            }`}
+          >
+            <Link2 className="w-5 h-5" /> Paste URL
+          </button>
         </div>
 
         <form onSubmit={handleSubmit}>
-          {tab === "url" ? (
-            <div className="card p-8">
-              <label className="text-base text-white/70 mb-3 block font-medium">YouTube or Video URL</label>
-              <div className="flex gap-3">
-                <input
-                  type="url"
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  className="input-field flex-1 text-base !py-4"
-                  placeholder="https://youtube.com/watch?v=..."
-                />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="btn-primary flex items-center gap-2 whitespace-nowrap text-base !py-4 !px-8"
-                >
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
-                  {loading ? "Processing..." : "Clip It"}
-                </button>
-              </div>
-            </div>
-          ) : (
+          {tab === "upload" ? (
             <div
               className={`card p-10 text-center transition-all ${
                 dragOver ? "border-brand-500 bg-brand-500/10" : ""
@@ -300,6 +279,30 @@ export default function ClipPage() {
                 </div>
               )}
             </div>
+          ) : (
+            <div className="card p-8">
+              <label className="text-base text-white/70 mb-3 block font-medium">YouTube or Video URL</label>
+              <div className="flex gap-3">
+                <input
+                  type="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  className="input-field flex-1 text-base !py-4"
+                  placeholder="https://youtube.com/watch?v=..."
+                />
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn-primary flex items-center gap-2 whitespace-nowrap text-base !py-4 !px-8"
+                >
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
+                  {loading ? "Processing..." : "Clip It"}
+                </button>
+              </div>
+              <p className="text-sm text-white/30 mt-3">
+                YouTube downloads may occasionally fail due to platform restrictions. If so, download the video and upload it directly.
+              </p>
+            </div>
           )}
 
           {error && (
@@ -323,7 +326,7 @@ export default function ClipPage() {
         </div>
 
         <p className="mt-4 text-center text-sm text-white/25">
-          Supports YouTube, TikTok, and direct video URLs. Max 2 hours.
+          Supports MP4, MOV, WEBM uploads and YouTube URLs. Max 2 hours.
         </p>
       </div>
     </div>
