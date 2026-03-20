@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
       ytdlpArgs.push(job.source_url);
 
       try {
-        const { stdout, stderr } = await execFileAsync(ytdlpBin, ytdlpArgs, { timeout: 120000, maxBuffer: 10 * 1024 * 1024 });
+        const { stdout, stderr } = await execFileAsync(ytdlpBin, ytdlpArgs, { timeout: 240000, maxBuffer: 10 * 1024 * 1024 });
         console.log(`[yt-dlp] stdout: ${stdout.slice(-500)}`);
         if (stderr) console.log(`[yt-dlp] stderr: ${stderr.slice(-500)}`);
       } catch (dlErr: unknown) {
