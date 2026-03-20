@@ -307,12 +307,34 @@ ${formattedTranscript.slice(0, 30000)}`,
       });
     }
 
-    // ── STEP 6: Update job as completed ──
+    // ── STEP 6: Update job as completed + track usage ──
     await admin.from("jobs").update({
       status: "completed",
       clips: processedClips,
       completed_at: new Date().toISOString(),
     }).eq("id", job_id);
+
+    // Only count usage on SUCCESS — failed jobs don't consume quota
+    const { data: userPlan } = await admin
+      .from("user_plans")
+      .select("monthly_usage, usage_reset_at")
+      .eq("user_id", job.user_id)
+      .single();
+
+    const now = new Date();
+    const resetAt = userPlan?.usage_reset_at ? new Date(userPlan.usage_reset_at) : null;
+    const needsReset = !resetAt || now > resetAt;
+    const currentUsage = needsReset ? 0 : (userPlan?.monthly_usage || 0);
+    const nextReset = new Date(now);
+    nextReset.setMonth(nextReset.getMonth() + 1);
+    nextReset.setDate(1);
+    nextReset.setHours(0, 0, 0, 0);
+
+    await admin.from("user_plans").upsert({
+      user_id: job.user_id,
+      monthly_usage: currentUsage + 1,
+      usage_reset_at: needsReset ? nextReset.toISOString() : userPlan?.usage_reset_at,
+    });
 
     // Cleanup tmp files
     await cleanup(tmpDir);

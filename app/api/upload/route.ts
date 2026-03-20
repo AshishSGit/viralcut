@@ -96,18 +96,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Failed to create job" }, { status: 500 });
   }
 
-  // Update usage
-  const nextReset = new Date(now);
-  nextReset.setMonth(nextReset.getMonth() + 1);
-  nextReset.setDate(1);
-  nextReset.setHours(0, 0, 0, 0);
-
-  await admin.from("user_plans").upsert({
-    user_id: user.id,
-    plan: currentPlan,
-    monthly_usage: (needsReset ? 0 : usage) + 1,
-    usage_reset_at: needsReset ? nextReset.toISOString() : plan?.usage_reset_at,
-  });
+  // Usage is tracked in the worker AFTER successful completion
+  // This ensures failed jobs don't consume the user's quota
 
   // Fire worker (fire-and-forget) — use internal secret, never send service role key
   const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
