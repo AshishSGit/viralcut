@@ -98,11 +98,12 @@ function Hero() {
         </motion.div>
 
         <motion.h1
-          className="mt-8 font-display text-5xl sm:text-6xl md:text-[5.5rem] lg:text-[6.5rem] font-bold text-white leading-[1.05] tracking-tight"
+          className="mt-8 font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.1] tracking-tight"
           initial="hidden" animate="visible" variants={fadeUp} custom={1}
         >
           Your podcast,{" "}
-          <span className="bg-gradient-to-r from-brand-300 via-brand-400 to-brand-600 bg-clip-text text-transparent">
+          <br className="hidden sm:block" />
+          <span className="text-brand-400">
             clippified.
           </span>
         </motion.h1>
