@@ -342,8 +342,24 @@ ${formattedTranscript.slice(0, 30000)}`,
 
     return NextResponse.json({ success: true, clips: processedClips.length });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    console.error(`Job ${job_id} failed:`, message);
+    const rawMessage = err instanceof Error ? err.message : "Unknown error";
+    console.error(`Job ${job_id} failed:`, rawMessage);
+
+    // Show user-friendly error messages instead of raw command output
+    let message = rawMessage;
+    if (rawMessage.includes("Sign in to confirm") || rawMessage.includes("not a bot")) {
+      message = "This video requires YouTube sign-in and can't be processed. Please try a different video.";
+    } else if (rawMessage.includes("Video unavailable") || rawMessage.includes("Private video")) {
+      message = "This video is private or unavailable. Please check the URL and try again.";
+    } else if (rawMessage.includes("Transcript too short")) {
+      message = "This video doesn't contain enough speech to generate clips. Try a video with more talking.";
+    } else if (rawMessage.includes("No valid clips found")) {
+      message = "The video is too short to generate clips. Try a longer video (at least 1 minute).";
+    } else if (rawMessage.includes("ENOENT") || rawMessage.includes("spawn")) {
+      message = "A processing error occurred. Please try again or contact support.";
+    } else if (rawMessage.length > 200) {
+      message = "Something went wrong while processing your video. Please try a different video or contact support.";
+    }
 
     await admin.from("jobs").update({
       status: "failed",
