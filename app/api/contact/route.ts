@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
 
 export async function POST(request: NextRequest) {
   const { name, email, type, message } = await request.json();
@@ -7,38 +8,33 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "All fields are required" }, { status: 400 });
   }
 
-  // Send notification to support email via Supabase edge function or store in DB
-  // For now, store in a simple log and forward via fetch to a webhook
-  // This ensures the form works without opening the user's email client
-
   try {
-    // Option 1: Send via email forwarding service (using Supabase or webhook)
-    // For now we'll store contact submissions in the jobs-adjacent pattern
-    const { createAdminClient } = await import("@/utils/supabase/admin");
-    const admin = createAdminClient();
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
-    // Insert into a contacts table (we'll create it if needed, or just log)
-    console.log(`[CONTACT] From: ${name} <${email}> | Type: ${type} | Message: ${message}`);
-
-    // Try to send via n8n webhook if configured
-    const webhookUrl = process.env.N8N_WEBHOOK_URL;
-    if (webhookUrl) {
-      await fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          event: "contact_form",
-          name,
-          email,
-          type,
-          message,
-          timestamp: new Date().toISOString(),
-        }),
-      }).catch(() => {});
-    }
+    await resend.emails.send({
+      from: process.env.RESEND_FROM_EMAIL || "Clippified <onboarding@resend.dev>",
+      to: "ashishstav@gmail.com",
+      replyTo: email,
+      subject: `[Clippified ${type}] Contact from ${name}`,
+      html: `
+        <div style="font-family: -apple-system, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #f59e0b;">New Contact Form Submission</h2>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr><td style="padding: 8px 0; color: #666; width: 100px;">Name</td><td style="padding: 8px 0; font-weight: 600;">${name}</td></tr>
+            <tr><td style="padding: 8px 0; color: #666;">Email</td><td style="padding: 8px 0;"><a href="mailto:${email}">${email}</a></td></tr>
+            <tr><td style="padding: 8px 0; color: #666;">Type</td><td style="padding: 8px 0; text-transform: capitalize;">${type}</td></tr>
+          </table>
+          <div style="margin-top: 16px; padding: 16px; background: #f5f5f5; border-radius: 8px;">
+            <p style="margin: 0; white-space: pre-wrap;">${message}</p>
+          </div>
+          <p style="margin-top: 16px; color: #999; font-size: 12px;">Reply directly to this email to respond to ${name}.</p>
+        </div>
+      `,
+    });
 
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (err) {
+    console.error("[CONTACT] Failed to send:", err);
     return NextResponse.json({ error: "Failed to send message" }, { status: 500 });
   }
 }
