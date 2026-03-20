@@ -12,16 +12,20 @@ export default function ContactPage() {
     e.preventDefault();
     setLoading(true);
 
-    // Send via mailto fallback (no backend needed)
-    const subject = encodeURIComponent(`[${form.type}] Contact from ${form.name}`);
-    const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\nType: ${form.type}\n\n${form.message}`);
-    window.location.href = `mailto:support@clippified.com?subject=${subject}&body=${body}`;
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
-    // Show success state
-    setTimeout(() => {
-      setLoading(false);
+      if (!res.ok) throw new Error("Failed to send");
       setSent(true);
-    }, 1000);
+    } catch {
+      alert("Something went wrong. Please email us directly at support@clippified.com");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
