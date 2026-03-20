@@ -163,7 +163,7 @@ export default function ClipPage() {
                       {userPlan === "free" ? "Upgrade Plan" : "Manage Plan"}
                     </a>
                     <a
-                      href="mailto:support@clippified.com"
+                      href="/contact"
                       className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
                     >
                       <User className="w-4 h-4" />

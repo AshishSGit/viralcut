@@ -553,7 +553,7 @@ function Footer() {
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         <Logo size="sm" />
         <div className="flex items-center gap-6 text-sm text-white/25">
-          <a href="mailto:support@clippified.com" className="hover:text-white transition-colors">Support</a>
+          <a href="/contact" className="hover:text-white transition-colors">Contact</a>
           <a href="/terms" className="hover:text-white transition-colors">Terms</a>
           <a href="/privacy" className="hover:text-white transition-colors">Privacy</a>
           <span>&copy; {new Date().getFullYear()} Clippified</span>
