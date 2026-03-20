@@ -121,7 +121,7 @@ export default function DashboardPage() {
               </button>
 
               {menuOpen && (
-                <div className="absolute right-0 mt-2 w-64 card p-2 border border-white/10 shadow-2xl z-50">
+                <div className="absolute right-0 mt-2 w-64 p-2 border border-white/10 shadow-2xl z-[60] rounded-2xl" style={{ background: "#111318", backdropFilter: "blur(20px)" }}>
                   <div className="px-3 py-3 border-b border-white/5">
                     <p className="text-sm font-medium text-white truncate">{userEmail}</p>
                     <p className="text-xs text-white/30 mt-0.5 capitalize">{usage.plan} plan</p>
