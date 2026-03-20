@@ -79,12 +79,12 @@ export default function ContactPage() {
               <div className="w-11 h-11 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-400 mb-4">
                 <MessageSquare className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-white mb-1">Common Topics</h3>
+              <h3 className="text-base font-bold text-white mb-1">We Can Help With</h3>
               <ul className="text-sm space-y-2.5 mt-3">
-                <li><a href="/clip" className="flex items-center gap-2 text-white/70 hover:text-brand-400 transition-colors"><HelpCircle className="w-3.5 h-3.5 text-brand-400" /> How to use Clippified</a></li>
-                <li><a href="/pricing" className="flex items-center gap-2 text-white/70 hover:text-brand-400 transition-colors"><Sparkles className="w-3.5 h-3.5 text-brand-400" /> Pricing & plans</a></li>
-                <li><a href="/terms" className="flex items-center gap-2 text-white/70 hover:text-brand-400 transition-colors"><Mail className="w-3.5 h-3.5 text-brand-400" /> Terms & policies</a></li>
-                <li><a href="/privacy" className="flex items-center gap-2 text-white/70 hover:text-brand-400 transition-colors"><Bug className="w-3.5 h-3.5 text-brand-400" /> Privacy & security</a></li>
+                <li className="flex items-center gap-2 text-white/70"><HelpCircle className="w-3.5 h-3.5 text-brand-400" /> Getting started & how-to</li>
+                <li className="flex items-center gap-2 text-white/70"><Bug className="w-3.5 h-3.5 text-brand-400" /> Bug reports & troubleshooting</li>
+                <li className="flex items-center gap-2 text-white/70"><Sparkles className="w-3.5 h-3.5 text-brand-400" /> Feature requests & ideas</li>
+                <li className="flex items-center gap-2 text-white/70"><Mail className="w-3.5 h-3.5 text-brand-400" /> Billing, plans & refunds</li>
               </ul>
             </div>
           </div>
