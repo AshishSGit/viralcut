@@ -49,7 +49,7 @@ export default function ContactPage() {
           <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
             Get in Touch
           </h1>
-          <p className="text-lg text-white/50 max-w-xl mx-auto">
+          <p className="text-lg text-white/70 max-w-xl mx-auto">
             Have a question, found a bug, or want to request a feature? We typically respond within a few hours.
           </p>
         </div>
@@ -72,7 +72,7 @@ export default function ContactPage() {
                 <Clock className="w-5 h-5" />
               </div>
               <h3 className="text-base font-bold text-white mb-1">Response Time</h3>
-              <p className="text-sm text-white/50">We respond to most inquiries within 2-4 hours during business days.</p>
+              <p className="text-sm text-white/70">We respond to most inquiries within 2-4 hours during business days.</p>
             </div>
 
             <div className="card p-6">
@@ -80,11 +80,11 @@ export default function ContactPage() {
                 <MessageSquare className="w-5 h-5" />
               </div>
               <h3 className="text-base font-bold text-white mb-1">Common Topics</h3>
-              <ul className="text-sm text-white/50 space-y-1.5 mt-2">
-                <li className="flex items-center gap-2"><HelpCircle className="w-3.5 h-3.5 text-white/30" /> How to use Clippified</li>
-                <li className="flex items-center gap-2"><Bug className="w-3.5 h-3.5 text-white/30" /> Report a bug or issue</li>
-                <li className="flex items-center gap-2"><Sparkles className="w-3.5 h-3.5 text-white/30" /> Feature requests</li>
-                <li className="flex items-center gap-2"><Mail className="w-3.5 h-3.5 text-white/30" /> Billing & subscriptions</li>
+              <ul className="text-sm space-y-2.5 mt-3">
+                <li><a href="/clip" className="flex items-center gap-2 text-white/70 hover:text-brand-400 transition-colors"><HelpCircle className="w-3.5 h-3.5 text-brand-400" /> How to use Clippified</a></li>
+                <li><a href="/pricing" className="flex items-center gap-2 text-white/70 hover:text-brand-400 transition-colors"><Sparkles className="w-3.5 h-3.5 text-brand-400" /> Pricing & plans</a></li>
+                <li><a href="/terms" className="flex items-center gap-2 text-white/70 hover:text-brand-400 transition-colors"><Mail className="w-3.5 h-3.5 text-brand-400" /> Terms & policies</a></li>
+                <li><a href="/privacy" className="flex items-center gap-2 text-white/70 hover:text-brand-400 transition-colors"><Bug className="w-3.5 h-3.5 text-brand-400" /> Privacy & security</a></li>
               </ul>
             </div>
           </div>
@@ -105,7 +105,7 @@ export default function ContactPage() {
             ) : (
               <form onSubmit={handleSubmit} className="card p-8 space-y-5">
                 <div>
-                  <label className="text-sm text-white/60 mb-2 block font-medium">Your Name</label>
+                  <label className="text-sm text-white/80 mb-2 block font-medium">Your Name</label>
                   <input
                     type="text"
                     required
@@ -117,7 +117,7 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label className="text-sm text-white/60 mb-2 block font-medium">Email Address</label>
+                  <label className="text-sm text-white/80 mb-2 block font-medium">Email Address</label>
                   <input
                     type="email"
                     required
@@ -129,7 +129,7 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label className="text-sm text-white/60 mb-2 block font-medium">What can we help with?</label>
+                  <label className="text-sm text-white/80 mb-2 block font-medium">What can we help with?</label>
                   <div className="grid grid-cols-2 gap-2">
                     {[
                       { key: "general", label: "General Question", icon: HelpCircle },
@@ -155,7 +155,7 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label className="text-sm text-white/60 mb-2 block font-medium">Message</label>
+                  <label className="text-sm text-white/80 mb-2 block font-medium">Message</label>
                   <textarea
                     required
                     rows={5}
@@ -175,7 +175,7 @@ export default function ContactPage() {
                   {loading ? "Sending..." : "Send Message"}
                 </button>
 
-                <p className="text-xs text-white/20 text-center">
+                <p className="text-xs text-white/40 text-center">
                   We&apos;ll respond to your email within 2-4 hours.
                 </p>
               </form>
