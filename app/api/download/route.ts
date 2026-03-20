@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
 
   const key = request.nextUrl.searchParams.get("key");
   // Strict validation: only allow clips under this user's directory, no path traversal
-  if (!key || key.includes("..") || !key.match(new RegExp(`^clips/${user.id}/[a-zA-Z0-9_/-]+\\.mp4$`))) {
+  if (!key || key.includes("..") || !key.match(new RegExp(`^clips/${user.id}/[a-zA-Z0-9_.\\-/]+\\.mp4$`))) {
     return NextResponse.json({ error: "Invalid key" }, { status: 400 });
   }
 
