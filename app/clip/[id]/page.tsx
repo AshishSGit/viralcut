@@ -174,11 +174,13 @@ export default function JobResultPage() {
 
             {/* Progress bar */}
             <div className="mb-8">
-              <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+              <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden relative">
                 <div
-                  className="h-full bg-gradient-to-r from-brand-500 to-brand-400 rounded-full transition-all duration-1000 ease-out"
+                  className="h-full bg-gradient-to-r from-brand-500 to-brand-400 rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
                   style={{ width: `${progressPercent}%` }}
-                />
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+                </div>
               </div>
             </div>
 
