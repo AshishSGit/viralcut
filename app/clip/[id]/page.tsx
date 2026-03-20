@@ -15,7 +15,6 @@ import {
   Wifi,
   Search,
   Film,
-  DownloadCloud,
   Play,
   Volume2,
   VolumeX,
@@ -53,7 +52,6 @@ export default function JobResultPage() {
   const { id } = useParams();
   const [job, setJob] = useState<Job | null>(null);
   const [downloading, setDownloading] = useState<string | null>(null);
-  const [downloadingAll, setDownloadingAll] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<Record<string, string>>({});
   const [playingClip, setPlayingClip] = useState<string | null>(null);
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
@@ -111,28 +109,6 @@ export default function JobResultPage() {
     }
 
     setDownloading(null);
-  }
-
-  async function handleDownloadAll() {
-    if (!job?.clips) return;
-    setDownloadingAll(true);
-
-    for (let i = 0; i < job.clips.length; i++) {
-      const clip = job.clips[i];
-      if (clip.r2_key) {
-        try {
-          const res = await fetch(`/api/download?key=${encodeURIComponent(clip.r2_key)}`);
-          if (!res.ok) continue;
-          const { url } = await res.json();
-          window.open(url, "_blank");
-          await new Promise(r => setTimeout(r, 1500));
-        } catch (err) {
-          console.error(`Download clip ${i + 1} failed:`, err);
-        }
-      }
-    }
-
-    setDownloadingAll(false);
   }
 
   function handlePlay(r2Key: string) {
@@ -314,24 +290,6 @@ export default function JobResultPage() {
               </p>
             </div>
 
-            {/* Download All */}
-            {sortedClips.length > 1 && (
-              <div className="flex justify-center mb-10">
-                <button
-                  onClick={handleDownloadAll}
-                  disabled={downloadingAll}
-                  className="group flex items-center gap-2.5 text-sm font-semibold px-6 py-3 rounded-xl border border-brand-500/25 bg-brand-500/[0.06] text-brand-400 hover:bg-brand-500/[0.12] hover:border-brand-500/40 hover:text-brand-300 transition-all duration-300 hover:shadow-lg hover:shadow-brand-500/10"
-                >
-                  {downloadingAll ? (
-                    <Loader2 className="w-4.5 h-4.5 animate-spin" />
-                  ) : (
-                    <DownloadCloud className="w-4.5 h-4.5 group-hover:animate-bounce" />
-                  )}
-                  {downloadingAll ? "Downloading..." : `Download All ${sortedClips.length} Clips`}
-                </button>
-              </div>
-            )}
-
             {/* Clip grid — vertical phone-frame cards */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               {sortedClips.map((clip, i) => {
@@ -406,16 +364,14 @@ export default function JobResultPage() {
                       <button
                         onClick={() => handleDownload(clip)}
                         disabled={downloading === clip.r2_key}
-                        className="btn-download w-full flex items-center justify-center gap-1.5 text-xs relative z-10"
+                        className="group/dl w-full flex items-center justify-center gap-2 text-xs font-bold py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 text-dark-950 hover:from-brand-400 hover:to-brand-300 transition-all duration-300 hover:shadow-lg hover:shadow-brand-500/25 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none relative z-10"
                       >
-                        <span className="relative z-10 flex items-center gap-1.5">
-                          {downloading === clip.r2_key ? (
-                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          ) : (
-                            <Download className="w-3.5 h-3.5 download-icon" />
-                          )}
-                          {downloading === clip.r2_key ? "Saving..." : "Download MP4"}
-                        </span>
+                        {downloading === clip.r2_key ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <Download className="w-3.5 h-3.5 group-hover/dl:animate-bounce" />
+                        )}
+                        {downloading === clip.r2_key ? "Saving..." : "Download"}
                       </button>
                     </div>
                   </div>
