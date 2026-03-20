@@ -278,7 +278,7 @@ ${formattedTranscript.slice(0, 30000)}`,
           const phraseStart = phraseWords[0].start - clip.start_time;
           const phraseEnd = phraseWords[phraseWords.length - 1].end - clip.start_time;
           filterParts.push(
-            `drawtext=text='${phraseText}':fontsize=48:fontcolor=white:borderw=3:bordercolor=black:x=(w-text_w)/2:y=h*0.75:enable='between(t\\,${phraseStart.toFixed(2)}\\,${phraseEnd.toFixed(2)})'`
+            `drawtext=text='${phraseText}':fontsize=min(h/25\\,36):fontcolor=white:borderw=2:bordercolor=black:x=(w-text_w)/2:y=h*0.80:enable='between(t\\,${phraseStart.toFixed(2)}\\,${phraseEnd.toFixed(2)})'`
           );
         }
         if (needsWatermark) {
