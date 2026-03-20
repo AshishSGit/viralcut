@@ -145,56 +145,33 @@ function Hero() {
           </span>
         </motion.div>
 
-        {/* App demo mockup */}
+        {/* How it works - visual steps */}
         <motion.div
-          className="mt-20 relative max-w-3xl mx-auto"
+          className="mt-20 max-w-3xl mx-auto"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7, duration: 0.8 }}
         >
-          <div className="card p-6 md:p-8">
-            {/* URL bar */}
-            <div className="flex items-center gap-3 mb-6">
-              <div className="flex items-center gap-2 flex-1 input-field !py-3">
-                <Link2 className="w-4 h-4 text-white/30" />
-                <span className="text-white/30 text-sm">https://youtube.com/watch?v=podcast-ep-42...</span>
+          <div className="grid grid-cols-3 gap-4 md:gap-6">
+            {[
+              { step: "1", label: "Paste a link", icon: Link2, desc: "Any YouTube or TikTok URL" },
+              { step: "2", label: "We find the gold", icon: Sparkles, desc: "Hooks, hot takes & emotional peaks" },
+              { step: "3", label: "Download & post", icon: TrendingUp, desc: "9:16 clips with captions, ready to go" },
+            ].map((s, i) => (
+              <div key={i} className="text-center">
+                <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-brand-500/10 border border-brand-500/15 flex items-center justify-center mx-auto mb-4">
+                  <s.icon className="w-6 h-6 md:w-7 md:h-7 text-brand-400" />
+                </div>
+                <p className="text-sm font-bold text-white mb-1">{s.label}</p>
+                <p className="text-xs text-white/35">{s.desc}</p>
               </div>
-              <button className="btn-primary !py-3 !px-6 flex items-center gap-2 text-sm">
-                <Zap className="w-4 h-4" /> Clip It
-              </button>
-            </div>
-
-            {/* Results */}
-            <div className="bg-dark-800/50 rounded-xl p-4 border border-white/5">
-              <div className="flex items-center gap-2 mb-4">
-                <CheckCircle className="w-4 h-4 text-neon-400" />
-                <span className="text-sm text-neon-400 font-semibold">5 clips ready to download</span>
-                <span className="text-xs text-white/25 ml-auto">Processed in 1:47</span>
-              </div>
-              <div className="space-y-2">
-                {[
-                  { title: "Why most creators fail in the first year", score: "9.2", duration: "47s", hot: true },
-                  { title: "The truth about growing on social media", score: "8.7", duration: "38s", hot: false },
-                  { title: "The moment everything changed for me", score: "8.4", duration: "52s", hot: false },
-                ].map((clip, i) => (
-                  <div key={i} className={`flex items-center gap-3 rounded-lg px-4 py-3 ${i === 0 ? "bg-brand-500/[0.06] border border-brand-500/10" : "bg-dark-900/60"}`}>
-                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${i === 0 ? "bg-brand-500/20" : "bg-white/[0.04]"}`}>
-                      <Play className={`w-4 h-4 ${i === 0 ? "text-brand-400" : "text-white/30"}`} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm text-white font-medium truncate">{clip.title}</p>
-                      <p className="text-xs text-white/25">{clip.duration} clip · 9:16 vertical</p>
-                    </div>
-                    <span className={`text-xs font-bold ${clip.hot ? "text-brand-400" : "text-white/40"}`}>{clip.score}/10</span>
-                    <button className={`text-xs px-3 py-1.5 rounded-lg font-semibold ${i === 0 ? "bg-brand-500 text-dark-950" : "bg-white/[0.05] text-white/50"}`}>
-                      Download
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
-          <div className="absolute -inset-4 bg-gradient-to-r from-brand-600/8 via-brand-500/4 to-brand-600/8 rounded-2xl blur-3xl -z-10" />
+          <div className="flex items-center justify-center mt-8">
+            <a href="/signin" className="btn-ghost text-sm flex items-center gap-2">
+              Try it free — takes 30 seconds
+            </a>
+          </div>
         </motion.div>
       </div>
     </section>
