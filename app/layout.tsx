@@ -6,37 +6,37 @@ const BASE_URL = process.env.NEXT_PUBLIC_URL || "https://clippified.com";
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "Clippified — Turn Podcasts Into Viral Clips",
+    default: "Clippified — Turn Videos Into Viral Clips",
     template: "%s | Clippified",
   },
   description:
-    "Paste a YouTube link. Clippified finds your most shareable moments, crops to 9:16, adds captions, and exports clips for TikTok, Reels & Shorts. Free to start.",
+    "Paste any YouTube link. Clippified finds the most shareable moments, crops to 9:16, adds captions, and exports clips for TikTok, Reels & Shorts. Free to start.",
   keywords: [
+    "video clip generator",
     "podcast clip generator",
-    "AI video clipper",
-    "podcast to shorts",
+    "youtube to tiktok",
     "viral clip finder",
     "auto captions",
-    "podcast repurposing",
-    "talking head video clipper",
+    "video repurposing tool",
     "tiktok clip maker",
     "reels generator",
     "youtube shorts maker",
+    "video to shorts",
     "clippified",
   ],
   openGraph: {
-    title: "Clippified — Turn Podcasts Into Viral Clips",
+    title: "Clippified — Turn Videos Into Viral Clips",
     description:
-      "Paste a YouTube link. Clippified finds your most shareable moments, crops to 9:16, adds captions, exports for TikTok/Reels/Shorts.",
+      "Paste a YouTube link. Clippified finds the most shareable moments, crops to 9:16, adds captions, exports for TikTok/Reels/Shorts.",
     type: "website",
     url: BASE_URL,
     siteName: "Clippified",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Clippified — Turn Podcasts Into Viral Clips",
+    title: "Clippified — Turn Videos Into Viral Clips",
     description:
-      "Paste a YouTube link. Clippified finds your most shareable moments, crops to 9:16, adds captions, exports for TikTok/Reels/Shorts.",
+      "Paste a YouTube link. Clippified finds the most shareable moments, crops to 9:16, adds captions, exports for TikTok/Reels/Shorts.",
   },
 };
 

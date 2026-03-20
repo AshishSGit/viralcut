@@ -242,7 +242,7 @@ function HowItWorks() {
     {
       icon: <Upload className="w-7 h-7" />,
       title: "Paste a Link",
-      desc: "Drop an MP4 or paste a YouTube/TikTok URL. Supports videos up to 2 hours long.",
+      desc: "Paste any YouTube or TikTok URL, or upload an MP4. Supports videos up to 2 hours.",
     },
     {
       icon: <Sparkles className="w-7 h-7" />,
@@ -316,7 +316,7 @@ function Features() {
     {
       icon: <Clock className="w-6 h-6" />,
       title: "2-Minute Processing",
-      desc: "A full 60-minute podcast processed in about 2 minutes. No waiting around.",
+      desc: "A 60-minute video processed in about 2 minutes. No waiting around.",
     },
     {
       icon: <Link2 className="w-6 h-6" />,
@@ -474,11 +474,11 @@ function FAQ() {
   const faqs = [
     {
       q: "What types of videos work best?",
-      a: "Clippified works best with podcasts, interviews, talking-head videos, and any content with speech. It analyzes the transcript to find hooks, hot takes, stories, and emotional moments.",
+      a: "Clippified works with podcasts, interviews, vlogs, webinars, lectures, and any video with speech. It analyzes the transcript to find hooks, hot takes, stories, and emotional moments.",
     },
     {
       q: "How long does processing take?",
-      a: "A 60-minute podcast typically takes 2-4 minutes. You'll see real-time progress as your video is transcribed, analyzed, and clipped.",
+      a: "A 60-minute video typically takes 2-4 minutes. You'll see real-time progress as your video is transcribed, analyzed, and clipped.",
     },
     {
       q: "What format are the clips?",
