@@ -111,8 +111,16 @@ export default function JobResultPage() {
 
   const currentStageIdx = STATUS_STAGES.findIndex((s) => s.key === job?.status);
 
+  const progressPercent = Math.max(0, Math.min(100, ((currentStageIdx >= 0 ? currentStageIdx : 0) / (STATUS_STAGES.length - 1)) * 100));
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
+      {/* Background ambient glow */}
+      <div className="fixed inset-0 pointer-events-none" aria-hidden>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-brand-500/[0.07] blur-[120px]" />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[300px] rounded-full bg-brand-600/[0.04] blur-[100px]" />
+      </div>
+
       <nav className="glass fixed top-0 w-full z-50">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-4">
           <a href="/" className="flex items-center gap-2">
@@ -121,40 +129,60 @@ export default function JobResultPage() {
               Clippi<span className="text-brand-400">fied</span>
             </span>
           </a>
-          <div className="flex items-center gap-4">
-            <a href="/dashboard" className="text-sm text-white/50 hover:text-white transition-colors">
+          <div className="flex items-center gap-3">
+            <a href="/dashboard" className="text-sm text-white/70 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5">
               Dashboard
             </a>
-            <a href="/clip" className="text-sm text-white/50 hover:text-white transition-colors flex items-center gap-1">
-              <ArrowLeft className="w-4 h-4" /> New Clip
+            <a href="/clip" className="text-sm font-medium text-dark-950 bg-brand-500 hover:bg-brand-400 transition-all px-4 py-1.5 rounded-lg flex items-center gap-1.5">
+              <Scissors className="w-3.5 h-3.5" /> New Clip
             </a>
           </div>
         </div>
       </nav>
 
-      <div className="pt-28 pb-20 px-6 max-w-4xl mx-auto">
+      <div className="relative pt-28 pb-20 px-6 max-w-4xl mx-auto">
         {!job ? (
           <div className="text-center py-20">
             <Loader2 className="w-8 h-8 text-brand-500 animate-spin mx-auto mb-4" />
             <p className="text-white/40">Loading job...</p>
           </div>
         ) : job.status === "failed" ? (
-          <div className="card p-10 text-center max-w-lg mx-auto">
-            <XCircle className="w-14 h-14 text-hot-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-3">Processing Failed</h2>
-            <p className="text-white/50 mb-8 text-base">{job.error || "An unknown error occurred."}</p>
-            <a href="/clip" className="btn-primary inline-flex items-center gap-2">
-              <ArrowLeft className="w-4 h-4" /> Try Again
-            </a>
+          <div className="card p-10 text-center max-w-lg mx-auto border-hot-500/15">
+            <div className="w-16 h-16 rounded-2xl bg-hot-500/10 flex items-center justify-center mx-auto mb-5">
+              <XCircle className="w-8 h-8 text-hot-500" />
+            </div>
+            <h2 className="font-display text-2xl font-bold text-white mb-3">Processing Failed</h2>
+            <p className="text-white/50 mb-8 text-base leading-relaxed">{job.error || "An unknown error occurred."}</p>
+            <div className="flex items-center justify-center gap-3">
+              <a href="/clip" className="btn-primary inline-flex items-center gap-2">
+                <ArrowLeft className="w-4 h-4" /> Try Again
+              </a>
+            </div>
           </div>
         ) : job.status !== "completed" ? (
           /* Processing progress */
-          <div className="card p-10 max-w-lg mx-auto">
-            <h2 className="font-display text-2xl font-bold text-white text-center mb-10">
-              Processing Your Video
-            </h2>
+          <div className="max-w-lg mx-auto">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 rounded-2xl bg-brand-500/10 flex items-center justify-center mx-auto mb-5 animate-pulse-glow">
+                <Scissors className="w-8 h-8 text-brand-400" />
+              </div>
+              <h2 className="font-display text-3xl font-bold text-white mb-2">
+                Processing Your Video
+              </h2>
+              <p className="text-white/40 text-sm">Sit tight — the magic is happening</p>
+            </div>
 
-            <div className="space-y-3">
+            {/* Progress bar */}
+            <div className="mb-8">
+              <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-brand-500 to-brand-400 rounded-full transition-all duration-1000 ease-out"
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="card p-6 space-y-1">
               {STATUS_STAGES.map((stage, i) => {
                 const isActive = stage.key === job.status;
                 const isComplete = i < currentStageIdx;
@@ -163,27 +191,27 @@ export default function JobResultPage() {
                 return (
                   <div
                     key={stage.key}
-                    className={`flex items-center gap-4 p-4 rounded-xl transition-all ${
+                    className={`flex items-center gap-4 p-3.5 rounded-xl transition-all ${
                       isActive
-                        ? "bg-brand-500/8 border border-brand-500/20"
+                        ? "bg-brand-500/[0.08] border border-brand-500/20"
                         : ""
                     }`}
                   >
                     <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                      className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
                         isComplete
                           ? "bg-neon-500/15 text-neon-400"
                           : isActive
                           ? "bg-brand-500/15 text-brand-400"
-                          : "bg-white/[0.03] text-white/20"
+                          : "bg-white/[0.03] text-white/15"
                       }`}
                     >
                       {isActive ? (
-                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <Loader2 className="w-4.5 h-4.5 animate-spin" />
                       ) : isComplete ? (
-                        <CheckCircle2 className="w-5 h-5" />
+                        <CheckCircle2 className="w-4.5 h-4.5" />
                       ) : (
-                        <Icon className="w-5 h-5" />
+                        <Icon className="w-4.5 h-4.5" />
                       )}
                     </div>
                     <span
@@ -197,13 +225,16 @@ export default function JobResultPage() {
                     >
                       {stage.label}
                     </span>
+                    {isComplete && (
+                      <span className="ml-auto text-xs text-neon-400/50 font-medium">Done</span>
+                    )}
                   </div>
                 );
               })}
             </div>
 
-            <p className="mt-10 text-center text-sm text-white/25">
-              This usually takes 2-4 minutes for a 60-minute video.
+            <p className="mt-6 text-center text-sm text-white/25">
+              Usually takes 2-4 minutes for a 60-minute video.
             </p>
           </div>
         ) : (
