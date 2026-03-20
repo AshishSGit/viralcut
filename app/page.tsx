@@ -20,12 +20,14 @@ import {
 } from "lucide-react";
 
 /* ── Animation variants ── */
+const smoothEase = "easeOut" as const;
+
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.12, duration: 0.7, ease: [0.25, 0.4, 0.25, 1] },
+    transition: { delay: i * 0.12, duration: 0.7, ease: smoothEase },
   }),
 };
 
@@ -34,7 +36,7 @@ const scaleIn = {
   visible: (i: number) => ({
     opacity: 1,
     scale: 1,
-    transition: { delay: i * 0.1, duration: 0.6, ease: [0.25, 0.4, 0.25, 1] },
+    transition: { delay: i * 0.1, duration: 0.6, ease: smoothEase },
   }),
 };
 
@@ -45,7 +47,7 @@ const staggerContainer = {
 
 const staggerItem = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.4, 0.25, 1] } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: smoothEase } },
 };
 
 /* ── Logo ── */
