@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Scissors,
-  Clock,
   CheckCircle2,
   XCircle,
   Loader2,
@@ -12,6 +11,10 @@ import {
   LogOut,
   Sparkles,
   Plus,
+  ChevronDown,
+  LayoutDashboard,
+  User,
+  Film,
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
@@ -30,6 +33,9 @@ export default function DashboardPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [usage, setUsage] = useState({ plan: "free", usage: 0, limit: 1 });
+  const [userEmail, setUserEmail] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
   const router = useRouter();
 
@@ -40,8 +46,8 @@ export default function DashboardPage() {
         router.push("/signin");
         return;
       }
+      setUserEmail(user.email || "");
 
-      // Get jobs
       const { data } = await supabase
         .from("jobs")
         .select("id, status, source_type, source_url, duration_seconds, clips, error, created_at")
@@ -51,7 +57,6 @@ export default function DashboardPage() {
 
       setJobs(data || []);
 
-      // Get usage
       const res = await fetch("/api/pro-status");
       if (res.ok) setUsage(await res.json());
 
@@ -60,21 +65,33 @@ export default function DashboardPage() {
     load();
   }, [supabase, router]);
 
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
   async function handleSignOut() {
     await supabase.auth.signOut();
     router.push("/");
   }
 
-  const statusIcon = (status: string) => {
-    switch (status) {
-      case "completed":
-        return <CheckCircle2 className="w-5 h-5 text-neon-400" />;
-      case "failed":
-        return <XCircle className="w-5 h-5 text-hot-400" />;
-      default:
-        return <Loader2 className="w-5 h-5 text-brand-400 animate-spin" />;
+  const initials = userEmail ? userEmail[0].toUpperCase() : "U";
+
+  function extractVideoTitle(url: string | null) {
+    if (!url) return "Uploaded video";
+    try {
+      const u = new URL(url);
+      const id = u.searchParams.get("v") || u.pathname.split("/").pop() || "";
+      return `YouTube · ${id.slice(0, 11)}`;
+    } catch {
+      return "Video";
     }
-  };
+  }
 
   return (
     <div className="min-h-screen">
@@ -86,40 +103,81 @@ export default function DashboardPage() {
               Clippi<span className="text-brand-400">fied</span>
             </span>
           </a>
-          <div className="flex items-center gap-4">
-            <a href="/clip" className="text-sm text-brand-400 hover:text-brand-300 flex items-center gap-1">
+          <div className="flex items-center gap-3">
+            <a href="/clip" className="btn-primary text-sm !py-2 !px-4 flex items-center gap-1.5">
               <Plus className="w-4 h-4" /> New Clip
             </a>
-            <a href="/pricing" className="text-sm text-white/50 hover:text-white flex items-center gap-1">
-              <Sparkles className="w-4 h-4" /> Upgrade
-            </a>
-            <button onClick={handleSignOut} className="text-sm text-white/30 hover:text-white">
-              <LogOut className="w-4 h-4" />
-            </button>
+
+            {/* User menu */}
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl border border-white/10 hover:border-white/20 transition-all"
+              >
+                <div className="w-7 h-7 rounded-lg bg-brand-500/20 flex items-center justify-center text-brand-400 text-xs font-bold">
+                  {initials}
+                </div>
+                <ChevronDown className={`w-3.5 h-3.5 text-white/40 transition-transform ${menuOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {menuOpen && (
+                <div className="absolute right-0 mt-2 w-64 card p-2 border border-white/10 shadow-2xl z-50">
+                  <div className="px-3 py-3 border-b border-white/5">
+                    <p className="text-sm font-medium text-white truncate">{userEmail}</p>
+                    <p className="text-xs text-white/30 mt-0.5 capitalize">{usage.plan} plan</p>
+                  </div>
+                  <div className="py-1">
+                    <a href="/clip" className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+                      <Plus className="w-4 h-4" /> New Clip
+                    </a>
+                    <a href="/pricing" className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+                      <Sparkles className="w-4 h-4" /> {usage.plan === "free" ? "Upgrade Plan" : "Manage Plan"}
+                    </a>
+                    <a href="/contact" className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+                      <User className="w-4 h-4" /> Contact Support
+                    </a>
+                  </div>
+                  <div className="border-t border-white/5 pt-1">
+                    <button onClick={handleSignOut} className="flex items-center gap-3 px-3 py-2.5 text-sm text-hot-400 hover:bg-hot-500/10 rounded-lg transition-colors w-full text-left">
+                      <LogOut className="w-4 h-4" /> Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </nav>
 
       <div className="pt-28 pb-20 px-6 max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4">
           <div>
-            <h1 className="font-display text-2xl md:text-3xl font-bold text-white">Dashboard</h1>
-            <p className="text-white/50 text-sm mt-1">Your clip history</p>
+            <h1 className="font-display text-3xl md:text-4xl font-bold text-white">Dashboard</h1>
+            <p className="text-white/40 mt-1">Your clip history</p>
           </div>
 
           {/* Usage card */}
-          <div className="card px-5 py-3 flex items-center gap-4">
+          <div className="card px-6 py-4 flex items-center gap-5">
             <div>
-              <p className="text-xs text-white/30 uppercase tracking-wider">Plan</p>
-              <p className="text-sm font-semibold text-white capitalize">{usage.plan}</p>
+              <p className="text-[11px] text-white/30 uppercase tracking-wider font-semibold">Plan</p>
+              <p className="text-sm font-bold text-white capitalize mt-0.5">{usage.plan}</p>
             </div>
-            <div className="w-px h-8 bg-dark-600" />
+            <div className="w-px h-10 bg-white/5" />
             <div>
-              <p className="text-xs text-white/30 uppercase tracking-wider">Usage</p>
-              <p className="text-sm font-semibold text-white">
-                {usage.usage}/{usage.limit === 999999 ? "∞" : usage.limit}
+              <p className="text-[11px] text-white/30 uppercase tracking-wider font-semibold">Usage</p>
+              <p className="text-sm font-bold text-white mt-0.5">
+                {usage.usage}/{usage.limit === 999999 ? "\u221E" : usage.limit}
               </p>
             </div>
+            {usage.plan === "free" && (
+              <>
+                <div className="w-px h-10 bg-white/5" />
+                <a href="/pricing" className="text-xs text-brand-400 hover:text-brand-300 font-semibold">
+                  Upgrade
+                </a>
+              </>
+            )}
           </div>
         </div>
 
@@ -128,10 +186,10 @@ export default function DashboardPage() {
             <Loader2 className="w-8 h-8 text-brand-500 animate-spin mx-auto" />
           </div>
         ) : jobs.length === 0 ? (
-          <div className="card p-12 text-center">
-            <Scissors className="w-12 h-12 text-white/15 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-2">No clips yet</h3>
-            <p className="text-white/50 mb-6">Create your first viral clip from a podcast or video.</p>
+          <div className="card p-14 text-center">
+            <Film className="w-14 h-14 text-white/10 mx-auto mb-5" />
+            <h3 className="text-xl font-bold text-white mb-2">No clips yet</h3>
+            <p className="text-white/40 mb-8">Create your first viral clip from a video.</p>
             <a href="/clip" className="btn-primary inline-flex items-center gap-2">
               <Plus className="w-4 h-4" /> Create First Clip
             </a>
@@ -142,20 +200,61 @@ export default function DashboardPage() {
               <a
                 key={job.id}
                 href={`/clip/${job.id}`}
-                className="card p-5 flex items-center gap-4 hover:border-brand-500/30 transition-all block"
+                className="card p-5 flex items-center gap-4 hover:border-brand-500/20 transition-all block group"
               >
-                {statusIcon(job.status)}
+                {/* Status icon */}
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                  job.status === "completed"
+                    ? "bg-neon-500/10 text-neon-400"
+                    : job.status === "failed"
+                    ? "bg-hot-500/10 text-hot-400"
+                    : "bg-brand-500/10 text-brand-400"
+                }`}>
+                  {job.status === "completed" ? (
+                    <CheckCircle2 className="w-5 h-5" />
+                  ) : job.status === "failed" ? (
+                    <XCircle className="w-5 h-5" />
+                  ) : (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  )}
+                </div>
+
+                {/* Content */}
                 <div className="flex-1 min-w-0">
                   <p className="text-white font-medium text-sm truncate">
-                    {job.source_url || "Uploaded video"}
+                    {extractVideoTitle(job.source_url)}
                   </p>
-                  <p className="text-xs text-white/30 mt-0.5">
-                    {new Date(job.created_at).toLocaleDateString()} ·{" "}
-                    {job.duration_seconds ? `${Math.round(job.duration_seconds / 60)} min` : "—"} ·{" "}
-                    {job.clips ? `${job.clips.length} clips` : job.status}
-                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-xs text-white/25">
+                      {new Date(job.created_at).toLocaleDateString()}
+                    </span>
+                    {job.duration_seconds && (
+                      <>
+                        <span className="text-xs text-white/15">·</span>
+                        <span className="text-xs text-white/25">
+                          {Math.round(job.duration_seconds / 60)} min
+                        </span>
+                      </>
+                    )}
+                    {job.clips && (
+                      <>
+                        <span className="text-xs text-white/15">·</span>
+                        <span className="text-xs text-neon-400 font-medium">
+                          {job.clips.length} clips
+                        </span>
+                      </>
+                    )}
+                    {job.status === "failed" && (
+                      <>
+                        <span className="text-xs text-white/15">·</span>
+                        <span className="text-xs text-hot-400">Failed</span>
+                      </>
+                    )}
+                  </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-white/15" />
+
+                {/* Arrow */}
+                <ArrowRight className="w-4 h-4 text-white/10 group-hover:text-white/30 transition-colors flex-shrink-0" />
               </a>
             ))}
           </div>
