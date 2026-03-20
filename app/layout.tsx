@@ -23,7 +23,20 @@ export const metadata: Metadata = {
     "youtube shorts maker",
     "video to shorts",
     "clippified",
+    "how to turn podcast into tiktok clips",
+    "podcast to shorts",
+    "repurpose podcast content",
+    "auto captions for video clips",
+    "podcast repurposing tool",
+    "ai video clipper",
+    "podcast to reels",
+    "turn youtube video into shorts",
+    "best podcast clip generator 2026",
+    "opus clip alternative",
   ],
+  alternates: {
+    canonical: "https://clippified.com",
+  },
   openGraph: {
     title: "Clippified — Turn Videos Into Viral Clips",
     description:
