@@ -41,9 +41,104 @@ function Logo({ size = "md" }: { size?: "sm" | "md" }) {
   );
 }
 
+const FAQ_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What types of videos work best with Clippified?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Clippified works with podcasts, interviews, vlogs, webinars, lectures, and any video with speech. It analyzes the transcript to find hooks, hot takes, stories, and emotional moments.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How long does processing take?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A 60-minute video typically takes 2-4 minutes. You'll see real-time progress as your video is transcribed, analyzed, and clipped.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What format are the clips?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "MP4 in 9:16 vertical format (1080x1920), optimized for TikTok, Instagram Reels, and YouTube Shorts. Captions are burned directly into the video.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How much does Clippified cost?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Clippified has a free plan (1 video/month), Pro at $19/month (10 videos), and Unlimited at $49/month. No credit card required to start.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is my content secure?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Your videos are processed on secure servers and automatically deleted after 24 hours. We never share your content.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can I cancel anytime?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Cancel your subscription at any time — you keep access until the end of your billing period. No questions asked.",
+      },
+    },
+  ],
+};
+
+const WEBSITE_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Clippified",
+  url: "https://clippified.com",
+  description: "Turn podcasts and YouTube videos into viral TikTok, Reels, and Shorts clips with AI-powered editing, auto-captions, and 9:16 cropping.",
+  applicationCategory: "MultimediaApplication",
+  operatingSystem: "Web",
+  offers: [
+    {
+      "@type": "Offer",
+      name: "Free",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    {
+      "@type": "Offer",
+      name: "Pro",
+      price: "19",
+      priceCurrency: "USD",
+      billingIncrement: "P1M",
+    },
+    {
+      "@type": "Offer",
+      name: "Unlimited",
+      price: "49",
+      priceCurrency: "USD",
+      billingIncrement: "P1M",
+    },
+  ],
+};
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen relative">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_SCHEMA) }}
+      />
       <Nav />
       <Hero />
       <div className="section-glow max-w-5xl mx-auto" />
@@ -147,28 +242,31 @@ function Hero() {
 
         {/* How it works - visual steps */}
         <motion.div
-          className="mt-20 max-w-3xl mx-auto"
+          className="mt-24 max-w-4xl mx-auto"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7, duration: 0.8 }}
         >
-          <div className="grid grid-cols-3 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {[
-              { step: "1", label: "Paste a link", icon: Link2, desc: "Any YouTube or TikTok URL" },
-              { step: "2", label: "We find the gold", icon: Sparkles, desc: "Hooks, hot takes & emotional peaks" },
-              { step: "3", label: "Download & post", icon: TrendingUp, desc: "9:16 clips with captions, ready to go" },
+              { step: "1", label: "Paste a link", icon: Link2, desc: "Any YouTube or TikTok URL — no downloads, no conversions, just paste and go." },
+              { step: "2", label: "We find the gold", icon: Sparkles, desc: "AI analyzes every word to find hooks, hot takes, and emotional peaks worth sharing." },
+              { step: "3", label: "Download & post", icon: TrendingUp, desc: "9:16 vertical clips with burned-in captions. Ready for TikTok, Reels, and Shorts." },
             ].map((s, i) => (
-              <div key={i} className="text-center">
-                <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-brand-500/10 border border-brand-500/15 flex items-center justify-center mx-auto mb-4">
-                  <s.icon className="w-6 h-6 md:w-7 md:h-7 text-brand-400" />
+              <div key={i} className="relative card p-8 text-center group hover:border-brand-500/25 transition-all">
+                <div className="absolute -top-px left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-500/40 to-transparent" />
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center mx-auto mb-6 group-hover:bg-brand-500/15 transition-colors">
+                  <s.icon className="w-7 h-7 md:w-9 md:h-9 text-brand-400" />
                 </div>
-                <p className="text-sm font-bold text-white mb-1">{s.label}</p>
-                <p className="text-xs text-white/35">{s.desc}</p>
+                <div className="text-[11px] text-brand-500 font-bold mb-2 tracking-widest uppercase">Step {s.step}</div>
+                <h3 className="text-lg md:text-xl font-bold text-white mb-3">{s.label}</h3>
+                <p className="text-sm md:text-base text-white/60 leading-relaxed">{s.desc}</p>
               </div>
             ))}
           </div>
-          <div className="flex items-center justify-center mt-8">
-            <a href="/signin" className="btn-ghost text-sm flex items-center gap-2">
+          <div className="flex items-center justify-center mt-10">
+            <a href="/signin" className="btn-primary text-base flex items-center gap-2 !py-4 !px-8">
+              <Zap className="w-5 h-5" />
               Try it free — takes 30 seconds
             </a>
           </div>
@@ -187,25 +285,25 @@ function SocialProof() {
         <p className="text-center text-xs text-white/25 uppercase tracking-widest font-medium mb-8">
           Create clips for
         </p>
-        <div className="flex items-center justify-center gap-8 md:gap-14 mb-16 text-white/20">
-          <span className="font-display font-bold text-lg md:text-xl">TikTok</span>
-          <span className="font-display font-bold text-lg md:text-xl">Reels</span>
-          <span className="font-display font-bold text-lg md:text-xl">Shorts</span>
+        <div className="flex items-center justify-center gap-8 md:gap-14 mb-16 text-white/30">
+          <span className="font-display font-bold text-xl md:text-2xl">TikTok</span>
+          <span className="font-display font-bold text-xl md:text-2xl">Reels</span>
+          <span className="font-display font-bold text-xl md:text-2xl">Shorts</span>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-8 text-center">
           <div>
-            <p className="font-display text-4xl md:text-5xl font-bold text-white">3-5</p>
-            <p className="text-sm text-white/35 mt-2">Clips per video</p>
+            <p className="font-display text-5xl md:text-6xl font-bold text-white">3-5</p>
+            <p className="text-sm md:text-base text-white/50 mt-2">Clips per video</p>
           </div>
           <div>
-            <p className="font-display text-4xl md:text-5xl font-bold text-white">~2<span className="text-xl text-white/40">min</span></p>
-            <p className="text-sm text-white/35 mt-2">Processing time</p>
+            <p className="font-display text-5xl md:text-6xl font-bold text-white">~2<span className="text-2xl text-white/50">min</span></p>
+            <p className="text-sm md:text-base text-white/50 mt-2">Processing time</p>
           </div>
           <div>
-            <p className="font-display text-4xl md:text-5xl font-bold text-white">9:16</p>
-            <p className="text-sm text-white/35 mt-2">Vertical + captions</p>
+            <p className="font-display text-5xl md:text-6xl font-bold text-white">9:16</p>
+            <p className="text-sm md:text-base text-white/50 mt-2">Vertical + captions</p>
           </div>
         </div>
       </div>
@@ -255,15 +353,15 @@ function HowItWorks() {
         <div className="grid md:grid-cols-4 gap-6">
           {steps.map((step, i) => (
             <motion.div
-              key={i} className="card p-7 text-center"
+              key={i} className="card p-8 text-center hover:border-brand-500/20 transition-all"
               initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={i + 1}
             >
-              <div className="w-14 h-14 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-400 mx-auto mb-5">
+              <div className="w-16 h-16 rounded-xl bg-brand-500/10 border border-brand-500/15 flex items-center justify-center text-brand-400 mx-auto mb-6">
                 {step.icon}
               </div>
               <div className="text-[11px] text-brand-500 font-bold mb-3 tracking-wider">STEP {i + 1}</div>
-              <h3 className="text-lg font-bold text-white mb-3">{step.title}</h3>
-              <p className="text-sm text-white/40 leading-relaxed">{step.desc}</p>
+              <h3 className="text-lg md:text-xl font-bold text-white mb-3">{step.title}</h3>
+              <p className="text-sm md:text-base text-white/55 leading-relaxed">{step.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -324,14 +422,14 @@ function Features() {
         <div className="grid md:grid-cols-3 gap-6">
           {features.map((f, i) => (
             <motion.div
-              key={i} className="card p-7"
+              key={i} className="card p-8 hover:border-brand-500/20 transition-all"
               initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={i + 1}
             >
-              <div className="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-400 mb-5">
+              <div className="w-14 h-14 rounded-xl bg-brand-500/10 border border-brand-500/15 flex items-center justify-center text-brand-400 mb-6">
                 {f.icon}
               </div>
-              <h3 className="text-lg font-bold text-white mb-3">{f.title}</h3>
-              <p className="text-sm text-white/40 leading-relaxed">{f.desc}</p>
+              <h3 className="text-lg md:text-xl font-bold text-white mb-3">{f.title}</h3>
+              <p className="text-sm md:text-base text-white/55 leading-relaxed">{f.desc}</p>
             </motion.div>
           ))}
         </div>
