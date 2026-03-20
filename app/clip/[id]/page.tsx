@@ -16,6 +16,7 @@ import {
   Search,
   Film,
   DownloadCloud,
+  Play,
 } from "lucide-react";
 
 interface Clip {
@@ -51,6 +52,8 @@ export default function JobResultPage() {
   const [job, setJob] = useState<Job | null>(null);
   const [downloading, setDownloading] = useState<string | null>(null);
   const [downloadingAll, setDownloadingAll] = useState(false);
+  const [previewUrls, setPreviewUrls] = useState<Record<string, string>>({});
+  const [loadingPreview, setLoadingPreview] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -69,19 +72,34 @@ export default function JobResultPage() {
     poll();
   }, [id]);
 
+  async function getPresignedUrl(r2Key: string) {
+    const res = await fetch(`/api/download?key=${encodeURIComponent(r2Key)}`);
+    const { url } = await res.json();
+    return url;
+  }
+
   async function handleDownload(clip: Clip) {
     if (!clip.r2_key) return;
     setDownloading(clip.r2_key);
 
-    const res = await fetch(`/api/download?key=${encodeURIComponent(clip.r2_key)}`);
-    const { url } = await res.json();
-
+    const url = await getPresignedUrl(clip.r2_key);
+    const blob = await fetch(url).then(r => r.blob());
+    const blobUrl = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url;
+    a.href = blobUrl;
     a.download = `${clip.title.replace(/[^a-zA-Z0-9]/g, "_")}.mp4`;
     a.click();
+    URL.revokeObjectURL(blobUrl);
 
     setDownloading(null);
+  }
+
+  async function handlePreview(clip: Clip) {
+    if (!clip.r2_key || previewUrls[clip.r2_key]) return;
+    setLoadingPreview(clip.r2_key);
+    const url = await getPresignedUrl(clip.r2_key);
+    setPreviewUrls(prev => ({ ...prev, [clip.r2_key!]: url }));
+    setLoadingPreview(null);
   }
 
   async function handleDownloadAll() {
@@ -274,46 +292,85 @@ export default function JobResultPage() {
               </div>
             )}
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 gap-6">
               {job.clips?.map((clip, i) => (
-                <div key={i} className="card p-6 flex flex-col">
-                  {/* Virality score badge */}
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="badge badge-hot flex items-center gap-1">
-                      <TrendingUp className="w-3 h-3" />
-                      {clip.virality_score}/10
-                    </span>
-                    <span className="text-xs text-white/30 font-medium">
-                      {Math.round(clip.end_time - clip.start_time)}s
-                    </span>
+                <div key={i} className="card overflow-hidden flex flex-col">
+                  {/* Video preview */}
+                  <div className="relative bg-dark-900 aspect-video">
+                    {clip.r2_key && previewUrls[clip.r2_key] ? (
+                      <video
+                        src={previewUrls[clip.r2_key]}
+                        controls
+                        playsInline
+                        className="w-full h-full object-contain bg-black"
+                      />
+                    ) : (
+                      <button
+                        onClick={() => handlePreview(clip)}
+                        disabled={loadingPreview === clip.r2_key}
+                        className="w-full h-full flex flex-col items-center justify-center gap-3 hover:bg-white/[0.02] transition-colors"
+                      >
+                        {loadingPreview === clip.r2_key ? (
+                          <Loader2 className="w-10 h-10 text-brand-400 animate-spin" />
+                        ) : (
+                          <div className="w-14 h-14 rounded-full bg-brand-500/15 border border-brand-500/25 flex items-center justify-center">
+                            <Play className="w-6 h-6 text-brand-400 ml-0.5" />
+                          </div>
+                        )}
+                        <span className="text-xs text-white/30">
+                          {loadingPreview === clip.r2_key ? "Loading preview..." : "Click to preview"}
+                        </span>
+                      </button>
+                    )}
+                    {/* Virality badge overlay */}
+                    <div className="absolute top-3 left-3">
+                      <span className="badge badge-hot flex items-center gap-1">
+                        <TrendingUp className="w-3 h-3" />
+                        {clip.virality_score}/10
+                      </span>
+                    </div>
+                    <div className="absolute top-3 right-3">
+                      <span className="text-xs text-white/70 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-md font-mono">
+                        {Math.round(clip.end_time - clip.start_time)}s
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Title */}
-                  <h3 className="text-lg font-bold text-white mb-2 leading-snug">{clip.title}</h3>
+                  {/* Info */}
+                  <div className="p-5 flex flex-col flex-1">
+                    <h3 className="text-base font-bold text-white mb-1.5 leading-snug">{clip.title}</h3>
+                    <p className="text-sm text-white/35 mb-4 flex-1 italic leading-relaxed line-clamp-2">
+                      &ldquo;{clip.hook_text}&rdquo;
+                    </p>
 
-                  {/* Hook preview */}
-                  <p className="text-sm text-white/40 mb-4 flex-1 italic leading-relaxed">
-                    &ldquo;{clip.hook_text}&rdquo;
-                  </p>
-
-                  {/* Timestamp */}
-                  <p className="text-xs text-white/20 mb-5 font-mono">
-                    {formatTimestamp(clip.start_time)} — {formatTimestamp(clip.end_time)}
-                  </p>
-
-                  {/* Download button */}
-                  <button
-                    onClick={() => handleDownload(clip)}
-                    disabled={downloading === clip.r2_key}
-                    className="btn-primary w-full flex items-center justify-center gap-2 text-sm !py-3"
-                  >
-                    {downloading === clip.r2_key ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Download className="w-4 h-4" />
-                    )}
-                    Download Clip
-                  </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleDownload(clip)}
+                        disabled={downloading === clip.r2_key}
+                        className="btn-primary flex-1 flex items-center justify-center gap-2 text-sm !py-2.5"
+                      >
+                        {downloading === clip.r2_key ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Download className="w-4 h-4" />
+                        )}
+                        {downloading === clip.r2_key ? "Saving..." : "Download"}
+                      </button>
+                      {clip.r2_key && !previewUrls[clip.r2_key] && (
+                        <button
+                          onClick={() => handlePreview(clip)}
+                          disabled={loadingPreview === clip.r2_key}
+                          className="btn-ghost flex items-center justify-center gap-2 text-sm !py-2.5 !px-4"
+                        >
+                          {loadingPreview === clip.r2_key ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Play className="w-4 h-4" />
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
