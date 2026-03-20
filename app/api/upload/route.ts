@@ -57,8 +57,8 @@ export async function POST(request: NextRequest) {
       if (!allowedHosts.some(h => parsed.hostname === h || parsed.hostname.endsWith(`.${h}`))) {
         return NextResponse.json({ error: "Only YouTube and TikTok URLs are supported" }, { status: 400 });
       }
-      if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
-        return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
+      if (parsed.protocol !== "https:") {
+        return NextResponse.json({ error: "Only HTTPS URLs are allowed" }, { status: 400 });
       }
     } catch {
       return NextResponse.json({ error: "Invalid URL format" }, { status: 400 });
@@ -66,6 +66,18 @@ export async function POST(request: NextRequest) {
   }
   if (sourceType === "upload" && !file) {
     return NextResponse.json({ error: "File is required" }, { status: 400 });
+  }
+
+  // Validate file type and size server-side
+  if (sourceType === "upload" && file) {
+    const allowedTypes = ["video/mp4", "video/quicktime", "video/webm", "video/x-msvideo", "video/x-matroska"];
+    if (!allowedTypes.includes(file.type)) {
+      return NextResponse.json({ error: "Only video files are allowed (MP4, MOV, WEBM)" }, { status: 400 });
+    }
+    const maxSize = 2 * 1024 * 1024 * 1024; // 2GB
+    if (file.size > maxSize) {
+      return NextResponse.json({ error: "File exceeds 2GB limit" }, { status: 413 });
+    }
   }
 
   let sourceR2Key: string | null = null;
@@ -101,7 +113,11 @@ export async function POST(request: NextRequest) {
 
   // Fire worker (fire-and-forget) — use internal secret, never send service role key
   const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
-  const workerSecret = process.env.WORKER_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const workerSecret = process.env.WORKER_SECRET;
+  if (!workerSecret) {
+    console.error("WORKER_SECRET not configured");
+    return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
+  }
   fetch(`${baseUrl}/api/worker`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${workerSecret}` },

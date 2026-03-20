@@ -24,7 +24,11 @@ interface ClipResult {
 export async function POST(request: NextRequest) {
   // Auth: verify bearer token matches worker secret
   const authHeader = request.headers.get("authorization");
-  const expectedSecret = process.env.WORKER_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const expectedSecret = process.env.WORKER_SECRET;
+  if (!expectedSecret) {
+    console.error("WORKER_SECRET not configured");
+    return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
+  }
   if (!authHeader || authHeader !== `Bearer ${expectedSecret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
