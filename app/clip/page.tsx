@@ -19,6 +19,7 @@ import {
   CreditCard,
   LayoutDashboard,
   ChevronDown,
+  Captions,
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
@@ -29,6 +30,7 @@ export default function ClipPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [dragOver, setDragOver] = useState(false);
+  const [includeCaptions, setIncludeCaptions] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [userPlan, setUserPlan] = useState("free");
@@ -80,6 +82,7 @@ export default function ClipPage() {
         formData.append("source_type", "upload");
         formData.append("file", file);
       }
+      formData.append("include_captions", includeCaptions ? "true" : "false");
 
       const res = await fetch("/api/upload", { method: "POST", body: formData });
       const data = await res.json();
@@ -111,7 +114,7 @@ export default function ClipPage() {
   const initials = userEmail ? userEmail[0].toUpperCase() : "U";
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen ambient-glow">
       {/* Top nav */}
       <nav className="glass fixed top-0 w-full z-50">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-4">
@@ -315,6 +318,27 @@ export default function ClipPage() {
             </div>
           )}
         </form>
+
+        {/* Captions toggle */}
+        <div className="mt-6 card p-5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-brand-500/10 flex items-center justify-center">
+              <Captions className="w-5 h-5 text-brand-400" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-white">Include captions</p>
+              <p className="text-xs text-white/40 mt-0.5">Burn word-by-word captions into your clips</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIncludeCaptions(!includeCaptions)}
+            className={`toggle-track ${includeCaptions ? "active" : ""}`}
+            aria-label="Toggle captions"
+          >
+            <div className="toggle-thumb" />
+          </button>
+        </div>
 
         {/* Trust signals */}
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4 md:gap-8 text-sm text-white/40">

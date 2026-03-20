@@ -28,6 +28,7 @@ create table if not exists jobs (
   source_url text,
   source_r2_key text,
   duration_seconds int,
+  include_captions boolean default true,
   clips jsonb,
   error text,
   created_at timestamptz default now(),
@@ -46,3 +47,7 @@ create policy "Users can insert own jobs"
 
 -- Index for faster dashboard queries
 create index if not exists idx_jobs_user_created on jobs(user_id, created_at desc);
+
+-- Migration: add include_captions column if table already exists
+-- Run this if you already have the jobs table:
+-- alter table jobs add column if not exists include_captions boolean default true;

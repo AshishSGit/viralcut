@@ -58,6 +58,7 @@ export async function POST(request: NextRequest) {
       .eq("user_id", job.user_id)
       .single();
     const needsWatermark = !plan || plan.plan === "free";
+    const includeCaptions = job.include_captions !== false; // default true if column missing
 
     // ── STEP 1: Download video ──
     await updateStatus(admin, job_id, "downloading");
@@ -294,17 +295,19 @@ ${formattedTranscript.slice(0, 30000)}`,
       const filterParts: string[] = [cropFilter];
 
       if (hasDrawtext) {
-        // Build drawtext filters for word-by-word captions (groups of 4 words)
-        const WORDS_PER_PHRASE = 4;
-        for (let p = 0; p < clipWords.length; p += WORDS_PER_PHRASE) {
-          const phraseWords = clipWords.slice(p, p + WORDS_PER_PHRASE);
-          const phraseText = phraseWords.map((w: { word: string }) => w.word).join(" ")
-            .replace(/\\/g, "\\\\").replace(/'/g, "\u2019").replace(/:/g, "\\:").replace(/%/g, "%%");
-          const phraseStart = phraseWords[0].start - clip.start_time;
-          const phraseEnd = phraseWords[phraseWords.length - 1].end - clip.start_time;
-          filterParts.push(
-            `drawtext=text='${phraseText}':fontsize=min(h/25\\,36):fontcolor=white:borderw=2:bordercolor=black:x=(w-text_w)/2:y=h*0.80:enable='between(t\\,${phraseStart.toFixed(2)}\\,${phraseEnd.toFixed(2)})'`
-          );
+        // Build drawtext filters for word-by-word captions (only if captions enabled)
+        if (includeCaptions) {
+          const WORDS_PER_PHRASE = 4;
+          for (let p = 0; p < clipWords.length; p += WORDS_PER_PHRASE) {
+            const phraseWords = clipWords.slice(p, p + WORDS_PER_PHRASE);
+            const phraseText = phraseWords.map((w: { word: string }) => w.word).join(" ")
+              .replace(/\\/g, "\\\\").replace(/'/g, "\u2019").replace(/:/g, "\\:").replace(/%/g, "%%");
+            const phraseStart = phraseWords[0].start - clip.start_time;
+            const phraseEnd = phraseWords[phraseWords.length - 1].end - clip.start_time;
+            filterParts.push(
+              `drawtext=text='${phraseText}':fontsize=min(h/25\\,36):fontcolor=white:borderw=2:bordercolor=black:x=(w-text_w)/2:y=h*0.80:enable='between(t\\,${phraseStart.toFixed(2)}\\,${phraseEnd.toFixed(2)})'`
+            );
+          }
         }
         if (needsWatermark) {
           filterParts.push(

@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
   const sourceType = formData.get("source_type") as string; // "url" or "upload"
   const sourceUrl = formData.get("source_url") as string | null;
   const file = formData.get("file") as File | null;
+  const includeCaptions = formData.get("include_captions") !== "false"; // default true
 
   if (sourceType === "url" && !sourceUrl) {
     return NextResponse.json({ error: "URL is required" }, { status: 400 });
@@ -100,6 +101,7 @@ export async function POST(request: NextRequest) {
       source_type: sourceType,
       source_url: sourceUrl || null,
       source_r2_key: sourceR2Key,
+      include_captions: includeCaptions,
     })
     .select("id")
     .single();

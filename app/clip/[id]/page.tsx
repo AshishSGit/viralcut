@@ -306,20 +306,20 @@ export default function JobResultPage() {
                 <button
                   onClick={handleDownloadAll}
                   disabled={downloadingAll}
-                  className="btn-ghost flex items-center gap-2 text-sm"
+                  className="group flex items-center gap-2.5 text-sm font-semibold px-6 py-3 rounded-xl border border-brand-500/25 bg-brand-500/[0.06] text-brand-400 hover:bg-brand-500/[0.12] hover:border-brand-500/40 hover:text-brand-300 transition-all duration-300 hover:shadow-lg hover:shadow-brand-500/10"
                 >
                   {downloadingAll ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader2 className="w-4.5 h-4.5 animate-spin" />
                   ) : (
-                    <DownloadCloud className="w-4 h-4" />
+                    <DownloadCloud className="w-4.5 h-4.5 group-hover:animate-bounce" />
                   )}
-                  {downloadingAll ? "Downloading..." : "Download All Clips"}
+                  {downloadingAll ? "Downloading..." : `Download All ${sortedClips.length} Clips`}
                 </button>
               </div>
             )}
 
             {/* Clip grid — vertical phone-frame cards */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               {sortedClips.map((clip, i) => {
                 const r2Key = clip.r2_key || "";
                 const hasPreview = !!previewUrls[r2Key];
@@ -327,9 +327,9 @@ export default function JobResultPage() {
 
                 return (
                   <div key={i} className="group flex flex-col">
-                    {/* Video container — 9:16 vertical */}
+                    {/* Video container — 9:16 vertical phone frame */}
                     <div
-                      className="relative rounded-2xl overflow-hidden bg-dark-900 border border-white/[0.06] cursor-pointer"
+                      className="clip-card relative cursor-pointer"
                       style={{ aspectRatio: "9/16" }}
                       onClick={() => hasPreview && handlePlay(r2Key)}
                     >
@@ -345,9 +345,9 @@ export default function JobResultPage() {
                           />
                           {/* Play overlay — show when paused */}
                           {!isPlaying && (
-                            <div className="absolute inset-0 bg-black/30 flex items-center justify-center transition-opacity">
-                              <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                                <Play className="w-5 h-5 text-white ml-0.5" fill="white" />
+                            <div className="absolute inset-0 bg-black/30 flex items-center justify-center transition-opacity group-hover:bg-black/20">
+                              <div className="w-14 h-14 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/20 group-hover:scale-110 transition-transform duration-300">
+                                <Play className="w-6 h-6 text-white ml-0.5" fill="white" />
                               </div>
                             </div>
                           )}
@@ -359,25 +359,25 @@ export default function JobResultPage() {
                       )}
 
                       {/* Top badges */}
-                      <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
+                      <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-lg backdrop-blur-md ${
                           clip.virality_score >= 8
                             ? "bg-brand-500/90 text-dark-950"
                             : clip.virality_score >= 6
-                            ? "bg-white/20 backdrop-blur-sm text-white"
-                            : "bg-black/40 backdrop-blur-sm text-white/70"
+                            ? "bg-white/20 text-white"
+                            : "bg-black/40 text-white/70"
                         }`}>
                           {clip.virality_score}/10
                         </span>
-                        <span className="text-[10px] font-mono text-white/80 bg-black/40 backdrop-blur-sm px-1.5 py-0.5 rounded-md">
+                        <span className="text-[10px] font-mono text-white/80 bg-black/40 backdrop-blur-md px-2 py-1 rounded-lg">
                           {Math.round(clip.end_time - clip.start_time)}s
                         </span>
                       </div>
 
                       {/* Rank badge for top clip */}
                       {i === 0 && (
-                        <div className="absolute bottom-2.5 left-2.5">
-                          <span className="text-[10px] font-bold bg-brand-500 text-dark-950 px-2 py-0.5 rounded-md flex items-center gap-1">
+                        <div className="absolute bottom-3 left-3">
+                          <span className="text-[10px] font-bold bg-gradient-to-r from-brand-500 to-brand-400 text-dark-950 px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-lg shadow-brand-500/20">
                             <TrendingUp className="w-3 h-3" /> Top Pick
                           </span>
                         </div>
@@ -386,20 +386,22 @@ export default function JobResultPage() {
 
                     {/* Info below video */}
                     <div className="mt-3 px-0.5">
-                      <h3 className="text-sm font-semibold text-white leading-snug line-clamp-2 mb-2">
+                      <h3 className="text-sm font-semibold text-white leading-snug line-clamp-2 mb-2.5">
                         {clip.title}
                       </h3>
                       <button
                         onClick={() => handleDownload(clip)}
                         disabled={downloading === clip.r2_key}
-                        className="w-full flex items-center justify-center gap-1.5 text-xs font-semibold py-2 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/70 hover:text-white hover:bg-white/10 hover:border-white/15 transition-all"
+                        className="btn-download w-full flex items-center justify-center gap-1.5 text-xs relative z-10"
                       >
-                        {downloading === clip.r2_key ? (
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        ) : (
-                          <Download className="w-3.5 h-3.5" />
-                        )}
-                        {downloading === clip.r2_key ? "Saving..." : "Download"}
+                        <span className="relative z-10 flex items-center gap-1.5">
+                          {downloading === clip.r2_key ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <Download className="w-3.5 h-3.5 download-icon" />
+                          )}
+                          {downloading === clip.r2_key ? "Saving..." : "Download MP4"}
+                        </span>
                       </button>
                     </div>
                   </div>

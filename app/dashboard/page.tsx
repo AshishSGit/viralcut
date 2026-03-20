@@ -94,7 +94,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen ambient-glow">
       <nav className="glass fixed top-0 w-full z-50">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-4">
           <a href="/" className="flex items-center gap-2">
@@ -186,12 +186,17 @@ export default function DashboardPage() {
             <Loader2 className="w-8 h-8 text-brand-500 animate-spin mx-auto" />
           </div>
         ) : jobs.length === 0 ? (
-          <div className="card p-14 text-center">
-            <Film className="w-14 h-14 text-white/10 mx-auto mb-5" />
-            <h3 className="text-xl font-bold text-white mb-2">No clips yet</h3>
-            <p className="text-white/40 mb-8">Create your first viral clip from a video.</p>
-            <a href="/clip" className="btn-primary inline-flex items-center gap-2">
-              <Plus className="w-4 h-4" /> Create First Clip
+          <div className="card p-14 text-center gradient-border">
+            <div className="w-20 h-20 rounded-2xl bg-brand-500/10 border border-brand-500/15 flex items-center justify-center mx-auto mb-6">
+              <Film className="w-10 h-10 text-brand-400" />
+            </div>
+            <h3 className="font-display text-2xl font-bold text-white mb-3">No clips yet</h3>
+            <p className="text-white/40 mb-3 max-w-sm mx-auto">
+              Paste a YouTube URL or upload a video and we will find the best moments worth posting.
+            </p>
+            <p className="text-white/25 text-sm mb-8">It takes about 2 minutes.</p>
+            <a href="/clip" className="btn-primary inline-flex items-center gap-2 text-base !py-3 !px-8">
+              <Sparkles className="w-4.5 h-4.5" /> Create Your First Clip
             </a>
           </div>
         ) : (
@@ -200,15 +205,15 @@ export default function DashboardPage() {
               <a
                 key={job.id}
                 href={`/clip/${job.id}`}
-                className="card p-5 flex items-center gap-4 hover:border-brand-500/20 transition-all block group"
+                className="card gradient-border p-5 flex items-center gap-4 hover:border-brand-500/20 transition-all duration-300 block group"
               >
                 {/* Status icon */}
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
                   job.status === "completed"
-                    ? "bg-neon-500/10 text-neon-400"
+                    ? "bg-neon-500/10 text-neon-400 group-hover:bg-neon-500/15"
                     : job.status === "failed"
-                    ? "bg-hot-500/10 text-hot-400"
-                    : "bg-brand-500/10 text-brand-400"
+                    ? "bg-hot-500/10 text-hot-400 group-hover:bg-hot-500/15"
+                    : "bg-brand-500/10 text-brand-400 group-hover:bg-brand-500/15"
                 }`}>
                   {job.status === "completed" ? (
                     <CheckCircle2 className="w-5 h-5" />
@@ -221,17 +226,17 @@ export default function DashboardPage() {
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-white font-medium text-sm truncate">
+                  <p className="text-white font-medium text-sm truncate group-hover:text-brand-300 transition-colors">
                     {extractVideoTitle(job.source_url)}
                   </p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-xs text-white/25">
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <span className="text-xs text-white/30">
                       {new Date(job.created_at).toLocaleDateString()}
                     </span>
                     {job.duration_seconds && (
                       <>
                         <span className="text-xs text-white/15">·</span>
-                        <span className="text-xs text-white/25">
+                        <span className="text-xs text-white/30">
                           {Math.round(job.duration_seconds / 60)} min
                         </span>
                       </>
@@ -247,14 +252,14 @@ export default function DashboardPage() {
                     {job.status === "failed" && (
                       <>
                         <span className="text-xs text-white/15">·</span>
-                        <span className="text-xs text-hot-400">Failed</span>
+                        <span className="text-xs text-hot-400 font-medium">Failed</span>
                       </>
                     )}
                   </div>
                 </div>
 
                 {/* Arrow */}
-                <ArrowRight className="w-4 h-4 text-white/10 group-hover:text-white/30 transition-colors flex-shrink-0" />
+                <ArrowRight className="w-4 h-4 text-white/10 group-hover:text-brand-400 group-hover:translate-x-0.5 transition-all duration-300 flex-shrink-0" />
               </a>
             ))}
           </div>

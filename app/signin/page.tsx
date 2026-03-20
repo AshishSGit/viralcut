@@ -46,7 +46,7 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 hero-gradient">
+    <div className="min-h-screen flex items-center justify-center px-6 hero-gradient ambient-glow">
       <motion.div
         className="card p-8 md:p-10 w-full max-w-md"
         initial={{ opacity: 0, y: 20 }}

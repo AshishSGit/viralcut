@@ -80,7 +80,7 @@ export default function PricingPage() {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen ambient-glow">
       <nav className="glass fixed top-0 w-full z-50">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-4">
           <a href="/" className="flex items-center gap-2">
