@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       }
 
       await execFileAsync(ytdlpBin, [
-        "--js-runtimes", "nodejs",
+        "--js-runtimes", "node",
         "-f", "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
         "--merge-output-format", "mp4",
         "-o", videoPath,
