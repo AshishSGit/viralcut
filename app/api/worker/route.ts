@@ -84,17 +84,29 @@ export async function POST(request: NextRequest) {
         "-o", videoPath,
         "--no-playlist",
         "--max-filesize", "2G",
+        "--verbose",
       ];
 
       // Use residential proxy if configured (avoids YouTube IP blocks on servers)
-      const proxyUrl = process.env.YTDLP_PROXY_URL;
+      const proxyUrl = process.env.YTDLP_PROXY_URL?.trim();
       if (proxyUrl) {
+        console.log(`[yt-dlp] Using proxy: ${proxyUrl.replace(/:[^:@]+@/, ':***@')}`);
         ytdlpArgs.push("--proxy", proxyUrl);
+      } else {
+        console.log("[yt-dlp] No proxy configured (YTDLP_PROXY_URL not set)");
       }
 
       ytdlpArgs.push(job.source_url);
 
-      await execFileAsync(ytdlpBin, ytdlpArgs, { timeout: 120000 });
+      try {
+        const { stdout, stderr } = await execFileAsync(ytdlpBin, ytdlpArgs, { timeout: 120000, maxBuffer: 10 * 1024 * 1024 });
+        console.log(`[yt-dlp] stdout: ${stdout.slice(-500)}`);
+        if (stderr) console.log(`[yt-dlp] stderr: ${stderr.slice(-500)}`);
+      } catch (dlErr: unknown) {
+        const msg = dlErr instanceof Error ? dlErr.message : String(dlErr);
+        console.error(`[yt-dlp] Download failed: ${msg.slice(-1000)}`);
+        throw dlErr;
+      }
     } else {
       // Download from R2
       const { S3Client, GetObjectCommand } = await import("@aws-sdk/client-s3");
