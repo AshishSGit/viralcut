@@ -76,20 +76,15 @@ export async function POST(request: NextRequest) {
         // fall back to PATH
       }
 
-      // Update yt-dlp before each run to stay ahead of YouTube's bot detection
-      try {
-        await execFileAsync(ytdlpBin, ["-U"], { timeout: 30000 });
-      } catch {}
-
       const ytdlpArgs = [
-        "--js-runtimes", "node",
         "--extractor-args", "youtube:player_client=web,mweb",
-        "-f", "bestvideo[height<=720]+bestaudio/best[height<=720]",
+        "-f", "best[height<=720]/bestvideo[height<=720]+bestaudio",
         "--merge-output-format", "mp4",
         "-o", videoPath,
         "--no-playlist",
         "--max-filesize", "2G",
-        "--verbose",
+        "--concurrent-fragments", "4",
+        "--no-warnings",
       ];
 
       // Use residential proxy if configured (avoids YouTube IP blocks on servers)
