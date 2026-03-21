@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Scissors, Check, Zap, Loader2, ArrowLeft } from "lucide-react";
 
@@ -9,18 +9,29 @@ export default function PricingPage() {
   const [error, setError] = useState("");
   const router = useRouter();
 
+  // Reset loading state when returning from Stripe via browser back
+  useEffect(() => {
+    setLoading(null);
+  }, []);
+
   async function handleCheckout(plan: string) {
     setLoading(plan);
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ plan }),
-    });
-    const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
-      setError(data.error || "Something went wrong. Please try again.");
+    setError("");
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setError(data.error || "Something went wrong. Please try again.");
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
       setLoading(null);
     }
   }
