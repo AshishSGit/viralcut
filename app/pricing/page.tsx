@@ -1,18 +1,31 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Scissors, Check, Zap, Loader2, ArrowLeft } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // Reset loading state when returning from Stripe via browser back
+  // Auto-trigger checkout if user just signed in with a plan param
   useEffect(() => {
-    setLoading(null);
-  }, []);
+    const plan = searchParams.get("plan");
+    if (plan && ["pro", "unlimited"].includes(plan)) {
+      // Check if user is logged in first
+      const supabase = createClient();
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user) {
+          handleCheckout(plan);
+        }
+      });
+    } else {
+      setLoading(null);
+    }
+  }, [searchParams]);
 
   async function handleCheckout(plan: string) {
     setLoading(plan);
@@ -24,6 +37,11 @@ export default function PricingPage() {
         body: JSON.stringify({ plan }),
       });
       const data = await res.json();
+      if (res.status === 401) {
+        // Not logged in — redirect to signin with plan context
+        router.push(`/signin?next=/pricing&plan=${plan}`);
+        return;
+      }
       if (data.url) {
         window.location.href = data.url;
       } else {

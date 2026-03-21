@@ -20,10 +20,15 @@ export default function SignInPage() {
     setLoading(true);
     setError("");
 
+    const params = new URLSearchParams(window.location.search);
+    const next = params.get("next") || "/clip";
+    const plan = params.get("plan");
+    const redirectNext = plan ? `${next}?plan=${plan}` : next;
+
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectNext)}`,
       },
     });
 
@@ -36,10 +41,16 @@ export default function SignInPage() {
   }
 
   async function handleGoogleSignIn() {
+    // Preserve the intended destination (e.g. /pricing?plan=pro) through OAuth
+    const params = new URLSearchParams(window.location.search);
+    const next = params.get("next") || "/clip";
+    const plan = params.get("plan");
+    const redirectNext = plan ? `${next}?plan=${plan}` : next;
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectNext)}`,
       },
     });
     if (error) setError(error.message);
