@@ -70,14 +70,14 @@ export default function BlogPage() {
         <h1 className="font-display text-4xl md:text-5xl font-bold text-white tracking-tight mb-4">
           Blog
         </h1>
-        <p className="text-white/40 text-lg mb-16">
+        <p className="text-white/60 text-lg mb-16">
           Tips, guides, and strategies for repurposing content and growing your audience with short-form video.
         </p>
 
         <div className="space-y-10">
           {posts.map((post) => (
             <article key={post.slug} className="card p-8">
-              <time className="text-xs text-white/25 uppercase tracking-wider">
+              <time className="text-xs text-white/45 uppercase tracking-wider">
                 {new Date(post.date).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "long",
@@ -89,7 +89,7 @@ export default function BlogPage() {
               <h2 className="font-display text-xl md:text-2xl font-bold text-white mt-3 mb-3">
                 {post.title}
               </h2>
-              <p className="text-white/45 leading-relaxed mb-4">{post.excerpt}</p>
+              <p className="text-white/60 leading-relaxed mb-4">{post.excerpt}</p>
               <a
                 href={`/blog/${post.slug}`}
                 className="text-brand-400 text-sm font-semibold hover:text-brand-300 transition-colors"
@@ -105,7 +105,7 @@ export default function BlogPage() {
           <h2 className="font-display text-2xl font-bold text-white mb-3">
             Ready to start clipping?
           </h2>
-          <p className="text-white/40 mb-6">
+          <p className="text-white/60 mb-6">
             Turn any podcast or YouTube video into viral clips in 2 minutes. Free to start.
           </p>
           <a href="/signin" className="btn-primary inline-flex items-center gap-2">
@@ -123,7 +123,7 @@ export default function BlogPage() {
               Clippi<span className="text-brand-400">fied</span>
             </span>
           </a>
-          <div className="flex items-center gap-6 text-sm text-white/25">
+          <div className="flex items-center gap-6 text-sm text-white/45">
             <a href="/blog" className="hover:text-white transition-colors">Blog</a>
             <a href="/contact" className="hover:text-white transition-colors">Contact</a>
             <a href="/terms" className="hover:text-white transition-colors">Terms</a>

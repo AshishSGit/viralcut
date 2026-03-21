@@ -144,7 +144,7 @@ export default function ContactPage() {
                         className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
                           form.type === opt.key
                             ? "bg-brand-500/15 text-white border border-brand-500/30"
-                            : "text-white/40 border border-white/8 hover:border-white/15"
+                            : "text-white/60 border border-white/8 hover:border-white/15"
                         }`}
                       >
                         <opt.icon className="w-4 h-4" />
@@ -175,7 +175,7 @@ export default function ContactPage() {
                   {loading ? "Sending..." : "Send Message"}
                 </button>
 
-                <p className="text-xs text-white/40 text-center">
+                <p className="text-xs text-white/60 text-center">
                   We&apos;ll respond to your email within 2-4 hours.
                 </p>
               </form>

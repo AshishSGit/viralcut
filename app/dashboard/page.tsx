@@ -145,14 +145,14 @@ export default function DashboardPage() {
                 <div className="w-7 h-7 rounded-lg bg-brand-500/20 flex items-center justify-center text-brand-400 text-xs font-bold">
                   {initials}
                 </div>
-                <ChevronDown className={`w-3.5 h-3.5 text-white/40 transition-transform ${menuOpen ? "rotate-180" : ""}`} />
+                <ChevronDown className={`w-3.5 h-3.5 text-white/60 transition-transform ${menuOpen ? "rotate-180" : ""}`} />
               </button>
 
               {menuOpen && (
                 <div className="absolute right-0 mt-2 w-64 p-2 border border-white/10 shadow-2xl z-[60] rounded-2xl" style={{ background: "#111318", backdropFilter: "blur(20px)" }}>
                   <div className="px-3 py-3 border-b border-white/5">
                     <p className="text-sm font-medium text-white truncate">{userEmail}</p>
-                    <p className="text-xs text-white/30 mt-0.5 capitalize">{usage.plan} plan</p>
+                    <p className="text-xs text-white/50 mt-0.5 capitalize">{usage.plan} plan</p>
                   </div>
                   <div className="py-1">
                     <a href="/clip" className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
@@ -182,18 +182,18 @@ export default function DashboardPage() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4">
           <div>
             <h1 className="font-display text-3xl md:text-4xl font-bold text-white">Dashboard</h1>
-            <p className="text-white/40 mt-1">Your clip history</p>
+            <p className="text-white/60 mt-1">Your clip history</p>
           </div>
 
           {/* Usage card */}
           <div className="card px-6 py-4 flex items-center gap-5">
             <div>
-              <p className="text-[11px] text-white/30 uppercase tracking-wider font-semibold">Plan</p>
+              <p className="text-[11px] text-white/50 uppercase tracking-wider font-semibold">Plan</p>
               <p className="text-sm font-bold text-white capitalize mt-0.5">{usage.plan}</p>
             </div>
             <div className="w-px h-10 bg-white/5" />
             <div>
-              <p className="text-[11px] text-white/30 uppercase tracking-wider font-semibold">Usage</p>
+              <p className="text-[11px] text-white/50 uppercase tracking-wider font-semibold">Usage</p>
               <p className="text-sm font-bold text-white mt-0.5">
                 {usage.usage}/{usage.limit === 999999 ? "\u221E" : usage.limit}
               </p>
@@ -219,10 +219,10 @@ export default function DashboardPage() {
               <Film className="w-10 h-10 text-brand-400" />
             </div>
             <h3 className="font-display text-2xl font-bold text-white mb-3">No clips yet</h3>
-            <p className="text-white/40 mb-3 max-w-sm mx-auto">
+            <p className="text-white/60 mb-3 max-w-sm mx-auto">
               Paste a YouTube URL or upload a video and we will find the best moments worth posting.
             </p>
-            <p className="text-white/25 text-sm mb-8">It takes about 2 minutes.</p>
+            <p className="text-white/45 text-sm mb-8">It takes about 2 minutes.</p>
             <a href="/clip" className="btn-primary inline-flex items-center gap-2 text-base !py-3 !px-8">
               <Sparkles className="w-4.5 h-4.5" /> Create Your First Clip
             </a>
@@ -258,13 +258,13 @@ export default function DashboardPage() {
                     {extractVideoTitle(job.source_url)}
                   </p>
                   <div className="flex items-center gap-2 mt-1.5">
-                    <span className="text-xs text-white/30">
+                    <span className="text-xs text-white/50">
                       {new Date(job.created_at).toLocaleDateString()}
                     </span>
                     {job.duration_seconds && (
                       <>
                         <span className="text-xs text-white/15">·</span>
-                        <span className="text-xs text-white/30">
+                        <span className="text-xs text-white/50">
                           {Math.round(job.duration_seconds / 60)} min
                         </span>
                       </>

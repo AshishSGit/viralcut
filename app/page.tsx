@@ -213,7 +213,7 @@ function Hero() {
         </motion.div>
 
         <motion.div
-          className="mt-8 flex flex-wrap items-center justify-center gap-5 md:gap-8 text-sm text-white/40"
+          className="mt-8 flex flex-wrap items-center justify-center gap-5 md:gap-8 text-sm text-white/60"
           initial="hidden" animate="visible" variants={fadeUp} custom={4}
         >
           {["No credit card", "1 free video/month", "Cancel anytime"].map((t) => (
@@ -260,7 +260,7 @@ function SocialProof() {
     <section className="py-20 md:py-28 px-6 relative">
       <div className="max-w-4xl mx-auto">
         <motion.p
-          className="text-center text-xs text-white/30 uppercase tracking-[0.2em] font-semibold mb-10"
+          className="text-center text-xs text-white/50 uppercase tracking-[0.2em] font-semibold mb-10"
           initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
         >
           Create clips for
@@ -274,7 +274,7 @@ function SocialProof() {
             <motion.span
               key={p}
               variants={staggerItem}
-              className="font-display font-bold text-2xl md:text-3xl text-white/20 hover:text-white/40 transition-colors duration-500 cursor-default"
+              className="font-display font-bold text-2xl md:text-3xl text-white/40 hover:text-white/60 transition-colors duration-500 cursor-default"
             >
               {p}
             </motion.span>
@@ -293,9 +293,9 @@ function SocialProof() {
             <motion.div key={s.label} variants={staggerItem}>
               <p className="font-display text-5xl md:text-7xl font-bold text-white">
                 {s.value}
-                {s.unit && <span className="text-2xl text-white/40">{s.unit}</span>}
+                {s.unit && <span className="text-2xl text-white/60">{s.unit}</span>}
               </p>
-              <p className="text-sm md:text-base text-white/45 mt-3">{s.label}</p>
+              <p className="text-sm md:text-base text-white/60 mt-3">{s.label}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -327,7 +327,7 @@ function HowItWorks() {
           <h2 className="mt-6 font-display text-3xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight">
             3 hours of editing → <span className="text-brand-400">2 minutes</span>
           </h2>
-          <p className="mt-5 text-white/45 text-lg md:text-xl max-w-xl mx-auto">Paste a link. Get clips. Post and grow.</p>
+          <p className="mt-5 text-white/60 text-lg md:text-xl max-w-xl mx-auto">Paste a link. Get clips. Post and grow.</p>
         </motion.div>
 
         <div className="grid md:grid-cols-4 gap-6">
@@ -373,7 +373,7 @@ function Features() {
           <h2 className="mt-6 font-display text-3xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight">
             Why creators switch to Clippified
           </h2>
-          <p className="mt-5 text-white/45 text-lg md:text-xl">Stop paying editors. Stop wasting weekends. Start growing.</p>
+          <p className="mt-5 text-white/60 text-lg md:text-xl">Stop paying editors. Stop wasting weekends. Start growing.</p>
         </motion.div>
 
         <motion.div
@@ -418,7 +418,7 @@ function Pricing() {
           <h2 className="mt-6 font-display text-3xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight">
             Simple pricing, no surprises
           </h2>
-          <p className="mt-5 text-white/45 text-lg md:text-xl">Start free. Upgrade when you need more.</p>
+          <p className="mt-5 text-white/60 text-lg md:text-xl">Start free. Upgrade when you need more.</p>
         </motion.div>
 
         <motion.div
@@ -437,7 +437,7 @@ function Pricing() {
               <h3 className="text-xl font-bold text-white">{plan.name}</h3>
               <div className="mt-4 flex items-baseline gap-1">
                 <span className="font-display text-5xl font-bold text-white">{plan.price}</span>
-                <span className="text-white/30 text-sm">{plan.period}</span>
+                <span className="text-white/50 text-sm">{plan.period}</span>
               </div>
               <ul className="mt-8 space-y-3.5 flex-1">
                 {plan.features.map((f, j) => (
@@ -510,7 +510,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
         className="w-full flex items-center justify-between p-6 text-left"
       >
         <span className="font-semibold text-white pr-4 group-hover:text-brand-300 transition-colors duration-300">{q}</span>
-        <ChevronDown className={`w-5 h-5 text-white/30 transition-transform duration-300 flex-shrink-0 ${open ? "rotate-180" : ""}`} />
+        <ChevronDown className={`w-5 h-5 text-white/50 transition-transform duration-300 flex-shrink-0 ${open ? "rotate-180" : ""}`} />
       </button>
       <AnimatePresence>
         {open && (
@@ -544,7 +544,7 @@ function CTA() {
         <h2 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight">
           Ready to go viral?
         </h2>
-        <p className="mt-5 text-white/45 text-lg md:text-xl max-w-xl mx-auto">
+        <p className="mt-5 text-white/60 text-lg md:text-xl max-w-xl mx-auto">
           Join creators who save hours every week. Your first video is free.
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -553,7 +553,7 @@ function CTA() {
             Start Clipping — Free
           </a>
         </div>
-        <p className="mt-6 text-sm text-white/30">No credit card required. 1 free video per month.</p>
+        <p className="mt-6 text-sm text-white/50">No credit card required. 1 free video per month.</p>
       </motion.div>
     </section>
   );
@@ -565,7 +565,7 @@ function Footer() {
     <footer className="py-12 px-6 border-t border-white/5">
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         <Logo size="sm" />
-        <div className="flex items-center gap-6 text-sm text-white/25">
+        <div className="flex items-center gap-6 text-sm text-white/45">
           <a href="/blog" className="hover:text-white transition-colors duration-300">Blog</a>
           <a href="/contact" className="hover:text-white transition-colors duration-300">Contact</a>
           <a href="/terms" className="hover:text-white transition-colors duration-300">Terms</a>

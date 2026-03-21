@@ -152,14 +152,14 @@ export default function ClipPage() {
                 <div className="w-7 h-7 rounded-lg bg-brand-500/20 flex items-center justify-center text-brand-400 text-xs font-bold">
                   {initials}
                 </div>
-                <ChevronDown className={`w-3.5 h-3.5 text-white/40 transition-transform ${menuOpen ? "rotate-180" : ""}`} />
+                <ChevronDown className={`w-3.5 h-3.5 text-white/60 transition-transform ${menuOpen ? "rotate-180" : ""}`} />
               </button>
 
               {menuOpen && (
                 <div className="absolute right-0 mt-2 w-64 p-2 border border-white/10 shadow-2xl z-[60] rounded-2xl" style={{ background: "#111318", backdropFilter: "blur(20px)" }}>
                   <div className="px-3 py-3 border-b border-white/5">
                     <p className="text-sm font-medium text-white truncate">{userEmail}</p>
-                    <p className="text-xs text-white/30 mt-0.5 capitalize">{userPlan} plan</p>
+                    <p className="text-xs text-white/50 mt-0.5 capitalize">{userPlan} plan</p>
                   </div>
                   <div className="py-1">
                     <a href="/dashboard" className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
@@ -237,7 +237,7 @@ export default function ClipPage() {
                   {loading ? "Processing..." : "Clip It"}
                 </button>
               </div>
-              <p className="text-sm text-white/30 mt-3">
+              <p className="text-sm text-white/50 mt-3">
                 YouTube downloads may occasionally fail due to platform restrictions. If so, download the video and upload it directly.
               </p>
             </div>
@@ -256,7 +256,7 @@ export default function ClipPage() {
                     <FileVideo className="w-10 h-10 text-brand-500" />
                     <div className="text-left">
                       <p className="text-white font-semibold text-lg">{file.name}</p>
-                      <p className="text-base text-white/40">
+                      <p className="text-base text-white/60">
                         {(file.size / (1024 * 1024)).toFixed(1)} MB
                       </p>
                     </div>
@@ -265,7 +265,7 @@ export default function ClipPage() {
                     <button
                       type="button"
                       onClick={() => setFile(null)}
-                      className="text-white/40 hover:text-white"
+                      className="text-white/60 hover:text-white"
                     >
                       <X className="w-5 h-5" />
                     </button>
@@ -285,7 +285,7 @@ export default function ClipPage() {
                   <p className="text-white font-semibold text-lg mb-2">
                     Drop your video here
                   </p>
-                  <p className="text-base text-white/40 mb-5">MP4, MOV, WEBM — up to 2GB</p>
+                  <p className="text-base text-white/60 mb-5">MP4, MOV, WEBM — up to 2GB</p>
                   <button
                     type="button"
                     onClick={() => fileRef.current?.click()}
@@ -320,7 +320,7 @@ export default function ClipPage() {
             </div>
             <div>
               <p className="text-sm font-semibold text-white">Include captions</p>
-              <p className="text-xs text-white/40 mt-0.5">Burn word-by-word captions into your clips</p>
+              <p className="text-xs text-white/60 mt-0.5">Burn word-by-word captions into your clips</p>
             </div>
           </div>
           <button
@@ -334,7 +334,7 @@ export default function ClipPage() {
         </div>
 
         {/* Trust signals */}
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-4 md:gap-8 text-sm text-white/40">
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-4 md:gap-8 text-sm text-white/60">
           <span className="flex items-center gap-2">
             <Shield className="w-4 h-4 text-neon-400" /> Secure & private
           </span>
@@ -346,7 +346,7 @@ export default function ClipPage() {
           </span>
         </div>
 
-        <p className="mt-4 text-center text-sm text-white/25">
+        <p className="mt-4 text-center text-sm text-white/45">
           Supports YouTube URLs and MP4, MOV, WEBM uploads. Max 2 hours.
         </p>
       </div>

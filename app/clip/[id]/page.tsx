@@ -181,7 +181,7 @@ export default function JobResultPage() {
         {!job ? (
           <div className="text-center py-20">
             <Loader2 className="w-8 h-8 text-brand-500 animate-spin mx-auto mb-4" />
-            <p className="text-white/40">Loading job...</p>
+            <p className="text-white/60">Loading job...</p>
           </div>
         ) : job.status === "failed" ? (
           <div className="card p-10 text-center max-w-lg mx-auto border-hot-500/15">
@@ -206,7 +206,7 @@ export default function JobResultPage() {
               <h2 className="font-display text-3xl font-bold text-white mb-2">
                 Processing Your Video
               </h2>
-              <p className="text-white/40 text-sm">Sit tight — the magic is happening</p>
+              <p className="text-white/60 text-sm">Sit tight — the magic is happening</p>
             </div>
 
             {/* Progress bar */}
@@ -259,7 +259,7 @@ export default function JobResultPage() {
                           ? "text-neon-400"
                           : isActive
                           ? "text-white"
-                          : "text-white/20"
+                          : "text-white/40"
                       }`}
                     >
                       {stage.label}
@@ -272,7 +272,7 @@ export default function JobResultPage() {
               })}
             </div>
 
-            <p className="mt-6 text-center text-sm text-white/25">
+            <p className="mt-6 text-center text-sm text-white/45">
               Usually takes 2-4 minutes for a 60-minute video.
             </p>
           </div>
@@ -283,7 +283,7 @@ export default function JobResultPage() {
               <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-3">
                 Your Clips Are Ready
               </h2>
-              <p className="text-white/40 text-base">
+              <p className="text-white/60 text-base">
                 {sortedClips.length} clips found
                 {job.duration_seconds ? ` from your ${Math.round(job.duration_seconds / 60)}-minute video` : ""}
                 {" "} — sorted by virality score
