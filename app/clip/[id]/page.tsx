@@ -314,7 +314,7 @@ export default function JobResultPage() {
             )}
 
             {/* Clip grid — vertical phone-frame cards */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               {sortedClips.map((clip, i) => {
                 const r2Key = clip.r2_key || "";
                 const hasPreview = !!previewUrls[r2Key];

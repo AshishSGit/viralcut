@@ -218,10 +218,12 @@ body::before {
   border: 1px solid rgba(245,158,11,0.3);
   box-shadow: 0 0 80px rgba(245,158,11,0.06), 0 0 0 1px rgba(245,158,11,0.08) inset;
   background: rgba(245,158,11,0.03);
-  transform: scale(1.03);
+}
+@media (min-width: 768px) {
+  .pricing-pro { transform: scale(1.03); }
+  .pricing-pro:hover { transform: scale(1.05); }
 }
 .pricing-pro:hover {
-  transform: scale(1.05);
   box-shadow: 0 0 100px rgba(245,158,11,0.1), 0 0 0 1px rgba(245,158,11,0.12) inset;
 }
 

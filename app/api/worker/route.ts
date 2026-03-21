@@ -406,6 +406,46 @@ ${formattedTranscript.slice(0, 30000)}`,
       usage_reset_at: needsReset ? nextReset.toISOString() : userPlan?.usage_reset_at,
     });
 
+    // Send email notification that clips are ready
+    try {
+      const { data: userData } = await admin.auth.admin.getUserById(job.user_id);
+      const userEmail = userData?.user?.email;
+      if (userEmail && process.env.RESEND_API_KEY) {
+        const { Resend } = await import("resend");
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        const from = process.env.RESEND_FROM_EMAIL || "Clippified <noreply@clippified.com>";
+        const clipCount = processedClips.length;
+        const baseUrl = process.env.NEXT_PUBLIC_URL || "https://clippified.com";
+
+        await resend.emails.send({
+          from,
+          to: userEmail,
+          subject: `Your ${clipCount} clips are ready!`,
+          html: `
+<div style="font-family: -apple-system, sans-serif; max-width: 520px; margin: 0 auto; padding: 40px 24px;">
+  <div style="text-align: center; margin-bottom: 24px;">
+    <span style="font-size: 28px; font-weight: 800; color: #f59e0b;">Clippified</span>
+  </div>
+  <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e2e8f0; text-align: center;">
+    <div style="font-size: 40px; margin-bottom: 12px;">🎬</div>
+    <h1 style="font-size: 22px; color: #0f172a; margin: 0 0 8px;">Your clips are ready!</h1>
+    <p style="font-size: 15px; color: #64748b; margin: 0 0 24px; line-height: 1.6;">
+      We found <strong style="color: #0f172a;">${clipCount} viral moments</strong> in your video. Download them now and start posting.
+    </p>
+    <a href="${baseUrl}/clip/${job_id}" style="display: inline-block; background: #f59e0b; color: white; font-size: 15px; font-weight: 600; padding: 14px 40px; border-radius: 10px; text-decoration: none;">
+      View & Download Clips
+    </a>
+  </div>
+  <p style="text-align: center; margin-top: 24px; font-size: 12px; color: #94a3b8;">
+    <a href="${baseUrl}" style="color: #94a3b8; text-decoration: none;">clippified.com</a>
+  </p>
+</div>`,
+        });
+      }
+    } catch (emailErr) {
+      console.error("Failed to send clips-ready email:", emailErr);
+    }
+
     // Cleanup tmp files
     await cleanup(tmpDir);
 

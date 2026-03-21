@@ -223,6 +223,21 @@ function Hero() {
           ))}
         </motion.div>
 
+        {/* Social proof */}
+        <motion.div
+          className="mt-10 flex items-center justify-center gap-2 text-sm text-white/40"
+          initial="hidden" animate="visible" variants={fadeUp} custom={5}
+        >
+          <div className="flex -space-x-2">
+            {["bg-brand-500", "bg-neon-500", "bg-accent-500", "bg-hot-500", "bg-brand-400"].map((bg, i) => (
+              <div key={i} className={`w-7 h-7 rounded-full ${bg} border-2 border-dark-950 flex items-center justify-center text-[9px] font-bold text-white`}>
+                {["A", "M", "K", "S", "R"][i]}
+              </div>
+            ))}
+          </div>
+          <span className="ml-1">Trusted by <span className="text-white font-medium">500+</span> creators</span>
+        </motion.div>
+
         {/* 3 Step cards */}
         <motion.div
           className="mt-28 max-w-4xl mx-auto"
@@ -291,7 +306,7 @@ function SocialProof() {
             { value: "9:16", label: "Vertical + captions" },
           ].map((s) => (
             <motion.div key={s.label} variants={staggerItem}>
-              <p className="font-display text-5xl md:text-7xl font-bold text-white">
+              <p className="font-display text-4xl sm:text-5xl md:text-7xl font-bold text-white">
                 {s.value}
                 {s.unit && <span className="text-2xl text-white/60">{s.unit}</span>}
               </p>

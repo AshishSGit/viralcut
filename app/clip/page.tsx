@@ -28,6 +28,7 @@ export default function ClipPage() {
   const [url, setUrl] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState("");
   const [dragOver, setDragOver] = useState(false);
   const [includeCaptions, setIncludeCaptions] = useState(true);
@@ -86,16 +87,40 @@ export default function ClipPage() {
       }
       formData.append("include_captions", includeCaptions ? "true" : "false");
 
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await res.json();
+      // Use XMLHttpRequest for upload progress tracking
+      const data = await new Promise<{ job_id: string }>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api/upload");
 
-      if (!res.ok) throw new Error(data.error || "Upload failed");
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) {
+            setUploadProgress(Math.round((e.loaded / e.total) * 100));
+          }
+        };
+
+        xhr.onload = () => {
+          try {
+            const resp = JSON.parse(xhr.responseText);
+            if (xhr.status >= 400) {
+              reject(new Error(resp.error || "Upload failed"));
+            } else {
+              resolve(resp);
+            }
+          } catch {
+            reject(new Error("Upload failed — please try again"));
+          }
+        };
+
+        xhr.onerror = () => reject(new Error("Upload failed — check your connection"));
+        xhr.send(formData);
+      });
 
       router.push(`/clip/${data.job_id}`);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
+      setUploadProgress(0);
     }
   }
 
@@ -284,12 +309,34 @@ export default function ClipPage() {
                       <X className="w-4 h-4" />
                     </button>
                   </div>
+                  {/* Upload progress bar */}
+                  {loading && uploadProgress > 0 && uploadProgress < 100 && (
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs text-white/50">Uploading...</span>
+                        <span className="text-xs text-brand-400 font-medium">{uploadProgress}%</span>
+                      </div>
+                      <div className="h-2 bg-white/[0.06] rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-brand-500 to-brand-400 rounded-full transition-all duration-300 relative overflow-hidden"
+                          style={{ width: `${uploadProgress}%` }}
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <button
                     type="submit"
                     disabled={loading}
-                    className="btn-primary w-full text-base !py-3.5 flex items-center justify-center"
+                    className="btn-primary w-full text-base !py-3.5 flex items-center justify-center gap-2"
                   >
-                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Clip It"}
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        {uploadProgress > 0 && uploadProgress < 100 ? `Uploading ${uploadProgress}%` : "Processing..."}
+                      </>
+                    ) : "Clip It"}
                   </button>
                 </div>
               ) : (
