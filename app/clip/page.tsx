@@ -34,6 +34,7 @@ export default function ClipPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [userPlan, setUserPlan] = useState("free");
+  const [usage, setUsage] = useState({ usage: 0, limit: 1 });
   const fileRef = useRef<HTMLInputElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -49,6 +50,7 @@ export default function ClipPage() {
       if (res.ok) {
         const data = await res.json();
         setUserPlan(data.plan);
+        setUsage({ usage: data.usage, limit: data.limit });
       }
     }
     loadUser();
@@ -146,43 +148,77 @@ export default function ClipPage() {
           </div>
 
           {/* User menu */}
-          <div className="flex items-center gap-3">
-            <div className="relative" ref={menuRef}>
-              <button
-                onClick={() => setMenuOpen(!menuOpen)}
-                className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl border border-white/10 hover:border-white/20 transition-all"
-              >
-                <div className="w-7 h-7 rounded-lg bg-brand-500/20 flex items-center justify-center text-brand-400 text-xs font-bold">
-                  {initials}
-                </div>
-                <ChevronDown className={`w-3.5 h-3.5 text-white/60 transition-transform ${menuOpen ? "rotate-180" : ""}`} />
-              </button>
+          <div className="relative" ref={menuRef}>
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-xl border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-all"
+            >
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-dark-950 text-xs font-bold">
+                {initials}
+              </div>
+              <div className="hidden sm:block text-left">
+                <p className="text-xs font-medium text-white/80 leading-tight truncate max-w-[120px]">{userEmail?.split("@")[0]}</p>
+                <p className="text-[10px] text-white/40 capitalize">{userPlan}</p>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-white/40 transition-transform duration-200 ${menuOpen ? "rotate-180" : ""}`} />
+            </button>
 
-              {menuOpen && (
-                <div className="absolute right-0 mt-2 w-64 p-2 border border-white/10 shadow-2xl z-[60] rounded-2xl" style={{ background: "#111318", backdropFilter: "blur(20px)" }}>
-                  <div className="px-3 py-3 border-b border-white/5">
-                    <p className="text-sm font-medium text-white truncate">{userEmail}</p>
-                    <p className="text-xs text-white/50 mt-0.5 capitalize">{userPlan} plan</p>
-                  </div>
-                  <div className="py-1">
-                    <a href="/dashboard" className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
-                      <LayoutDashboard className="w-4 h-4" /> Dashboard
-                    </a>
-                    <a href="/pricing" className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
-                      <Sparkles className="w-4 h-4" /> {userPlan === "free" ? "Upgrade Plan" : "Manage Plan"}
-                    </a>
-                    <a href="/contact" className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
-                      <User className="w-4 h-4" /> Support
-                    </a>
-                  </div>
-                  <div className="border-t border-white/5 pt-1">
-                    <button onClick={handleSignOut} className="flex items-center gap-3 px-3 py-2.5 text-sm text-hot-400 hover:bg-hot-500/10 rounded-lg transition-colors w-full text-left">
-                      <LogOut className="w-4 h-4" /> Sign Out
-                    </button>
+            {menuOpen && (
+              <div className="absolute right-0 mt-2 w-72 border border-white/10 shadow-2xl z-[60] rounded-2xl overflow-hidden" style={{ background: "#111318", backdropFilter: "blur(24px)" }}>
+                {/* User header */}
+                <div className="px-4 py-4 border-b border-white/5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-dark-950 text-sm font-bold shrink-0">
+                      {initials}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-white truncate">{userEmail}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                          userPlan === "unlimited" ? "bg-brand-500/15 text-brand-400" :
+                          userPlan === "pro" ? "bg-brand-500/15 text-brand-400" :
+                          "bg-white/[0.06] text-white/50"
+                        }`}>{userPlan}</span>
+                        <span className="text-[10px] text-white/30">{usage.usage}/{usage.limit === 999999 ? "\u221E" : usage.limit} videos</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              )}
-            </div>
+
+                {/* Usage bar */}
+                {userPlan === "free" && (
+                  <div className="px-4 py-3 border-b border-white/5">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[11px] text-white/40">Monthly usage</span>
+                      <span className="text-[11px] text-white/50 font-medium">{usage.usage}/{usage.limit}</span>
+                    </div>
+                    <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                      <div className="h-full bg-brand-500 rounded-full transition-all" style={{ width: `${Math.min(100, (usage.usage / usage.limit) * 100)}%` }} />
+                    </div>
+                  </div>
+                )}
+
+                {/* Menu items */}
+                <div className="p-1.5">
+                  <a href="/dashboard" className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/[0.05] rounded-lg transition-all">
+                    <LayoutDashboard className="w-4 h-4" /> My Clips
+                  </a>
+                  <a href="/pricing" className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/[0.05] rounded-lg transition-all">
+                    <Sparkles className="w-4 h-4" /> {userPlan === "free" ? "Upgrade to Pro" : "Manage Plan"}
+                  </a>
+                  <a href="/contact" className="flex items-center gap-3 px-3 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/[0.05] rounded-lg transition-all">
+                    <User className="w-4 h-4" /> Help & Support
+                  </a>
+                </div>
+
+                {/* Sign out */}
+                <div className="border-t border-white/5 p-1.5">
+                  <button onClick={handleSignOut} className="flex items-center gap-3 px-3 py-2.5 text-sm text-hot-400 hover:bg-hot-500/10 rounded-lg transition-all w-full text-left">
+                    <LogOut className="w-4 h-4" /> Sign Out
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </nav>
