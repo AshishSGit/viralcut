@@ -76,36 +76,63 @@ export async function POST(request: NextRequest) {
         // fall back to PATH
       }
 
-      const ytdlpArgs = [
-        "--extractor-args", "youtube:player_client=web,mweb",
-        "-f", "best[height<=720]/bestvideo[height<=720]+bestaudio/best",
-        "--merge-output-format", "mp4",
-        "-o", videoPath,
-        "--no-playlist",
-        "--max-filesize", "2G",
-        "--concurrent-fragments", "4",
-        "--no-warnings",
+      const proxyUrl = process.env.YTDLP_PROXY_URL?.trim();
+
+      // Try multiple download strategies — YouTube blocks differently per client/format
+      const strategies = [
+        { client: "ios", format: "best[height<=720]/best" },
+        { client: "web,mweb", format: "best[height<=720]/bestvideo[height<=720]+bestaudio/best" },
+        { client: "android", format: "best[height<=720]/best" },
+        { client: "tv", format: "best[height<=720]/best" },
       ];
 
-      // Use residential proxy if configured (avoids YouTube IP blocks on servers)
-      const proxyUrl = process.env.YTDLP_PROXY_URL?.trim();
-      if (proxyUrl) {
-        console.log(`[yt-dlp] Using proxy: ${proxyUrl.replace(/:[^:@]+@/, ':***@')}`);
-        ytdlpArgs.push("--proxy", proxyUrl);
-      } else {
-        console.log("[yt-dlp] No proxy configured (YTDLP_PROXY_URL not set)");
+      let downloaded = false;
+      let lastError = "";
+
+      for (let attempt = 0; attempt < strategies.length; attempt++) {
+        const strategy = strategies[attempt];
+        console.log(`[yt-dlp] Attempt ${attempt + 1}/${strategies.length}: client=${strategy.client}, format=${strategy.format}`);
+
+        const ytdlpArgs = [
+          "--extractor-args", `youtube:player_client=${strategy.client}`,
+          "-f", strategy.format,
+          "--merge-output-format", "mp4",
+          "-o", videoPath,
+          "--no-playlist",
+          "--max-filesize", "2G",
+          "--no-warnings",
+          "--socket-timeout", "30",
+          "--retries", "2",
+        ];
+
+        if (proxyUrl) {
+          ytdlpArgs.push("--proxy", proxyUrl);
+        }
+
+        ytdlpArgs.push(job.source_url);
+
+        try {
+          const { stdout } = await execFileAsync(ytdlpBin, ytdlpArgs, { timeout: 180000, maxBuffer: 10 * 1024 * 1024 });
+          console.log(`[yt-dlp] Success on attempt ${attempt + 1}: ${stdout.slice(-200)}`);
+          downloaded = true;
+          break;
+        } catch (dlErr: unknown) {
+          const msg = dlErr instanceof Error ? dlErr.message : String(dlErr);
+          lastError = msg.slice(-500);
+          console.error(`[yt-dlp] Attempt ${attempt + 1} failed: ${lastError.slice(-200)}`);
+
+          // Clean up partial download before retry
+          try { await unlink(videoPath); } catch {}
+
+          // If it's a non-retryable error (private video, unavailable), don't retry
+          if (msg.includes("Video unavailable") || msg.includes("Private video") || msg.includes("is not available")) {
+            break;
+          }
+        }
       }
 
-      ytdlpArgs.push(job.source_url);
-
-      try {
-        const { stdout, stderr } = await execFileAsync(ytdlpBin, ytdlpArgs, { timeout: 240000, maxBuffer: 10 * 1024 * 1024 });
-        console.log(`[yt-dlp] stdout: ${stdout.slice(-500)}`);
-        if (stderr) console.log(`[yt-dlp] stderr: ${stderr.slice(-500)}`);
-      } catch (dlErr: unknown) {
-        const msg = dlErr instanceof Error ? dlErr.message : String(dlErr);
-        console.error(`[yt-dlp] Download failed: ${msg.slice(-1000)}`);
-        throw dlErr;
+      if (!downloaded) {
+        throw new Error(lastError || "All download attempts failed");
       }
     } else {
       // Download from R2
