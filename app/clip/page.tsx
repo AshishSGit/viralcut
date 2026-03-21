@@ -198,7 +198,7 @@ export default function ClipPage() {
         {/* Tab toggle */}
         <div className="flex items-center justify-center gap-3 mb-8">
           <button
-            onClick={() => setTab("upload")}
+            onClick={() => { setTab("upload"); setError(""); }}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold transition-all ${
               tab === "upload"
                 ? "bg-brand-500/15 text-white border border-brand-500/30"
@@ -208,7 +208,7 @@ export default function ClipPage() {
             <Upload className="w-5 h-5" /> Upload Video
           </button>
           <button
-            onClick={() => setTab("url")}
+            onClick={() => { setTab("url"); setError(""); }}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold transition-all relative ${
               tab === "url"
                 ? "bg-brand-500/15 text-white border border-brand-500/30"
@@ -257,19 +257,16 @@ export default function ClipPage() {
                   </button>
                 </div>
               ) : (
-                <div className="py-4">
+                <div
+                  className="py-4 cursor-pointer"
+                  onClick={() => fileRef.current?.click()}
+                >
                   <Upload className="w-14 h-14 text-white/20 mx-auto mb-4" />
                   <p className="text-white font-semibold text-lg mb-2">
-                    Drop your video here
+                    Drop your video here or click to browse
                   </p>
-                  <p className="text-base text-white/60 mb-5">MP4, MOV, WEBM — up to 2GB</p>
-                  <button
-                    type="button"
-                    onClick={() => fileRef.current?.click()}
-                    className="btn-primary inline-flex items-center gap-2 text-base !py-3 !px-8"
-                  >
-                    <Upload className="w-5 h-5" /> Browse Files
-                  </button>
+                  <p className="text-base text-white/60 mb-2">MP4, MOV, WEBM — up to 2GB</p>
+                  <p className="text-sm text-brand-400 font-medium mt-3">Browse Files</p>
                   <input
                     ref={fileRef}
                     type="file"
