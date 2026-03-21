@@ -181,10 +181,6 @@ export default function ClipPage() {
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-dark-950 text-xs font-bold">
                 {initials}
               </div>
-              <div className="hidden sm:block text-left">
-                <p className="text-xs font-medium text-white/80 leading-tight truncate max-w-[120px]">{userEmail?.split("@")[0]}</p>
-                <p className="text-[10px] text-white/40 capitalize">{userPlan}</p>
-              </div>
               <ChevronDown className={`w-3.5 h-3.5 text-white/40 transition-transform duration-200 ${menuOpen ? "rotate-180" : ""}`} />
             </button>
 
