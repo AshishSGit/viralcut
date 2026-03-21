@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
 
       const ytdlpArgs = [
         "--extractor-args", "youtube:player_client=web,mweb",
-        "-f", "best[height<=720]/bestvideo[height<=720]+bestaudio",
+        "-f", "best[height<=720]/bestvideo[height<=720]+bestaudio/best",
         "--merge-output-format", "mp4",
         "-o", videoPath,
         "--no-playlist",

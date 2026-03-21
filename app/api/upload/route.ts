@@ -3,7 +3,8 @@ import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { uploadToR2 } from "@/utils/r2";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
+export const config = { api: { bodyParser: false } };
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();

@@ -4,9 +4,10 @@ const nextConfig: NextConfig = {
   serverExternalPackages: [],
   experimental: {
     serverActions: {
-      bodySizeLimit: "100mb",
+      bodySizeLimit: "2gb",
     },
   },
+  middlewareClientMaxBodySize: "2gb",
 };
 
 export default nextConfig;
