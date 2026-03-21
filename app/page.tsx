@@ -183,10 +183,12 @@ function Hero() {
           className="mt-8 font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.08] tracking-tight"
           initial="hidden" animate="visible" variants={fadeUp} custom={1}
         >
-          <span className="text-white">Your content,</span>
+          <span className="text-white">One video.</span>
+          <br className="hidden sm:block" />
+          <span className="text-white">Five viral clips.</span>
           <br className="hidden sm:block" />
           <span className="bg-gradient-to-r from-brand-300 via-brand-400 to-brand-500 bg-clip-text text-transparent">
-            clippified.
+            Zero editing.
           </span>
         </motion.h1>
 
@@ -194,8 +196,7 @@ function Hero() {
           className="mt-8 text-lg md:text-2xl text-white/55 max-w-2xl mx-auto leading-relaxed"
           initial="hidden" animate="visible" variants={fadeUp} custom={2}
         >
-          You have hours of great content buried in long videos.
-          We find the moments worth posting — cropped, captioned, and ready to go viral.
+          Drop any video. Our AI finds the moments your audience will share — cropped to 9:16, captioned, and ready to post in under 2 minutes.
         </motion.p>
 
         <motion.div
