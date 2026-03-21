@@ -252,10 +252,9 @@ export default function ClipPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="btn-primary flex items-center gap-2 text-base !py-4 !px-8"
+                      className="btn-primary text-base !py-3.5 !px-8 whitespace-nowrap"
                     >
-                      {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
-                      {loading ? "Processing..." : "Clip It"}
+                      {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Clip It"}
                     </button>
                   </div>
                 </div>
