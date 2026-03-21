@@ -80,10 +80,10 @@ export async function POST(request: NextRequest) {
 
       // Try multiple download strategies — YouTube blocks differently per client/format
       const strategies = [
-        { client: "ios", format: "best[height<=720]/best" },
-        { client: "web,mweb", format: "best[height<=720]/bestvideo[height<=720]+bestaudio/best" },
-        { client: "android", format: "best[height<=720]/best" },
-        { client: "tv", format: "best[height<=720]/best" },
+        { client: "ios", format: "bestvideo[height<=720]+bestaudio/best[height<=720]/best" },
+        { client: "web", format: "best[height<=720]/bestvideo[height<=720]+bestaudio/best" },
+        { client: "mweb", format: "best[height<=720]/bestvideo[height<=720]+bestaudio/best" },
+        { client: "android", format: "bestvideo[height<=720]+bestaudio/best[height<=720]/best" },
       ];
 
       let downloaded = false;
@@ -125,7 +125,8 @@ export async function POST(request: NextRequest) {
           try { await unlink(videoPath); } catch {}
 
           // If it's a non-retryable error (private video, unavailable), don't retry
-          if (msg.includes("Video unavailable") || msg.includes("Private video") || msg.includes("is not available")) {
+          // But "format is not available" IS retryable — different clients offer different formats
+          if ((msg.includes("Video unavailable") || msg.includes("Private video")) && !msg.includes("format")) {
             break;
           }
         }
