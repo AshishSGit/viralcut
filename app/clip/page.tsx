@@ -231,32 +231,30 @@ export default function ClipPage() {
               onDrop={handleDrop}
             >
               {file ? (
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <FileVideo className="w-10 h-10 text-brand-500" />
-                    <div className="text-left">
-                      <p className="text-white font-semibold text-lg">{file.name}</p>
-                      <p className="text-base text-white/60">
-                        {(file.size / (1024 * 1024)).toFixed(1)} MB
-                      </p>
+                <div className="space-y-5">
+                  <div className="flex items-center gap-3 bg-white/[0.03] rounded-xl px-4 py-3 border border-white/[0.06]">
+                    <div className="w-9 h-9 rounded-lg bg-brand-500/10 flex items-center justify-center shrink-0">
+                      <FileVideo className="w-5 h-5 text-brand-400" />
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3">
+                    <div className="flex-1 min-w-0 text-left">
+                      <p className="text-sm font-medium text-white truncate">{file.name}</p>
+                      <p className="text-xs text-white/50">{(file.size / (1024 * 1024)).toFixed(1)} MB</p>
+                    </div>
                     <button
                       type="button"
                       onClick={() => setFile(null)}
-                      className="text-white/60 hover:text-white"
+                      className="text-white/40 hover:text-white transition-colors shrink-0"
                     >
-                      <X className="w-5 h-5" />
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="btn-primary text-base !py-3.5 !px-8 whitespace-nowrap"
-                    >
-                      {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Clip It"}
+                      <X className="w-4 h-4" />
                     </button>
                   </div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="btn-primary w-full text-base !py-3.5 flex items-center justify-center"
+                  >
+                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Clip It"}
+                  </button>
                 </div>
               ) : (
                 <div className="py-4">
