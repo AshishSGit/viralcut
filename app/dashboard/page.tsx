@@ -55,7 +55,18 @@ export default function DashboardPage() {
         .order("created_at", { ascending: false })
         .limit(20);
 
-      setJobs(data || []);
+      // Mark stale jobs (processing for over 10 min) as failed on the client
+      const STALE_MS = 10 * 60 * 1000;
+      const jobs = (data || []).map(job => {
+        if (job.status !== "completed" && job.status !== "failed") {
+          const age = Date.now() - new Date(job.created_at).getTime();
+          if (age > STALE_MS) {
+            return { ...job, status: "failed", error: "Processing timed out." };
+          }
+        }
+        return job;
+      });
+      setJobs(jobs);
 
       const res = await fetch("/api/pro-status");
       if (res.ok) setUsage(await res.json());
