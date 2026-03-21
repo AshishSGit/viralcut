@@ -199,7 +199,7 @@ export default function JobResultPage() {
             <p className="text-white/50 mb-8 text-base leading-relaxed">{job.error || "An unknown error occurred."}</p>
             <div className="flex items-center justify-center gap-3">
               <a href="/clip" className="btn-primary inline-flex items-center gap-2">
-                <ArrowLeft className="w-4 h-4" /> Try Again
+                <Scissors className="w-4 h-4" /> Try Again
               </a>
             </div>
           </div>
