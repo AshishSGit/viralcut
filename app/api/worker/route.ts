@@ -331,15 +331,16 @@ ${formattedTranscript.slice(0, 30000)}`,
       if (hasDrawtext) {
         // Build drawtext filters for word-by-word captions (only if captions enabled)
         if (includeCaptions) {
-          const WORDS_PER_PHRASE = 4;
+          const WORDS_PER_PHRASE = 3;
           for (let p = 0; p < clipWords.length; p += WORDS_PER_PHRASE) {
             const phraseWords = clipWords.slice(p, p + WORDS_PER_PHRASE);
-            const phraseText = phraseWords.map((w: { word: string }) => w.word).join(" ")
+            const phraseText = phraseWords.map((w: { word: string }) => w.word).join(" ").toUpperCase()
               .replace(/\\/g, "\\\\").replace(/'/g, "\u2019").replace(/:/g, "\\:").replace(/%/g, "%%");
             const phraseStart = phraseWords[0].start - clip.start_time;
             const phraseEnd = phraseWords[phraseWords.length - 1].end - clip.start_time;
+            // Background box behind text for readability
             filterParts.push(
-              `drawtext=text='${phraseText}':fontsize=min(h/25\\,36):fontcolor=white:borderw=2:bordercolor=black:x=(w-text_w)/2:y=h*0.80:enable='between(t\\,${phraseStart.toFixed(2)}\\,${phraseEnd.toFixed(2)})'`
+              `drawtext=text='${phraseText}':fontsize=min(h/18\\,52):fontcolor=white:borderw=3:bordercolor=black@0.8:box=1:boxcolor=black@0.4:boxborderw=12:x=(w-text_w)/2:y=h*0.72:enable='between(t\\,${phraseStart.toFixed(2)}\\,${phraseEnd.toFixed(2)})'`
             );
           }
         }

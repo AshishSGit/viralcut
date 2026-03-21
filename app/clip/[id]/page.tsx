@@ -96,19 +96,26 @@ export default function JobResultPage() {
     setDownloading(clip.r2_key);
 
     try {
-      // Get a fresh presigned URL
-      const res = await fetch(`/api/download?key=${encodeURIComponent(clip.r2_key)}`);
-      if (!res.ok) throw new Error("Failed to get download URL");
-      const { url } = await res.json();
-
-      // Open in new tab — browser will download the .mp4 file
-      window.open(url, "_blank");
+      const filename = `${clip.title.replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "_").slice(0, 50)}.mp4`;
+      const a = document.createElement("a");
+      a.href = `/api/download?key=${encodeURIComponent(clip.r2_key)}&stream=true&name=${encodeURIComponent(filename)}`;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     } catch (err) {
       console.error("Download failed:", err);
       alert("Download failed. Please try again.");
     }
 
-    setDownloading(null);
+    setTimeout(() => setDownloading(null), 2000);
+  }
+
+  function handleDownloadAll() {
+    if (!sortedClips.length) return;
+    sortedClips.forEach((clip, i) => {
+      setTimeout(() => handleDownload(clip), i * 1500);
+    });
   }
 
   function handlePlay(r2Key: string) {
@@ -292,6 +299,19 @@ export default function JobResultPage() {
                 {" "} — sorted by virality score
               </p>
             </div>
+
+            {/* Download All */}
+            {sortedClips.length > 1 && (
+              <div className="flex justify-center mb-8">
+                <button
+                  onClick={handleDownloadAll}
+                  className="flex items-center gap-2 text-sm font-medium text-white/60 hover:text-white px-5 py-2.5 rounded-xl border border-white/10 hover:border-white/20 hover:bg-white/[0.04] transition-all"
+                >
+                  <Download className="w-4 h-4" />
+                  Download All {sortedClips.length} Clips
+                </button>
+              </div>
+            )}
 
             {/* Clip grid — vertical phone-frame cards */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
