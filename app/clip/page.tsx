@@ -24,7 +24,7 @@ import {
 import { createClient } from "@/utils/supabase/client";
 
 export default function ClipPage() {
-  const [tab, setTab] = useState<"url" | "upload">("url");
+  const [tab, setTab] = useState<"url" | "upload">("upload");
   const [url, setUrl] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -192,21 +192,11 @@ export default function ClipPage() {
           Create Viral Clips
         </h1>
         <p className="text-lg text-white/60 text-center mb-12">
-          Paste a YouTube URL or upload a video to get started.
+          Upload a video or paste a YouTube URL to get started.
         </p>
 
         {/* Tab toggle */}
         <div className="flex items-center justify-center gap-3 mb-8">
-          <button
-            onClick={() => setTab("url")}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold transition-all ${
-              tab === "url"
-                ? "bg-brand-500/15 text-white border border-brand-500/30"
-                : "text-white/80 hover:text-white border border-white/15 hover:border-white/25 bg-white/5"
-            }`}
-          >
-            <Link2 className="w-5 h-5" /> Paste URL
-          </button>
           <button
             onClick={() => setTab("upload")}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold transition-all ${
@@ -217,34 +207,21 @@ export default function ClipPage() {
           >
             <Upload className="w-5 h-5" /> Upload Video
           </button>
+          <button
+            onClick={() => setTab("url")}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold transition-all relative ${
+              tab === "url"
+                ? "bg-brand-500/15 text-white border border-brand-500/30"
+                : "text-white/80 hover:text-white border border-white/15 hover:border-white/25 bg-white/5"
+            }`}
+          >
+            <Link2 className="w-5 h-5" /> Paste URL
+            <span className="text-[9px] font-bold bg-brand-500/20 text-brand-400 px-1.5 py-0.5 rounded-md uppercase tracking-wider">Beta</span>
+          </button>
         </div>
 
         <form onSubmit={handleSubmit}>
-          {tab === "url" ? (
-            <div className="card p-8">
-              <label className="text-base text-white/70 mb-3 block font-medium">YouTube or Video URL</label>
-              <div className="flex gap-3">
-                <input
-                  type="url"
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  className="input-field flex-1 text-base !py-4"
-                  placeholder="https://youtube.com/watch?v=..."
-                />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="btn-primary flex items-center gap-2 whitespace-nowrap text-base !py-4 !px-8"
-                >
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
-                  {loading ? "Processing..." : "Clip It"}
-                </button>
-              </div>
-              <p className="text-sm text-white/50 mt-3">
-                YouTube downloads may occasionally fail due to platform restrictions. If so, download the video and upload it directly.
-              </p>
-            </div>
-          ) : (
+          {tab === "upload" ? (
             <div
               className={`card p-10 text-center transition-all ${
                 dragOver ? "border-brand-500 bg-brand-500/10" : ""
@@ -305,6 +282,33 @@ export default function ClipPage() {
                   />
                 </div>
               )}
+            </div>
+          ) : (
+            <div className="card p-8">
+              <div className="flex items-center gap-2 mb-4">
+                <label className="text-base text-white/70 font-medium">YouTube or Video URL</label>
+                <span className="text-[9px] font-bold bg-brand-500/20 text-brand-400 px-1.5 py-0.5 rounded-md uppercase tracking-wider">Beta</span>
+              </div>
+              <div className="flex gap-3">
+                <input
+                  type="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  className="input-field flex-1 text-base !py-4"
+                  placeholder="https://youtube.com/watch?v=..."
+                />
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn-primary flex items-center gap-2 whitespace-nowrap text-base !py-4 !px-8"
+                >
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
+                  {loading ? "Processing..." : "Clip It"}
+                </button>
+              </div>
+              <p className="text-sm text-white/50 mt-3">
+                YouTube URL downloads are in beta and may not work for all videos. For best results, download the video first and use the Upload tab.
+              </p>
             </div>
           )}
 
