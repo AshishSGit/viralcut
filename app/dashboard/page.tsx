@@ -129,6 +129,9 @@ export default function DashboardPage() {
             <a href="/blog" className="text-sm text-white/50 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.06] transition-all">
               Blog
             </a>
+            <a href="/contact" className="text-sm text-white/50 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.06] transition-all">
+              Contact
+            </a>
           </div>
 
           <div className="flex items-center gap-3">
