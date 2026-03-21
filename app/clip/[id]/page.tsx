@@ -8,7 +8,6 @@ import {
   Loader2,
   CheckCircle2,
   XCircle,
-  ArrowLeft,
   TrendingUp,
   Clock,
   Sparkles,
@@ -16,8 +15,6 @@ import {
   Search,
   Film,
   Play,
-  Volume2,
-  VolumeX,
 } from "lucide-react";
 
 interface Clip {
@@ -289,23 +286,42 @@ export default function JobResultPage() {
         ) : (
           /* Completed — show clips */
           <div>
-            <div className="text-center mb-8">
-              <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-3">
-                Your Clips Are Ready
+            {/* Celebration header */}
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 badge badge-neon mb-5">
+                <CheckCircle2 className="w-3.5 h-3.5" /> Ready to post
+              </div>
+              <h2 className="font-display text-3xl md:text-5xl font-bold text-white mb-4">
+                {sortedClips.length} Viral Clips Found
               </h2>
-              <p className="text-white/60 text-base">
-                {sortedClips.length} clips found
-                {job.duration_seconds ? ` from your ${Math.round(job.duration_seconds / 60)}-minute video` : ""}
-                {" "} — sorted by virality score
+              <p className="text-white/50 text-base md:text-lg max-w-lg mx-auto">
+                {job.duration_seconds ? `From your ${Math.round(job.duration_seconds / 60)}-minute video — ` : ""}
+                ranked by virality score. Preview, then download.
               </p>
+
+              {/* Quick stats */}
+              <div className="flex items-center justify-center gap-6 mt-6">
+                <div className="flex items-center gap-2 text-sm text-white/50">
+                  <Film className="w-4 h-4 text-brand-400" />
+                  <span>{sortedClips.length} clips</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-white/50">
+                  <Clock className="w-4 h-4 text-brand-400" />
+                  <span>{sortedClips.reduce((acc, c) => acc + Math.round(c.end_time - c.start_time), 0)}s total</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-white/50">
+                  <TrendingUp className="w-4 h-4 text-neon-400" />
+                  <span>Top score: {sortedClips[0]?.virality_score}/10</span>
+                </div>
+              </div>
             </div>
 
             {/* Download All */}
             {sortedClips.length > 1 && (
-              <div className="flex justify-center mb-8">
+              <div className="flex justify-center mb-10">
                 <button
                   onClick={handleDownloadAll}
-                  className="flex items-center gap-2 text-sm font-medium text-white/60 hover:text-white px-5 py-2.5 rounded-xl border border-white/10 hover:border-white/20 hover:bg-white/[0.04] transition-all"
+                  className="btn-primary text-sm !py-2.5 !px-6 flex items-center gap-2"
                 >
                   <Download className="w-4 h-4" />
                   Download All {sortedClips.length} Clips
@@ -314,7 +330,7 @@ export default function JobResultPage() {
             )}
 
             {/* Clip grid — vertical phone-frame cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {sortedClips.map((clip, i) => {
                 const r2Key = clip.r2_key || "";
                 const hasPreview = !!previewUrls[r2Key];
@@ -338,63 +354,71 @@ export default function JobResultPage() {
                             onEnded={() => setPlayingClip(null)}
                             className="w-full h-full object-cover"
                           />
-                          {/* Play overlay — show when paused */}
                           {!isPlaying && (
-                            <div className="absolute inset-0 bg-black/30 flex items-center justify-center transition-opacity group-hover:bg-black/20">
-                              <div className="w-14 h-14 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/20 group-hover:scale-110 transition-transform duration-300">
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-center justify-center transition-opacity group-hover:from-black/40">
+                              <div className="w-14 h-14 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/25 group-hover:scale-110 group-hover:bg-white/25 transition-all duration-300 shadow-lg">
                                 <Play className="w-6 h-6 text-white ml-0.5" fill="white" />
                               </div>
                             </div>
                           )}
                         </>
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Loader2 className="w-6 h-6 text-white/20 animate-spin" />
+                        <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-dark-800 to-dark-900">
+                          <Loader2 className="w-6 h-6 text-brand-400/40 animate-spin" />
+                          <span className="text-[10px] text-white/30">Loading preview</span>
                         </div>
                       )}
 
                       {/* Top badges */}
-                      <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-lg backdrop-blur-md ${
+                      <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+                        <span className={`text-[11px] font-bold px-2.5 py-1 rounded-lg backdrop-blur-md shadow-sm ${
                           clip.virality_score >= 8
-                            ? "bg-brand-500/90 text-dark-950"
+                            ? "bg-brand-500 text-dark-950"
                             : clip.virality_score >= 6
                             ? "bg-white/20 text-white"
-                            : "bg-black/40 text-white/70"
+                            : "bg-black/50 text-white/70"
                         }`}>
                           {clip.virality_score}/10
                         </span>
-                        <span className="text-[10px] font-mono text-white/80 bg-black/40 backdrop-blur-md px-2 py-1 rounded-lg">
+                        <span className="text-[11px] font-mono text-white bg-black/50 backdrop-blur-md px-2 py-1 rounded-lg">
                           {Math.round(clip.end_time - clip.start_time)}s
                         </span>
                       </div>
 
-                      {/* Rank badge for top clip */}
+                      {/* Rank badge */}
                       {i === 0 && (
-                        <div className="absolute bottom-3 left-3">
-                          <span className="text-[10px] font-bold bg-gradient-to-r from-brand-500 to-brand-400 text-dark-950 px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-lg shadow-brand-500/20">
-                            <TrendingUp className="w-3 h-3" /> Top Pick
+                        <div className="absolute bottom-3 left-3 pointer-events-none">
+                          <span className="text-[10px] font-bold bg-gradient-to-r from-brand-500 to-brand-300 text-dark-950 px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-lg shadow-brand-500/30">
+                            <TrendingUp className="w-3 h-3" /> Best Clip
                           </span>
+                        </div>
+                      )}
+                      {i === 1 && sortedClips.length > 2 && (
+                        <div className="absolute bottom-3 left-3 pointer-events-none">
+                          <span className="text-[10px] font-bold bg-white/15 backdrop-blur-md text-white px-3 py-1.5 rounded-lg">#2</span>
                         </div>
                       )}
                     </div>
 
-                    {/* Info below video */}
-                    <div className="mt-3 px-0.5">
-                      <h3 className="text-sm font-semibold text-white leading-snug line-clamp-2 mb-2.5">
+                    {/* Info + download */}
+                    <div className="mt-3.5 px-0.5">
+                      <p className="text-xs text-white/40 mb-1 font-medium">
+                        Clip {i + 1} of {sortedClips.length}
+                      </p>
+                      <h3 className="text-sm font-semibold text-white leading-snug line-clamp-2 mb-3 group-hover:text-brand-300 transition-colors">
                         {clip.title}
                       </h3>
                       <button
                         onClick={() => handleDownload(clip)}
                         disabled={downloading === clip.r2_key}
-                        className="group/dl w-full flex items-center justify-center gap-2 text-xs font-bold py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 text-dark-950 hover:from-brand-400 hover:to-brand-300 transition-all duration-300 hover:shadow-lg hover:shadow-brand-500/25 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none relative z-10"
+                        className="group/dl w-full flex items-center justify-center gap-2 text-xs font-bold py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 text-dark-950 hover:from-brand-400 hover:to-brand-300 transition-all duration-300 hover:shadow-lg hover:shadow-brand-500/25 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
                       >
                         {downloading === clip.r2_key ? (
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />
                         ) : (
                           <Download className="w-3.5 h-3.5 group-hover/dl:animate-bounce" />
                         )}
-                        {downloading === clip.r2_key ? "Saving..." : "Download"}
+                        {downloading === clip.r2_key ? "Saving..." : "Download MP4"}
                       </button>
                     </div>
                   </div>
@@ -402,9 +426,13 @@ export default function JobResultPage() {
               })}
             </div>
 
-            <div className="mt-12 text-center">
-              <a href="/clip" className="btn-ghost inline-flex items-center gap-2">
+            {/* Bottom actions */}
+            <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <a href="/clip" className="btn-primary inline-flex items-center gap-2 text-sm !py-3 !px-6">
                 <Scissors className="w-4 h-4" /> Clip Another Video
+              </a>
+              <a href="/dashboard" className="btn-ghost inline-flex items-center gap-2 text-sm">
+                View All Clips
               </a>
             </div>
           </div>
