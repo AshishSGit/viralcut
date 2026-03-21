@@ -82,15 +82,31 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen ambient-glow">
       <nav className="glass fixed top-0 w-full z-50">
-        <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-4">
+        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-3">
           <a href="/" className="flex items-center gap-2">
             <Scissors className="w-6 h-6 text-brand-500" />
             <span className="font-display text-xl font-bold text-white">
               Clippi<span className="text-brand-400">fied</span>
             </span>
           </a>
-          <a href="/clip" className="text-sm text-slate-400 hover:text-white flex items-center gap-1">
-            <ArrowLeft className="w-4 h-4" /> Create Clips
+
+          <div className="hidden md:flex items-center bg-white/[0.04] rounded-xl border border-white/[0.06] p-1">
+            <a href="/dashboard" className="text-sm text-white/50 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.06] transition-all">
+              Dashboard
+            </a>
+            <a href="/clip" className="text-sm text-white/50 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.06] transition-all">
+              Create
+            </a>
+            <a href="/pricing" className="text-sm font-medium text-white px-4 py-2 rounded-lg bg-white/[0.08] border border-white/[0.08]">
+              Pricing
+            </a>
+            <a href="/blog" className="text-sm text-white/50 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.06] transition-all">
+              Blog
+            </a>
+          </div>
+
+          <a href="/clip" className="btn-primary text-sm !py-2 !px-4 flex items-center gap-1.5">
+            <Zap className="w-3.5 h-3.5" /> New Clip
           </a>
         </div>
       </nav>
