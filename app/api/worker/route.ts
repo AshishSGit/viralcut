@@ -158,13 +158,24 @@ export async function POST(request: NextRequest) {
       await writeFile(videoPath, Buffer.concat(chunks));
     }
 
-    // Get video duration
-    const { stdout: durationOut } = await execFileAsync("ffprobe", [
-      "-v", "error", "-show_entries", "format=duration",
-      "-of", "default=noprint_wrappers=1:nokey=1", videoPath,
+    // Get video duration and check for audio stream
+    const { stdout: probeOut } = await execFileAsync("ffprobe", [
+      "-v", "error",
+      "-show_entries", "format=duration",
+      "-show_entries", "stream=codec_type",
+      "-of", "default=noprint_wrappers=1", videoPath,
     ]);
-    const durationSec = Math.round(parseFloat(durationOut.trim()));
+    const durationSec = Math.round(parseFloat(probeOut.match(/duration=([\d.]+)/)?.[1] || "0"));
     await admin.from("jobs").update({ duration_seconds: durationSec }).eq("id", job_id);
+
+    // Check video has audio and is long enough
+    const hasAudio = probeOut.includes("codec_type=audio");
+    if (!hasAudio) {
+      throw new Error("This video has no audio track. Clippified needs speech to find viral moments.");
+    }
+    if (durationSec < 10) {
+      throw new Error("Video is too short (under 10 seconds). Upload a video with at least 30 seconds of speech.");
+    }
 
     // ── STEP 2: Extract audio ──
     await updateStatus(admin, job_id, "transcribing");
