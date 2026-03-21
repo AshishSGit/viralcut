@@ -35,6 +35,7 @@ export default function DashboardPage() {
   const [usage, setUsage] = useState({ plan: "free", usage: 0, limit: 1 });
   const [userEmail, setUserEmail] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [filter, setFilter] = useState<"all" | "completed" | "failed">("all");
   const menuRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
   const router = useRouter();
@@ -257,8 +258,31 @@ export default function DashboardPage() {
             </a>
           </div>
         ) : (
-          <div className="space-y-3">
-            {jobs.map((job) => (
+          <div>
+            {/* Filter tabs */}
+            {jobs.some(j => j.status === "failed") && (
+              <div className="flex items-center gap-2 mb-6">
+                {(["all", "completed", "failed"] as const).map((f) => {
+                  const count = f === "all" ? jobs.length : jobs.filter(j => j.status === f).length;
+                  return (
+                    <button
+                      key={f}
+                      onClick={() => setFilter(f)}
+                      className={`text-xs font-medium px-3 py-1.5 rounded-lg transition-all capitalize ${
+                        filter === f
+                          ? "bg-white/[0.08] text-white border border-white/[0.08]"
+                          : "text-white/40 hover:text-white/60 hover:bg-white/[0.03]"
+                      }`}
+                    >
+                      {f} ({count})
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            <div className="space-y-3">
+            {jobs.filter(j => filter === "all" ? true : j.status === filter).map((job) => (
               <a
                 key={job.id}
                 href={`/clip/${job.id}`}
@@ -298,14 +322,6 @@ export default function DashboardPage() {
                         </span>
                       </>
                     )}
-                    {job.clips && (
-                      <>
-                        <span className="text-xs text-white/15">·</span>
-                        <span className="text-xs text-neon-400 font-medium">
-                          {job.clips.length} clips
-                        </span>
-                      </>
-                    )}
                     {job.status === "failed" && (
                       <>
                         <span className="text-xs text-white/15">·</span>
@@ -316,9 +332,17 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Arrow */}
-                <ArrowRight className="w-4 h-4 text-white/10 group-hover:text-brand-400 group-hover:translate-x-0.5 transition-all duration-300 flex-shrink-0" />
+                {/* Clip count or arrow */}
+                {job.status === "completed" && job.clips ? (
+                  <span className="text-xs font-medium text-neon-400 bg-neon-500/10 px-2.5 py-1 rounded-lg shrink-0">
+                    {job.clips.length} clips
+                  </span>
+                ) : (
+                  <ArrowRight className="w-4 h-4 text-white/10 group-hover:text-brand-400 group-hover:translate-x-0.5 transition-all duration-300 flex-shrink-0" />
+                )}
               </a>
             ))}
+            </div>
           </div>
         )}
       </div>
