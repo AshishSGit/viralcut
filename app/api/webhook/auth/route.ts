@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 
     <!-- Logo -->
     <div style="text-align: center; margin-bottom: 40px;">
-      <span style="font-size: 30px; font-weight: 800; color: #f59e0b; letter-spacing: -1px;">✂ Clippi</span><span style="font-size: 30px; font-weight: 800; color: #fbbf24; letter-spacing: -1px;">fied</span>
+      <span style="font-size: 30px; font-weight: 800; color: #f59e0b; letter-spacing: -1px;">Clippi</span><span style="font-size: 30px; font-weight: 800; color: #fbbf24; letter-spacing: -1px;">fied</span>
     </div>
 
     <!-- Main card -->
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
 
       <!-- Greeting -->
       <h1 style="font-size: 26px; color: #ffffff; margin: 0 0 6px 0; font-weight: 700; letter-spacing: -0.5px;">
-        ${firstName ? `Welcome, ${firstName} 👋` : "Welcome to Clippified 👋"}
+        ${firstName ? `Welcome, ${firstName}!` : "Welcome to Clippified!"}
       </h1>
       <p style="font-size: 15px; color: #94a3b8; line-height: 1.7; margin: 0 0 32px 0;">
         You just unlocked the fastest way to turn long videos into viral short clips. Here's how it works:
