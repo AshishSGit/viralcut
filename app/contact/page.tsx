@@ -84,6 +84,9 @@ export default function ContactPage() {
               <a href="/blog" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Blog</a>
               <a href="/contact" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Contact</a>
             </div>
+            <div className="mt-6 pt-6 border-t border-white/10">
+              <a href="/signin" className="block px-4 py-3 text-sm text-hot-400 hover:bg-hot-500/10 rounded-lg">Sign Out</a>
+            </div>
           </div>
         </div>
       )}

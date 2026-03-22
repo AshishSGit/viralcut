@@ -268,6 +268,17 @@ export default function ClipPage() {
               <a href="/blog" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Blog</a>
               <a href="/contact" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Contact</a>
             </div>
+            {userEmail && (
+              <div className="mt-6 pt-6 border-t border-white/10">
+                <p className="text-xs text-white/40 px-4 truncate mb-3">{userEmail}</p>
+                <button
+                  onClick={() => { setMobileMenuOpen(false); handleSignOut(); }}
+                  className="block w-full text-left px-4 py-3 text-sm text-hot-400 hover:bg-hot-500/10 rounded-lg"
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
