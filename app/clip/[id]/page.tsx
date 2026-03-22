@@ -15,6 +15,8 @@ import {
   Search,
   Film,
   Play,
+  Menu,
+  X,
 } from "lucide-react";
 
 interface Clip {
@@ -48,6 +50,7 @@ const STATUS_STAGES = [
 export default function JobResultPage() {
   const { id } = useParams();
   const [job, setJob] = useState<Job | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [downloading, setDownloading] = useState<string | null>(null);
   const [previewUrls, setPreviewUrls] = useState<Record<string, string>>({});
   const [playingClip, setPlayingClip] = useState<string | null>(null);
@@ -176,13 +179,37 @@ export default function JobResultPage() {
             </a>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden text-white/60 hover:text-white p-2"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+
+          <div className="hidden md:flex items-center gap-3">
             <a href="/clip" className="btn-primary text-sm !py-2 !px-4 flex items-center gap-1.5">
               <Scissors className="w-3.5 h-3.5" /> New Clip
             </a>
           </div>
         </div>
       </nav>
+
+      {/* Mobile nav menu */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-40 md:hidden">
+          <div className="fixed inset-0 bg-black/60" onClick={() => setMobileMenuOpen(false)} />
+          <div className="fixed top-0 right-0 w-64 h-full z-50 p-6 pt-20" style={{ background: "#111318" }}>
+            <div className="space-y-1">
+              <a href="/dashboard" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Dashboard</a>
+              <a href="/clip" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Create</a>
+              <a href="/pricing" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Pricing</a>
+              <a href="/blog" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Blog</a>
+              <a href="/contact" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Contact</a>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="relative pt-28 pb-20 px-6 max-w-6xl mx-auto">
         {!job ? (
@@ -294,13 +321,13 @@ export default function JobResultPage() {
               <h2 className="font-display text-3xl md:text-5xl font-bold text-white mb-4">
                 {sortedClips.length} Viral Clips Found
               </h2>
-              <p className="text-white/50 text-base md:text-lg max-w-lg mx-auto">
+              <p className="text-white/50 text-sm md:text-lg max-w-lg mx-auto">
                 {job.duration_seconds ? `From your ${Math.round(job.duration_seconds / 60)}-minute video — ` : ""}
                 ranked by virality score. Preview, then download.
               </p>
 
               {/* Quick stats */}
-              <div className="flex items-center justify-center gap-6 mt-6">
+              <div className="flex items-center justify-center gap-3 md:gap-6 flex-wrap mt-6">
                 <div className="flex items-center gap-2 text-sm text-white/50">
                   <Film className="w-4 h-4 text-brand-400" />
                   <span>{sortedClips.length} clips</span>
@@ -318,7 +345,7 @@ export default function JobResultPage() {
 
             {/* Download All */}
             {sortedClips.length > 1 && (
-              <div className="flex justify-center mb-10">
+              <div className="flex justify-center mb-6 md:mb-10">
                 <button
                   onClick={handleDownloadAll}
                   className="btn-primary text-sm !py-2.5 !px-6 flex items-center gap-2"
@@ -330,7 +357,7 @@ export default function JobResultPage() {
             )}
 
             {/* Clip grid — vertical phone-frame cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
               {sortedClips.map((clip, i) => {
                 const r2Key = clip.r2_key || "";
                 const hasPreview = !!previewUrls[r2Key];

@@ -20,6 +20,7 @@ import {
   LayoutDashboard,
   ChevronDown,
   Captions,
+  Menu,
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
@@ -33,6 +34,7 @@ export default function ClipPage() {
   const [dragOver, setDragOver] = useState(false);
   const [includeCaptions, setIncludeCaptions] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [userPlan, setUserPlan] = useState("free");
   const [usage, setUsage] = useState({ usage: 0, limit: 1 });
@@ -172,6 +174,14 @@ export default function ClipPage() {
             </a>
           </div>
 
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden text-white/60 hover:text-white p-2"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+
           {/* User menu — only show when user data loaded */}
           {userEmail && (
           <div className="relative" ref={menuRef}>
@@ -246,6 +256,22 @@ export default function ClipPage() {
         </div>
       </nav>
 
+      {/* Mobile nav menu */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-40 md:hidden">
+          <div className="fixed inset-0 bg-black/60" onClick={() => setMobileMenuOpen(false)} />
+          <div className="fixed top-0 right-0 w-64 h-full z-50 p-6 pt-20" style={{ background: "#111318" }}>
+            <div className="space-y-1">
+              <a href="/dashboard" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Dashboard</a>
+              <a href="/clip" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Create</a>
+              <a href="/pricing" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Pricing</a>
+              <a href="/blog" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Blog</a>
+              <a href="/contact" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Contact</a>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="pt-28 pb-20 px-6 max-w-2xl mx-auto">
         <h1 className="font-display text-4xl md:text-5xl font-bold text-white text-center mb-3">
           Create Viral Clips
@@ -258,7 +284,7 @@ export default function ClipPage() {
         <div className="flex items-center justify-center gap-3 mb-8">
           <button
             onClick={() => { setTab("upload"); setError(""); }}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold transition-all ${
+            className={`flex items-center gap-2 px-4 py-2.5 md:px-6 md:py-3 rounded-xl text-base font-semibold transition-all ${
               tab === "upload"
                 ? "bg-brand-500/15 text-white border border-brand-500/30"
                 : "text-white/80 hover:text-white border border-white/15 hover:border-white/25 bg-white/5"
@@ -268,7 +294,7 @@ export default function ClipPage() {
           </button>
           <button
             onClick={() => { setTab("url"); setError(""); }}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold transition-all relative ${
+            className={`flex items-center gap-2 px-4 py-2.5 md:px-6 md:py-3 rounded-xl text-base font-semibold transition-all relative ${
               tab === "url"
                 ? "bg-brand-500/15 text-white border border-brand-500/30"
                 : "text-white/80 hover:text-white border border-white/15 hover:border-white/25 bg-white/5"
@@ -282,7 +308,7 @@ export default function ClipPage() {
         <form onSubmit={handleSubmit}>
           {tab === "upload" ? (
             <div
-              className={`card p-10 text-center transition-all ${
+              className={`card p-6 md:p-10 text-center transition-all ${
                 dragOver ? "border-brand-500 bg-brand-500/10" : ""
               }`}
               onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}

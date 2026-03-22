@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Scissors, Check, Zap, Loader2, ArrowLeft } from "lucide-react";
+import { Scissors, Check, Zap, Loader2, ArrowLeft, Menu, X } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [annual, setAnnual] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -135,11 +136,35 @@ export default function PricingPage() {
             </a>
           </div>
 
-          <a href="/clip" className="btn-primary text-sm !py-2 !px-4 flex items-center gap-1.5">
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden text-white/60 hover:text-white p-2"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+
+          <a href="/clip" className="hidden md:flex btn-primary text-sm !py-2 !px-4 items-center gap-1.5">
             <Zap className="w-3.5 h-3.5" /> New Clip
           </a>
         </div>
       </nav>
+
+      {/* Mobile nav menu */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-40 md:hidden">
+          <div className="fixed inset-0 bg-black/60" onClick={() => setMobileMenuOpen(false)} />
+          <div className="fixed top-0 right-0 w-64 h-full z-50 p-6 pt-20" style={{ background: "#111318" }}>
+            <div className="space-y-1">
+              <a href="/dashboard" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Dashboard</a>
+              <a href="/clip" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Create</a>
+              <a href="/pricing" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Pricing</a>
+              <a href="/blog" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Blog</a>
+              <a href="/contact" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Contact</a>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="pt-32 pb-20 px-6 max-w-5xl mx-auto">
         <div className="text-center mb-10">
@@ -152,7 +177,7 @@ export default function PricingPage() {
 
         {/* Billing toggle */}
         <div
-          className="flex items-center justify-center gap-4 mb-12 cursor-pointer select-none"
+          className="flex items-center justify-center gap-3 md:gap-4 mb-8 md:mb-12 cursor-pointer select-none"
           onClick={() => setAnnual(!annual)}
         >
           <span className={`text-sm font-medium transition-colors ${!annual ? "text-white" : "text-white/40"}`}>Monthly</span>
@@ -171,7 +196,7 @@ export default function PricingPage() {
             return (
             <div
               key={plan.key}
-              className={`card p-8 flex flex-col ${plan.highlight ? "pricing-pro" : ""} ${!plan.disabled ? "cursor-pointer" : ""}`}
+              className={`card p-6 md:p-8 flex flex-col ${plan.highlight ? "pricing-pro" : ""} ${!plan.disabled ? "cursor-pointer" : ""}`}
               onClick={() => !plan.disabled && !loading && handleCheckout(plan.key)}
             >
               {plan.highlight && (

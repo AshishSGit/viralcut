@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Scissors, Mail, MessageSquare, Clock, Send, Loader2, CheckCircle2, HelpCircle, Bug, Sparkles, Zap } from "lucide-react";
+import { Scissors, Mail, MessageSquare, Clock, Send, Loader2, CheckCircle2, HelpCircle, Bug, Sparkles, Zap, Menu, X } from "lucide-react";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", type: "general", message: "" });
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -57,11 +58,35 @@ export default function ContactPage() {
             </a>
           </div>
 
-          <a href="/clip" className="btn-primary text-sm !py-2 !px-4 flex items-center gap-1.5">
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden text-white/60 hover:text-white p-2"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+
+          <a href="/clip" className="hidden md:flex btn-primary text-sm !py-2 !px-4 items-center gap-1.5">
             <Zap className="w-3.5 h-3.5" /> New Clip
           </a>
         </div>
       </nav>
+
+      {/* Mobile nav menu */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-40 md:hidden">
+          <div className="fixed inset-0 bg-black/60" onClick={() => setMobileMenuOpen(false)} />
+          <div className="fixed top-0 right-0 w-64 h-full z-50 p-6 pt-20" style={{ background: "#111318" }}>
+            <div className="space-y-1">
+              <a href="/dashboard" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Dashboard</a>
+              <a href="/clip" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Create</a>
+              <a href="/pricing" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Pricing</a>
+              <a href="/blog" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Blog</a>
+              <a href="/contact" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Contact</a>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="pt-32 pb-20 px-6 max-w-5xl mx-auto">
         <div className="text-center mb-16">
@@ -73,7 +98,7 @@ export default function ContactPage() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-5 gap-10">
+        <div className="grid md:grid-cols-5 gap-6 md:gap-10">
           {/* Left — contact info */}
           <div className="md:col-span-2 space-y-6">
             <div className="card p-6">

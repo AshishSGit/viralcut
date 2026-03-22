@@ -1,4 +1,7 @@
-import { Scissors } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { Scissors, Menu, X } from "lucide-react";
 
 const posts = [
   {
@@ -49,6 +52,8 @@ const posts = [
 ];
 
 export default function BlogPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen ambient-glow">
       {/* Nav */}
@@ -79,11 +84,35 @@ export default function BlogPage() {
             </a>
           </div>
 
-          <a href="/signin" className="btn-primary text-sm !py-2 !px-5">
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden text-white/60 hover:text-white p-2"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+
+          <a href="/signin" className="hidden md:inline-flex btn-primary text-sm !py-2 !px-5">
             Get Started Free
           </a>
         </div>
       </nav>
+
+      {/* Mobile nav menu */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-40 md:hidden">
+          <div className="fixed inset-0 bg-black/60" onClick={() => setMobileMenuOpen(false)} />
+          <div className="fixed top-0 right-0 w-64 h-full z-50 p-6 pt-20" style={{ background: "#111318" }}>
+            <div className="space-y-1">
+              <a href="/dashboard" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Dashboard</a>
+              <a href="/clip" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Create</a>
+              <a href="/pricing" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Pricing</a>
+              <a href="/blog" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Blog</a>
+              <a href="/contact" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Contact</a>
+            </div>
+          </div>
+        </div>
+      )}
 
       <main className="max-w-3xl mx-auto px-6 pt-32 pb-24">
         <h1 className="font-display text-4xl md:text-5xl font-bold text-white tracking-tight mb-4">

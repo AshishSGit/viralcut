@@ -15,6 +15,8 @@ import {
   LayoutDashboard,
   User,
   Film,
+  Menu,
+  X,
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
@@ -35,6 +37,7 @@ export default function DashboardPage() {
   const [usage, setUsage] = useState({ plan: "free", usage: 0, limit: 1 });
   const [userEmail, setUserEmail] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [filter, setFilter] = useState<"all" | "completed" | "failed">("all");
   const menuRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
@@ -135,7 +138,15 @@ export default function DashboardPage() {
             </a>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden text-white/60 hover:text-white p-2"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+
+          <div className="hidden md:flex items-center gap-3">
             <a href="/clip" className="btn-primary text-sm !py-2 !px-4 flex items-center gap-1.5">
               <Plus className="w-4 h-4" /> New Clip
             </a>
@@ -207,6 +218,22 @@ export default function DashboardPage() {
         </div>
       </nav>
 
+      {/* Mobile nav menu */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-40 md:hidden">
+          <div className="fixed inset-0 bg-black/60" onClick={() => setMobileMenuOpen(false)} />
+          <div className="fixed top-0 right-0 w-64 h-full z-50 p-6 pt-20" style={{ background: "#111318" }}>
+            <div className="space-y-1">
+              <a href="/dashboard" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Dashboard</a>
+              <a href="/clip" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Create</a>
+              <a href="/pricing" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Pricing</a>
+              <a href="/blog" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Blog</a>
+              <a href="/contact" className="block px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg">Contact</a>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="pt-28 pb-20 px-6 max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4">
@@ -216,7 +243,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Usage card */}
-          <div className="card px-6 py-4 flex items-center gap-5">
+          <div className="card px-6 py-4 flex items-center gap-3 md:gap-5">
             <div>
               <p className="text-[11px] text-white/50 uppercase tracking-wider font-semibold">Plan</p>
               <p className="text-sm font-bold text-white capitalize mt-0.5">{usage.plan}</p>
@@ -286,7 +313,7 @@ export default function DashboardPage() {
               <a
                 key={job.id}
                 href={`/clip/${job.id}`}
-                className="card gradient-border p-5 flex items-center gap-4 hover:border-brand-500/20 transition-all duration-300 block group"
+                className="card gradient-border p-4 md:p-5 flex items-center gap-4 hover:border-brand-500/20 transition-all duration-300 block group"
               >
                 {/* Status icon */}
                 <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${

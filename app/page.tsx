@@ -180,7 +180,7 @@ function Hero() {
         </motion.div>
 
         <motion.h1
-          className="mt-8 font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.08] tracking-tight"
+          className="mt-8 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-[1.08] tracking-tight"
           initial="hidden" animate="visible" variants={fadeUp} custom={1}
         >
           <span className="text-white">AI finds your</span>
@@ -255,7 +255,7 @@ function Hero() {
             ].map((s, i) => (
               <motion.div key={i} variants={staggerItem} className="relative card p-8 text-center group hover:border-brand-500/25 transition-all duration-500">
                 <div className="absolute -top-px left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-500/40 to-transparent" />
-                <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center mx-auto mb-6 group-hover:bg-brand-500/15 group-hover:scale-105 transition-all duration-500">
+                <div className="w-14 h-14 md:w-20 md:h-20 rounded-2xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center mx-auto mb-6 group-hover:bg-brand-500/15 group-hover:scale-105 transition-all duration-500">
                   <s.icon className="w-7 h-7 md:w-9 md:h-9 text-brand-400" />
                 </div>
                 <div className="text-[11px] text-brand-500 font-bold mb-2 tracking-widest uppercase">Step {s.step}</div>
@@ -283,7 +283,7 @@ function SocialProof() {
         </motion.p>
 
         <motion.div
-          className="flex items-center justify-center gap-10 md:gap-16 mb-20"
+          className="flex items-center justify-center gap-6 md:gap-16 mb-20"
           initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer}
         >
           {["TikTok", "Reels", "Shorts"].map((p) => (
@@ -307,7 +307,7 @@ function SocialProof() {
             { value: "9:16", label: "Vertical + captions" },
           ].map((s) => (
             <motion.div key={s.label} variants={staggerItem}>
-              <p className="font-display text-4xl sm:text-5xl md:text-7xl font-bold text-white">
+              <p className="font-display text-3xl sm:text-5xl md:text-7xl font-bold text-white">
                 {s.value}
                 {s.unit && <span className="text-2xl text-white/60">{s.unit}</span>}
               </p>
@@ -350,7 +350,7 @@ function HowItWorks() {
           {steps.map((step, i) => (
             <motion.div
               key={i}
-              className="card p-8 text-center group hover:border-brand-500/25 transition-all duration-500"
+              className="card p-6 md:p-8 text-center group hover:border-brand-500/25 transition-all duration-500"
               initial="hidden" whileInView="visible" viewport={{ once: true }} variants={scaleIn} custom={i + 1}
             >
               <div className="w-16 h-16 rounded-2xl bg-brand-500/10 border border-brand-500/15 flex items-center justify-center text-brand-400 mx-auto mb-6 group-hover:bg-brand-500/15 group-hover:scale-110 transition-all duration-500">
@@ -399,7 +399,7 @@ function Features() {
           {features.map((f, i) => (
             <motion.div
               key={i}
-              className="card p-8 group hover:border-brand-500/20 transition-all duration-500"
+              className="card p-6 md:p-8 group hover:border-brand-500/20 transition-all duration-500"
               variants={staggerItem}
             >
               <div className="w-14 h-14 rounded-2xl bg-brand-500/10 border border-brand-500/15 flex items-center justify-center text-brand-400 mb-6 group-hover:bg-brand-500/15 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-brand-500/10 transition-all duration-500">
@@ -453,7 +453,7 @@ function Pricing() {
 
         {/* Monthly / Yearly toggle */}
         <div
-          className="flex items-center justify-center gap-4 mb-14 cursor-pointer select-none"
+          className="flex items-center justify-center gap-3 md:gap-4 mb-10 md:mb-14 cursor-pointer select-none"
           onClick={() => setAnnual(!annual)}
         >
           <span className={`text-sm font-medium transition-colors ${!annual ? "text-white" : "text-white/40"}`}>Monthly</span>
@@ -477,7 +477,7 @@ function Pricing() {
             return (
             <motion.div
               key={i}
-              className={`card p-8 flex flex-col group transition-all duration-500 ${plan.highlight ? "pricing-pro" : "hover:border-white/10"}`}
+              className={`card p-6 md:p-8 flex flex-col group transition-all duration-500 ${plan.highlight ? "pricing-pro" : "hover:border-white/10"}`}
               variants={staggerItem}
             >
               {plan.badge && (
