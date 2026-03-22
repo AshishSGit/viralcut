@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 
     <!-- Logo -->
     <div style="text-align: center; margin-bottom: 40px;">
-      <span style="font-size: 30px; font-weight: 800; color: #f59e0b; letter-spacing: -1px;">Clippi</span><span style="font-size: 30px; font-weight: 800; color: #fbbf24; letter-spacing: -1px;">fied</span>
+      <span style="font-size: 30px; font-weight: 800; color: #ffffff; letter-spacing: -1px;">Clippi</span><span style="font-size: 30px; font-weight: 800; color: #fbbf24; letter-spacing: -1px;">fied</span>
     </div>
 
     <!-- Main card -->
