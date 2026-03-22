@@ -175,7 +175,7 @@ function Hero() {
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
           <span className="inline-flex items-center gap-2 badge badge-brand uppercase tracking-widest text-xs">
             <Sparkles className="w-3.5 h-3.5" />
-            Stop editing. Start posting.
+            AI-Powered Clip Generator
           </span>
         </motion.div>
 
@@ -183,12 +183,12 @@ function Hero() {
           className="mt-8 font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.08] tracking-tight"
           initial="hidden" animate="visible" variants={fadeUp} custom={1}
         >
-          <span className="text-white">One video.</span>
+          <span className="text-white">AI finds your</span>
           <br className="hidden sm:block" />
-          <span className="text-white">Five viral clips.</span>
+          <span className="text-white">most viral moments.</span>
           <br className="hidden sm:block" />
           <span className="bg-gradient-to-r from-brand-300 via-brand-400 to-brand-500 bg-clip-text text-transparent">
-            Zero editing.
+            You just post.
           </span>
         </motion.h1>
 
@@ -196,7 +196,7 @@ function Hero() {
           className="mt-8 text-lg md:text-2xl text-white/55 max-w-2xl mx-auto leading-relaxed"
           initial="hidden" animate="visible" variants={fadeUp} custom={2}
         >
-          Drop any video. Our AI finds the moments your audience will share — cropped to 9:16, captioned, and ready to post in under 2 minutes.
+          Drop a podcast, interview, or any video. Get vertical clips with captions — ranked by virality, ready to post in 2 minutes.
         </motion.p>
 
         <motion.div
@@ -558,10 +558,10 @@ function CTA() {
         initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
       >
         <h2 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight">
-          Ready to go viral?
+          Your audience is waiting.
         </h2>
         <p className="mt-5 text-white/60 text-lg md:text-xl max-w-xl mx-auto">
-          Join creators who save hours every week. Your first video is free.
+          Every day you don&apos;t post clips, you&apos;re leaving growth on the table. Start free — no credit card needed.
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
           <a href="/signin" className="btn-primary text-base flex items-center gap-2 !py-4 !px-8 group">
