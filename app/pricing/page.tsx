@@ -151,15 +151,14 @@ export default function PricingPage() {
         </div>
 
         {/* Billing toggle */}
-        <div className="flex items-center justify-center gap-4 mb-12">
+        <div
+          className="flex items-center justify-center gap-4 mb-12 cursor-pointer select-none"
+          onClick={() => setAnnual(!annual)}
+        >
           <span className={`text-sm font-medium transition-colors ${!annual ? "text-white" : "text-white/40"}`}>Monthly</span>
-          <button
-            onClick={() => setAnnual(!annual)}
-            className={`toggle-track ${annual ? "active" : ""}`}
-            aria-label="Toggle annual billing"
-          >
+          <div className={`toggle-track ${annual ? "active" : ""}`}>
             <div className="toggle-thumb" />
-          </button>
+          </div>
           <span className={`text-sm font-medium transition-colors ${annual ? "text-white" : "text-white/40"}`}>Yearly</span>
           <span className="text-xs font-bold bg-neon-500/15 text-neon-400 px-2.5 py-1 rounded-lg border border-neon-500/20">
             Save 20%

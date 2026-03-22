@@ -452,15 +452,14 @@ function Pricing() {
         </motion.div>
 
         {/* Monthly / Yearly toggle */}
-        <div className="flex items-center justify-center gap-4 mb-14">
+        <div
+          className="flex items-center justify-center gap-4 mb-14 cursor-pointer select-none"
+          onClick={() => setAnnual(!annual)}
+        >
           <span className={`text-sm font-medium transition-colors ${!annual ? "text-white" : "text-white/40"}`}>Monthly</span>
-          <button
-            onClick={() => setAnnual(!annual)}
-            className={`toggle-track ${annual ? "active" : ""}`}
-            aria-label="Toggle annual billing"
-          >
+          <div className={`toggle-track ${annual ? "active" : ""}`}>
             <div className="toggle-thumb" />
-          </button>
+          </div>
           <span className={`text-sm font-medium transition-colors ${annual ? "text-white" : "text-white/40"}`}>
             Yearly
           </span>
