@@ -14,16 +14,25 @@ export async function POST(request: NextRequest) {
   }
 
   const stripe = getStripe();
-  const { plan } = await request.json();
+  const { plan, billing } = await request.json();
 
   if (!["pro", "unlimited"].includes(plan)) {
     return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
   }
 
-  const priceId =
-    plan === "pro"
-      ? process.env.STRIPE_PRO_PRICE_ID!
-      : process.env.STRIPE_UNLIMITED_PRICE_ID!;
+  const isYearly = billing === "yearly";
+
+  const priceMap: Record<string, string> = {
+    "pro-monthly": process.env.STRIPE_PRO_PRICE_ID!,
+    "pro-yearly": process.env.STRIPE_PRO_YEARLY_PRICE_ID!,
+    "unlimited-monthly": process.env.STRIPE_UNLIMITED_PRICE_ID!,
+    "unlimited-yearly": process.env.STRIPE_UNLIMITED_YEARLY_PRICE_ID!,
+  };
+
+  const priceId = priceMap[`${plan}-${isYearly ? "yearly" : "monthly"}`];
+  if (!priceId) {
+    return NextResponse.json({ error: "Invalid plan configuration" }, { status: 400 });
+  }
 
   const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
 

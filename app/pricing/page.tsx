@@ -8,6 +8,7 @@ import { createClient } from "@/utils/supabase/client";
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [annual, setAnnual] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -34,7 +35,7 @@ export default function PricingPage() {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify({ plan, billing: annual ? "yearly" : "monthly" }),
       });
       const data = await res.json();
       if (res.status === 401) {
@@ -57,8 +58,7 @@ export default function PricingPage() {
   const plans = [
     {
       name: "Free",
-      price: "$0",
-      period: "forever",
+      monthly: 0, yearly: 0,
       key: "free",
       features: [
         "1 video per month",
@@ -73,8 +73,7 @@ export default function PricingPage() {
     },
     {
       name: "Pro",
-      price: "$19",
-      period: "/month",
+      monthly: 19, yearly: 15,
       key: "pro",
       features: [
         "10 videos per month",
@@ -90,8 +89,7 @@ export default function PricingPage() {
     },
     {
       name: "Unlimited",
-      price: "$49",
-      period: "/month",
+      monthly: 49, yearly: 39,
       key: "unlimited",
       features: [
         "Unlimited videos",
@@ -144,28 +142,53 @@ export default function PricingPage() {
       </nav>
 
       <div className="pt-32 pb-20 px-6 max-w-5xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
           <Zap className="w-10 h-10 text-brand-500 mx-auto mb-4" />
           <h1 className="font-display text-3xl md:text-5xl font-bold text-white mb-4">
             Upgrade Your Plan
           </h1>
-          <p className="text-slate-400 text-lg">Remove watermarks, clip more videos, and get priority processing.</p>
+          <p className="text-white/60 text-lg">Remove watermarks, clip more videos, and get priority processing.</p>
+        </div>
+
+        {/* Billing toggle */}
+        <div className="flex items-center justify-center gap-4 mb-12">
+          <span className={`text-sm font-medium transition-colors ${!annual ? "text-white" : "text-white/40"}`}>Monthly</span>
+          <button
+            onClick={() => setAnnual(!annual)}
+            className={`toggle-track ${annual ? "active" : ""}`}
+            aria-label="Toggle annual billing"
+          >
+            <div className="toggle-thumb" />
+          </button>
+          <span className={`text-sm font-medium transition-colors ${annual ? "text-white" : "text-white/40"}`}>Yearly</span>
+          {annual && (
+            <span className="text-xs font-bold bg-neon-500/15 text-neon-400 px-2.5 py-1 rounded-lg border border-neon-500/20">
+              Save 20%
+            </span>
+          )}
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {plans.map((plan) => (
+          {plans.map((plan) => {
+            const price = plan.monthly === 0 ? 0 : annual ? plan.yearly : plan.monthly;
+            return (
             <div key={plan.key} className={`card p-8 flex flex-col ${plan.highlight ? "pricing-pro" : ""}`}>
               {plan.highlight && (
                 <span className="badge badge-brand mb-4 self-start">Most Popular</span>
               )}
               <h3 className="text-xl font-semibold text-white">{plan.name}</h3>
               <div className="mt-4 flex items-baseline gap-1">
-                <span className="font-display text-4xl font-bold text-white">{plan.price}</span>
-                <span className="text-slate-400 text-sm">{plan.period}</span>
+                <span className="font-display text-4xl font-bold text-white">${price}</span>
+                <span className="text-white/50 text-sm">{plan.monthly === 0 ? "forever" : annual ? "/mo, billed yearly" : "/month"}</span>
               </div>
+              {annual && plan.monthly > 0 && (
+                <p className="text-xs text-neon-400 mt-2 font-medium">
+                  Save ${(plan.monthly - plan.yearly) * 12}/year
+                </p>
+              )}
               <ul className="mt-6 space-y-3 flex-1">
                 {plan.features.map((f, j) => (
-                  <li key={j} className="flex items-center gap-2 text-sm text-slate-300">
+                  <li key={j} className="flex items-center gap-2 text-sm text-white/60">
                     <Check className="w-4 h-4 text-neon-400 flex-shrink-0" />
                     {f}
                   </li>
@@ -186,7 +209,8 @@ export default function PricingPage() {
                 {plan.cta}
               </button>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {error && (
