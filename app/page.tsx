@@ -134,12 +134,12 @@ function Nav() {
           <a href="#faq" className="hover:text-white transition-colors duration-300">FAQ</a>
           <a href="/blog" className="hover:text-white transition-colors duration-300">Blog</a>
         </div>
-        <div className="flex items-center gap-3">
-          <a href="/signin" className="text-sm text-white/60 hover:text-white transition-colors duration-300">
+        <div className="flex items-center gap-2 md:gap-3">
+          <a href="/signin" className="hidden sm:inline text-sm text-white/60 hover:text-white transition-colors duration-300">
             Sign In
           </a>
-          <a href="/signin" className="btn-primary text-sm !py-2 !px-5">
-            Get Started Free
+          <a href="/signin" className="btn-primary text-xs sm:text-sm !py-2 !px-3 sm:!px-5 whitespace-nowrap">
+            Get Started
           </a>
         </div>
       </div>
@@ -183,9 +183,9 @@ function Hero() {
           className="mt-8 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-[1.08] tracking-tight"
           initial="hidden" animate="visible" variants={fadeUp} custom={1}
         >
-          <span className="text-white">AI finds your</span>
+          <span className="text-white">AI finds your </span>
           <br className="hidden sm:block" />
-          <span className="text-white">most viral moments.</span>
+          <span className="text-white">most viral moments. </span>
           <br className="hidden sm:block" />
           <span className="bg-gradient-to-r from-brand-300 via-brand-400 to-brand-500 bg-clip-text text-transparent">
             You just post.

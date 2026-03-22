@@ -182,9 +182,9 @@ export default function ClipPage() {
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
-          {/* User menu — only show when user data loaded */}
+          {/* User menu — only show on desktop when user data loaded */}
           {userEmail && (
-          <div className="relative" ref={menuRef}>
+          <div className="hidden md:block relative" ref={menuRef}>
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-xl border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-all"
@@ -385,23 +385,23 @@ export default function ClipPage() {
               )}
             </div>
           ) : (
-            <div className="card p-8">
+            <div className="card p-6 md:p-8">
               <div className="flex items-center gap-2 mb-4">
-                <label className="text-base text-white/70 font-medium">YouTube or Video URL</label>
+                <label className="text-sm md:text-base text-white/70 font-medium">YouTube or Video URL</label>
                 <span className="text-[9px] font-bold bg-brand-500/20 text-brand-400 px-1.5 py-0.5 rounded-md uppercase tracking-wider">Beta</span>
               </div>
-              <div className="flex gap-3">
+              <div className="space-y-3">
                 <input
                   type="url"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  className="input-field flex-1 text-base !py-4"
+                  className="input-field w-full text-sm md:text-base !py-3.5"
                   placeholder="https://youtube.com/watch?v=..."
                 />
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn-primary flex items-center gap-2 whitespace-nowrap text-base !py-4 !px-8"
+                  className="btn-primary w-full flex items-center justify-center gap-2 text-base !py-3.5"
                 >
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
                   {loading ? "Processing..." : "Clip It"}
