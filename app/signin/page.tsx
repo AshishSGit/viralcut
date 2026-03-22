@@ -117,7 +117,7 @@ export default function SignInPage() {
             </div>
             <h2 className="text-xl font-semibold text-white mb-2">Check your email</h2>
             <p className="text-white/60 text-sm mb-6">
-              We sent a confirmation link to <span className="text-white font-medium">{email}</span>.
+              We sent a link to <span className="text-white font-medium">{email}</span>. Click it to continue.
             </p>
             <button
               onClick={() => setMode("signin")}
@@ -186,6 +186,28 @@ export default function SignInPage() {
                   {showPassword ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
                 </button>
               </div>
+
+              {mode === "signin" && (
+                <div className="flex justify-end mb-4">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!email) { setError("Enter your email first"); return; }
+                      setLoading(true);
+                      setError("");
+                      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                        redirectTo: `${window.location.origin}/reset-password`,
+                      });
+                      setLoading(false);
+                      if (error) { setError(error.message); }
+                      else { setMode("sent"); }
+                    }}
+                    className="text-xs text-white/40 hover:text-brand-400 transition-colors"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+              )}
 
               {error && (
                 <p className="text-hot-400 text-sm mb-4">{error}</p>
