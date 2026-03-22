@@ -172,7 +172,8 @@ export default function ClipPage() {
             </a>
           </div>
 
-          {/* User menu */}
+          {/* User menu — only show when user data loaded */}
+          {userEmail && (
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setMenuOpen(!menuOpen)}
@@ -241,6 +242,7 @@ export default function ClipPage() {
               </div>
             )}
           </div>
+          )}
         </div>
       </nav>
 
