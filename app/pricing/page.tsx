@@ -161,11 +161,9 @@ export default function PricingPage() {
             <div className="toggle-thumb" />
           </button>
           <span className={`text-sm font-medium transition-colors ${annual ? "text-white" : "text-white/40"}`}>Yearly</span>
-          {annual && (
-            <span className="text-xs font-bold bg-neon-500/15 text-neon-400 px-2.5 py-1 rounded-lg border border-neon-500/20">
-              Save 20%
-            </span>
-          )}
+          <span className="text-xs font-bold bg-neon-500/15 text-neon-400 px-2.5 py-1 rounded-lg border border-neon-500/20">
+            Save 20%
+          </span>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
