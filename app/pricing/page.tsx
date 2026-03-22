@@ -195,20 +195,19 @@ export default function PricingPage() {
                   </li>
                 ))}
               </ul>
-              <button
-                onClick={() => !plan.disabled && handleCheckout(plan.key)}
-                disabled={plan.disabled || loading === plan.key}
-                className={`mt-8 w-full py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
+              <div
+                className={`mt-8 w-full py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 pointer-events-none ${
                   plan.highlight
                     ? "btn-primary"
                     : plan.disabled
-                    ? "bg-dark-700 text-slate-500 cursor-not-allowed"
+                    ? "bg-dark-700 text-white/30"
                     : "btn-ghost"
                 }`}
               >
                 {loading === plan.key && <Loader2 className="w-4 h-4 animate-spin" />}
+                {loading === plan.key && <Loader2 className="w-4 h-4 animate-spin" />}
                 {plan.cta}
-              </button>
+              </div>
             </div>
             );
           })}
