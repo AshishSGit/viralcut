@@ -417,17 +417,31 @@ function Features() {
 
 /* ── Pricing ── */
 function Pricing() {
+  const [annual, setAnnual] = useState(false);
+
   const plans = [
-    { name: "Free", price: "$0", period: "forever", badge: null, features: ["1 video per month", "Up to 30 min videos", "3-5 clips per video", "Animated captions", "Clippified watermark"], cta: "Get Started Free", highlight: false },
-    { name: "Pro", price: "$19", period: "/month", badge: "Most Popular", features: ["10 videos per month", "Up to 2 hour videos", "3-5 clips per video", "Animated captions", "No watermark", "Priority processing"], cta: "Start Pro", highlight: true },
-    { name: "Unlimited", price: "$49", period: "/month", badge: null, features: ["Unlimited videos", "Up to 2 hour videos", "3-5 clips per video", "Animated captions", "No watermark", "Priority processing", "Early access to features"], cta: "Go Unlimited", highlight: false },
+    {
+      name: "Free", badge: null, highlight: false, cta: "Get Started Free",
+      monthly: 0, yearly: 0, period: "forever",
+      features: ["1 video per month", "Up to 30 min videos", "3-5 clips per video", "Animated captions", "Clippified watermark"],
+    },
+    {
+      name: "Pro", badge: "Most Popular", highlight: true, cta: "Start Pro",
+      monthly: 19, yearly: 15, period: "/month",
+      features: ["10 videos per month", "Up to 2 hour videos", "3-5 clips per video", "Animated captions", "No watermark", "Priority processing"],
+    },
+    {
+      name: "Unlimited", badge: null, highlight: false, cta: "Go Unlimited",
+      monthly: 49, yearly: 39, period: "/month",
+      features: ["Unlimited videos", "Up to 2 hour videos", "3-5 clips per video", "Animated captions", "No watermark", "Priority processing", "Early access to features"],
+    },
   ];
 
   return (
     <section id="pricing" className="py-28 md:py-40 px-6 relative">
       <div className="max-w-5xl mx-auto">
         <motion.div
-          className="text-center mb-20"
+          className="text-center mb-12"
           initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
         >
           <span className="badge badge-hot">Pricing</span>
@@ -437,11 +451,33 @@ function Pricing() {
           <p className="mt-5 text-white/60 text-lg md:text-xl">Start free. Upgrade when you need more.</p>
         </motion.div>
 
+        {/* Monthly / Yearly toggle */}
+        <div className="flex items-center justify-center gap-4 mb-14">
+          <span className={`text-sm font-medium transition-colors ${!annual ? "text-white" : "text-white/40"}`}>Monthly</span>
+          <button
+            onClick={() => setAnnual(!annual)}
+            className={`toggle-track ${annual ? "active" : ""}`}
+            aria-label="Toggle annual billing"
+          >
+            <div className="toggle-thumb" />
+          </button>
+          <span className={`text-sm font-medium transition-colors ${annual ? "text-white" : "text-white/40"}`}>
+            Yearly
+          </span>
+          {annual && (
+            <span className="text-xs font-bold bg-neon-500/15 text-neon-400 px-2.5 py-1 rounded-lg border border-neon-500/20">
+              Save 20%
+            </span>
+          )}
+        </div>
+
         <motion.div
           className="grid md:grid-cols-3 gap-6 items-start"
           initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer}
         >
-          {plans.map((plan, i) => (
+          {plans.map((plan, i) => {
+            const price = plan.monthly === 0 ? 0 : annual ? plan.yearly : plan.monthly;
+            return (
             <motion.div
               key={i}
               className={`card p-8 flex flex-col group transition-all duration-500 ${plan.highlight ? "pricing-pro" : "hover:border-white/10"}`}
@@ -452,9 +488,14 @@ function Pricing() {
               )}
               <h3 className="text-xl font-bold text-white">{plan.name}</h3>
               <div className="mt-4 flex items-baseline gap-1">
-                <span className="font-display text-5xl font-bold text-white">{plan.price}</span>
-                <span className="text-white/50 text-sm">{plan.period}</span>
+                <span className="font-display text-5xl font-bold text-white">${price}</span>
+                <span className="text-white/50 text-sm">{plan.monthly === 0 ? "forever" : annual ? "/mo, billed yearly" : "/month"}</span>
               </div>
+              {annual && plan.monthly > 0 && (
+                <p className="text-xs text-neon-400 mt-2 font-medium">
+                  Save ${(plan.monthly - plan.yearly) * 12}/year
+                </p>
+              )}
               <ul className="mt-8 space-y-3.5 flex-1">
                 {plan.features.map((f, j) => (
                   <li key={j} className="flex items-center gap-2.5 text-sm text-white/55">
@@ -472,7 +513,8 @@ function Pricing() {
                 {plan.cta}
               </a>
             </motion.div>
-          ))}
+            );
+          })}
         </motion.div>
       </div>
     </section>
