@@ -35,15 +35,13 @@ export default function SignInPage() {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectNext)}`,
-        },
       });
       setLoading(false);
       if (error) {
         setError(error.message);
       } else {
-        setMode("sent");
+        // No email confirmation needed — redirect immediately
+        window.location.href = redirectNext.startsWith("/") ? redirectNext : "/clip";
       }
     } else {
       const { error } = await supabase.auth.signInWithPassword({
