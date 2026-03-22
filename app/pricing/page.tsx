@@ -169,7 +169,11 @@ export default function PricingPage() {
           {plans.map((plan) => {
             const price = plan.monthly === 0 ? 0 : annual ? plan.yearly : plan.monthly;
             return (
-            <div key={plan.key} className={`card p-8 flex flex-col ${plan.highlight ? "pricing-pro" : ""}`}>
+            <div
+              key={plan.key}
+              className={`card p-8 flex flex-col ${plan.highlight ? "pricing-pro" : ""} ${!plan.disabled ? "cursor-pointer" : ""}`}
+              onClick={() => !plan.disabled && !loading && handleCheckout(plan.key)}
+            >
               {plan.highlight && (
                 <span className="badge badge-brand mb-4 self-start">Most Popular</span>
               )}
