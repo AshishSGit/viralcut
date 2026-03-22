@@ -205,7 +205,6 @@ export default function PricingPage() {
                 }`}
               >
                 {loading === plan.key && <Loader2 className="w-4 h-4 animate-spin" />}
-                {loading === plan.key && <Loader2 className="w-4 h-4 animate-spin" />}
                 {plan.cta}
               </div>
             </div>
